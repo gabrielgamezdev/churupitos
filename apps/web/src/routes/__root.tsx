@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 
 import { UpdatePrompt } from "@/features/pwa/update-prompt";
+import { RequestBrakeBanner } from "@/features/request-brake/request-brake-banner";
 
 export interface RouterContext {
   queryClient: QueryClient;
@@ -15,6 +16,7 @@ function RootLayout() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <Outlet />
+      <RequestBrakeBanner />
       <UpdatePrompt />
     </div>
   );

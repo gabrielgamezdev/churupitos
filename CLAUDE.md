@@ -115,6 +115,8 @@ en bloque después.
 Planes gratis y **sin método de pago** en Cloudflare, Supabase y GitHub: así lo que
 pase de un límite se corta, nunca se factura. Cloudflare solo sirve estáticos;
 `ops/guardia-costos.mjs` hace fallar el check si `wrangler.jsonc` pide algo más.
+En la app, el freno de `src/lib/request-brake.ts` corta las consultas si se
+disparan (un bucle): no se quita ni se sube su límite sin motivo escrito.
 Añadir algo que se pague por uso es decisión del autor, con su ADR. Ver ADR 0007.
 
 ---

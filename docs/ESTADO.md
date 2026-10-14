@@ -42,7 +42,8 @@ Del producto (las de dominio se mudan a `docs/DOMINIO.md` cuando nazca, en M1):
   de esa moneda → libro de la cuenta.
 - **Repositorio público** en GitHub, como portafolio, con licencia MIT.
 - **Costo cero**: planes gratis y sin método de pago en Cloudflare, Supabase y GitHub,
-  y Cloudflare solo sirve estáticos (ADR 0007).
+  y Cloudflare solo sirve estáticos (ADR 0007). La app lleva un freno: más de 60
+  consultas en un minuto la detienen hasta recargar.
 
 ## Pendiente de decidir
 
