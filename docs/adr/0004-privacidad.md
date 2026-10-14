@@ -1,7 +1,7 @@
 # ADR 0004 — Repositorio público sin un solo dato personal
 
 - **Fecha:** 2026-10-12
-- **Estado:** aceptada
+- **Estado:** aceptada. Lo de la lista de nombres en la CI lo sustituye el ADR 0006.
 
 ## Contexto
 El repositorio es público porque forma parte de un portafolio, pero la app gestiona

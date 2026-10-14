@@ -1,5 +1,7 @@
 # Churupitos
 
+[![CI](https://github.com/gabrielgamezdev/churupitos/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielgamezdev/churupitos/actions/workflows/ci.yml)
+
 App de finanzas del hogar para una pareja en Venezuela: **bolívares y dólares,
 presupuesto por sobres y varias cuentas**. Es una PWA pensada para el teléfono, que
 sustituye unos Excels mensuales donde cada sobre tiene dinero repartido entre varios
@@ -38,6 +40,7 @@ apps/web/      la PWA
 supabase/      migraciones, pruebas de la base y datos inventados para desarrollar
 ops/           barrido de privacidad
 .githooks/     hooks de git: barrido y Conventional Commits
+.github/       CI: el check en cada push y las pruebas de la base cuando cambia
 docs/          estado, módulos, trampas y decisiones de arquitectura
 ```
 

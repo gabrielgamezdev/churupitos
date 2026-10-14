@@ -32,23 +32,16 @@ const isCi = Boolean(process.env.CI);
 
 // --- Los nombres -------------------------------------------------------------
 // Viven fuera del repositorio: si estuvieran escritos aquí, este archivo sería
-// él mismo la fuga que intenta evitar. En local salen de privado/; en CI, del
-// secreto BARRIDO_NOMBRES (uno por línea, igual que el archivo).
+// él mismo la fuga que intenta evitar. Solo existen en privado/ y no se suben a
+// ningún sitio, ni como secreto de la CI (ADR 0006): allí el barrido busca solo
+// los patrones de abajo, y los nombres los vigilan los hooks locales.
 const NAMES_FILE = "privado/barrido-nombres.txt";
-const parseNames = (text) =>
-  text
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#"));
-
-let names = [];
-if (process.env.BARRIDO_NOMBRES) names = parseNames(process.env.BARRIDO_NOMBRES);
-else if (existsSync(NAMES_FILE)) names = parseNames(readFileSync(NAMES_FILE, "utf8"));
-
-if (names.length === 0 && isCi) {
-  console.error("BARRIDO: falta el secreto BARRIDO_NOMBRES, así que no se pueden buscar nombres propios.");
-  process.exit(1);
-}
+const names = existsSync(NAMES_FILE)
+  ? readFileSync(NAMES_FILE, "utf8")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+  : [];
 
 // --- Las reglas --------------------------------------------------------------
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -137,5 +130,11 @@ if (findings.length > 0) {
 
 if (mode !== "--mensaje") {
   console.log(`Barrido limpio: ${scanned} archivos revisados.`);
-  if (names.length === 0) console.log(`AVISO: falta ${NAMES_FILE}, así que no se buscaron nombres propios.`);
+  if (names.length === 0) {
+    console.log(
+      isCi
+        ? "Sin la lista de nombres, a propósito: en la CI solo se buscan patrones (ADR 0006)."
+        : `AVISO: falta ${NAMES_FILE}, así que no se buscaron nombres propios.`,
+    );
+  }
 }

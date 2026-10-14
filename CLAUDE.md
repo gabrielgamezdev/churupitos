@@ -78,7 +78,9 @@ importador, la investigación, las copias y la lista de nombres del barrido.
 Ver `docs/adr/0004-privacidad.md`.
 
 El barrido de privacidad (`ops/barrido-privacidad.mjs`) corre solo en cada commit
-(hooks de `.githooks/`, activados por `npm install`) y en cada push (CI).
+(hooks de `.githooks/`, activados por `npm install`) y en cada push (CI). La lista
+de nombres **no sale nunca de `privado/`**, ni como secreto de la CI: allí solo se
+buscan patrones (ADR 0006).
 
 ### 2. El dinero son enteros de céntimos
 

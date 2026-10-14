@@ -1,0 +1,31 @@
+name: CI
+
+# En cada push: lo mismo que `npm run check` en local. Dura alrededor de un minuto.
+on:
+  push:
+
+# Un push nuevo cancela la corrida anterior de la misma rama: no se gastan minutos
+# en revisar una versión que ya quedó vieja.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Tipos, lint, pruebas, build y barrido
+    runs-on: ubuntu-latest
+    # Tope duro: si algo se cuelga, se corta aquí en vez de gastar hasta las seis
+    # horas que permite GitHub.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # El barrido corre aquí sin la lista de nombres, a propósito (ADR 0006).
+      - run: npm run check

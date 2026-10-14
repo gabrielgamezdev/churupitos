@@ -1,0 +1,30 @@
+name: Base de datos
+
+# Solo cuando cambia la base: levantar Supabase cuesta un par de minutos y no tiene
+# sentido repetirlo por un cambio en la app o en la documentación.
+on:
+  push:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/db.yml"
+
+concurrency:
+  group: db-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Pruebas de la base, permisos por fila incluidos
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      # Sin versión: la toma del package-lock.json, la misma que en local.
+      - uses: supabase/setup-cli@v3
+      # Solo la base y el login (sus tablas): las pruebas no usan la API, el panel
+      # ni el correo, y arrancar menos contenedores ahorra minutos.
+      - run: supabase start -x kong,mailpit,postgrest,postgres-meta,studio
+      - run: supabase test db

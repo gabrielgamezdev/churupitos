@@ -4,8 +4,8 @@
 # Copia esto como privado/barrido-nombres.txt y pon los reales: los bancos y
 # plataformas donde hay dinero, las personas y los apodos que salen en los
 # Excels, y los sobres con nombre propio. Se buscan como palabra completa y
-# distinguiendo mayúsculas. En CI, el mismo contenido va en el secreto
-# BARRIDO_NOMBRES del repositorio.
+# distinguiendo mayúsculas. La lista real no se sube a ningún sitio, ni como
+# secreto de la CI (ADR 0006): la vigilan solo los hooks locales.
 #
 # Sin la lista, el barrido sigue detectando lo estructural (importes con
 # separador de miles, referencias a celdas, correos, IPs), pero no los nombres.

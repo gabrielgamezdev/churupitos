@@ -22,7 +22,8 @@
 5. [x] **Instalable**: manifest, iconos, *service worker* y aviso de versión nueva.
    El icono es provisional: un sobre con una moneda, generado desde `public/favicon.svg`.
 6. [ ] **GitHub**: primeros commits con la identidad pública del autor, repo público
-   y CI con el secreto del barrido.
+   y CI (check en cada push; pruebas de la base cuando cambia `supabase/`).
+   Falta: hacerlo público.
 7. [ ] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
    migraciones aplicadas.
 8. [ ] **Cloudflare**: despliegue automático de `main`.
