@@ -63,6 +63,7 @@ npm run db:reset     # borra la base local y la rehace: migraciones + datos inve
 npm run db:types     # regenera los tipos de TypeScript desde la base local
 npm run db:stop      # apaga Supabase y libera la PC
 npm run barrido      # solo el barrido de privacidad, sobre todo el repositorio
+npm run costos       # comprueba que Cloudflare solo sirve estáticos (nada que cobre por uso)
 ```
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos

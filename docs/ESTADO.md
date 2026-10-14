@@ -41,6 +41,8 @@ Del producto (las de dominio se mudan a `docs/DOMINIO.md` cuando nazca, en M1):
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Repositorio público** en GitHub, como portafolio, con licencia MIT.
+- **Costo cero**: planes gratis y sin método de pago en Cloudflare, Supabase y GitHub,
+  y Cloudflare solo sirve estáticos (ADR 0007).
 
 ## Pendiente de decidir
 

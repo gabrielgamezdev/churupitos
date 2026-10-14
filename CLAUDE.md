@@ -110,6 +110,13 @@ Un gasto que deja una celda en negativo se guarda con un aviso, nunca se rechaza
 Así funciona el Excel: entre el 6 % y el 20 % de los gastos lo hacen y se cubren
 en bloque después.
 
+### 7. Nada que pueda cobrar por uso
+
+Planes gratis y **sin método de pago** en Cloudflare, Supabase y GitHub: así lo que
+pase de un límite se corta, nunca se factura. Cloudflare solo sirve estáticos;
+`ops/guardia-costos.mjs` hace fallar el check si `wrangler.jsonc` pide algo más.
+Añadir algo que se pague por uso es decisión del autor, con su ADR. Ver ADR 0007.
+
 ---
 
 ## Cómo se trabaja aquí
