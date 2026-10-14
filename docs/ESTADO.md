@@ -34,20 +34,17 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 
-Del producto (las de dominio se mudan a `docs/DOMINIO.md` cuando nazca, en M1):
+Las del dominio (cómo se traduce el Excel) están en `docs/DOMINIO.md` §6. Aquí, las
+del producto:
 
-- **Las mismas reglas que el Excel.** «Más simple» significa menos piezas técnicas,
-  no menos reglas. Lo que la versión anterior añadió y el Excel no tiene es opcional.
 - **Mobile first, Android.** Los dos usan Android. La PC sigue con el Excel mientras
   la app madura.
 - **Sin conexión = solo lectura**: se ven los últimos datos guardados, se recarga al
   volver la red o al estirar hacia abajo. No hay cola de escrituras.
-- **La celda cuenta × sobre es imprescindible**: hay que ver cuánto queda en cada
-  banco y de qué sobre.
-- **Todo el histórico antes de usar la app**, y que se vea tal cual el Excel.
 - **Un solo proyecto de Supabase.** Hasta el corte, la base se vacía y se recarga
   desde los Excels; un candado impide hacerlo después del corte sin pedirlo.
-- **Las comisiones se registran a mano** por ahora; nada automático.
+- **Los Excels son el respaldo hasta el corte**: si algo de la app no convence, se
+  compara, se ajusta el importador y se recarga todo.
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Repositorio público** en GitHub, como portafolio, con licencia MIT.

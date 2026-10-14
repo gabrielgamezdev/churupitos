@@ -15,14 +15,12 @@ los teléfonos antes de empezar el siguiente**.
 
 | Documento | Para qué |
 |---|---|
-| `docs/ESTADO.md` | En qué módulo estamos, qué toca y las decisiones ya tomadas |
+| `docs/ESTADO.md` | En qué módulo estamos, qué toca y las decisiones de producto |
+| `docs/DOMINIO.md` | **La autoridad del dominio**: el método del Excel, sus reglas `R1…` y las decisiones `D1…` |
 | `docs/modulos/` | El plan del módulo en curso: qué entra, qué no y cuándo está hecho |
 | `docs/TRAMPAS.md` | Fallos que ya costaron tiempo. **Leerlo ahorra horas** |
 | `docs/adr/` | Decisiones de arquitectura, una por archivo, con su porqué |
 | `README.md` | Qué es, cómo se arranca y **todos los comandos** |
-
-`docs/DOMINIO.md` (el método del Excel: conceptos, reglas y decisiones de dominio)
-nace en M1, junto al esquema de la base.
 
 ---
 
@@ -37,7 +35,7 @@ versiones compitiendo. Cada dato vive en un solo sitio y los demás enlazan.
 
 | Documento | Trato |
 |---|---|
-| `CLAUDE.md`, `README.md`, `docs/ESTADO.md`, `docs/TRAMPAS.md` | **Vivos** |
+| `CLAUDE.md`, `README.md`, `docs/ESTADO.md`, `docs/DOMINIO.md`, `docs/TRAMPAS.md` | **Vivos** |
 | `docs/modulos/Mn-*.md` | **Vivo mientras dure el módulo.** Al cerrarlo se congela |
 | `docs/adr/` | **Se supersede, no se edita.** Si la decisión cambia, se escribe un ADR nuevo que reemplaza al anterior, y el viejo se marca como sustituido |
 
@@ -47,6 +45,7 @@ pruebas, cuántos archivos) no se escriben a mano.
 
 ### Al cambiar algo, revisar en concreto
 
+- ¿Cambió una regla de negocio? → `docs/DOMINIO.md` primero, y la prueba que la cita.
 - ¿Cambió una orden que se teclea? → `README.md`, y solo ahí.
 - ¿Se cerró o abrió un módulo? → `docs/ESTADO.md` y su `docs/modulos/Mn-*.md`.
 - ¿Costó tiempo un fallo no evidente? → `docs/TRAMPAS.md`.
