@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Barrido de privacidad sobre lo que va a entrar en el commit.
+# Se activa con `npm install` (script `prepare`). Ver ops/barrido-privacidad.mjs.
+exec node ops/barrido-privacidad.mjs

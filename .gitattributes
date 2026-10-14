@@ -1,0 +1,12 @@
+# Todo el texto con LF, también en Windows. En la v2, un script escrito con CRLF
+# rompió su shebang («env: 'bash\r'») y git vio el archivo entero como cambiado.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
+*.xlsx binary
+
+# Generado por el plugin de TanStack Router: GitHub lo pliega en los diffs.
+apps/web/src/routeTree.gen.ts linguist-generated

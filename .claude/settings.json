@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git ls-files*)",
+      "Bash(git check-ignore*)",
+      "Bash(node ops/barrido-privacidad.mjs*)",
+      "Bash(npm run check*)",
+      "Bash(npm run barrido*)",
+      "Bash(npm run build*)",
+      "Bash(npm run typecheck*)",
+      "Bash(npm test*)",
+      "Bash(npm run test*)",
+      "Bash(npm view*)",
+      "Bash(ls*)",
+      "Bash(wc*)",
+      "Read",
+      "Grep",
+      "Glob"
+    ]
+  }
+}

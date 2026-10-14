@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# El mensaje del commit también es público: pasa por el barrido de privacidad
+# y tiene que seguir Conventional Commits (CLAUDE.md, «Al hacer un commit»).
+set -euo pipefail
+
+msg_file="$1"
+first_line=$(grep -v '^#' "$msg_file" | head -n 1)
+
+case "$first_line" in
+  Merge\ *|Revert\ *) ;;
+  *)
+    if ! printf '%s' "$first_line" | grep -qE '^(feat|fix|docs|chore|refactor|test|perf|build|ci|style)(\([a-z0-9-]+\))?!?: .+'; then
+      echo "El commit no sigue Conventional Commits: «$first_line»" >&2
+      echo "Formato: tipo(ámbito): resumen en minúscula. Ejemplo: feat(web): pantalla de inicio" >&2
+      exit 1
+    fi
+    ;;
+esac
+
+exec node ops/barrido-privacidad.mjs --mensaje "$msg_file"

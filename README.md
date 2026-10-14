@@ -1,0 +1,69 @@
+# Churupitos
+
+App de finanzas del hogar para una pareja en Venezuela: **bolívares y dólares,
+presupuesto por sobres y varias cuentas**. Es una PWA pensada para el teléfono, que
+sustituye unos Excels mensuales donde cada sobre tiene dinero repartido entre varios
+bancos, y cada ingreso llega con su propia tasa de cambio.
+
+> **Estado:** en construcción, módulo **M0 · Cimientos**. El plan completo está en
+> [`docs/ESTADO.md`](docs/ESTADO.md).
+
+## Qué la hace distinta
+
+- **La unidad de saldo es la celda cuenta × sobre**: no basta con saber cuánto tiene
+  «Ahorro», hay que saber en qué banco está, porque no se paga desde un banco con
+  dinero que está en otro.
+- **Dos monedas que nunca se mezclan**, y una tasa por ingreso en lugar de una tasa del día.
+- **Ningún saldo se guarda**: todos se calculan a partir de los asientos, y el dinero
+  son enteros de céntimos ([ADR 0002](docs/adr/0002-dinero-enteros.md),
+  [ADR 0003](docs/adr/0003-saldos-derivados.md)).
+- **Repositorio público sin un solo dato personal**, con un barrido de privacidad en
+  cada commit y en cada push ([ADR 0004](docs/adr/0004-privacidad.md)).
+
+## Stack
+
+| Pieza | Tecnología |
+|---|---|
+| App | React 19, Vite, `vite-plugin-pwa`, Tailwind 4, shadcn/ui, TanStack Router y Query |
+| Datos y login | Supabase: Postgres, Auth y RLS |
+| Hosting | Cloudflare (estáticos) + Supabase Cloud |
+
+Por qué este stack: [ADR 0001](docs/adr/0001-stack.md) y
+[ADR 0005](docs/adr/0005-hosting-y-acceso.md).
+
+## Estructura
+
+```
+apps/web/      la PWA
+supabase/      migraciones, pruebas de la base y datos inventados para desarrollar
+ops/           barrido de privacidad
+.githooks/     hooks de git: barrido y Conventional Commits
+docs/          estado, módulos, trampas y decisiones de arquitectura
+```
+
+## Cómo correrlo
+
+Requisitos: Node 24, y Docker Desktop encendido para la base de datos local.
+
+```bash
+npm install          # instala todo y activa los hooks de git
+npm run db:start     # levanta Supabase en Docker (la primera vez descarga las imágenes)
+npm run dev          # la app en http://localhost:5173
+npm run check        # tipos, lint, pruebas, build y barrido de privacidad
+npm run db:test      # pruebas de la base: permisos por fila incluidos
+npm run db:reset     # borra la base local y la rehace: migraciones + datos inventados
+npm run db:stop      # apaga Supabase y libera la PC
+npm run barrido      # solo el barrido de privacidad, sobre todo el repositorio
+```
+
+Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
+que enviaría el login se ven en http://localhost:54324. Las cuentas de prueba, con
+datos inventados, son `ana@ejemplo.test` y `beto@ejemplo.test`, con la contraseña
+`churupitos-dev-1`.
+
+Para el barrido completo hace falta la lista de nombres privada: copia
+`ops/barrido-nombres.example.txt` como `privado/barrido-nombres.txt` y rellénala.
+
+## Licencia
+
+Pendiente de decidir.

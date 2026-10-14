@@ -1,0 +1,43 @@
+# ==========================================================================
+# Churupitos — qué NUNCA entra en git
+# ==========================================================================
+# El repositorio es público. Un dato dentro de un commit sobrevive al borrado
+# del archivo: sacarlo después obliga a reescribir la historia.
+
+# --- DATOS PERSONALES -----------------------------------------------------
+# Todo lo que tenga nombres, bancos o cifras reales vive en una sola carpeta:
+# los Excels, el catálogo del importador, la investigación, las copias de
+# seguridad y la lista de nombres que busca el barrido de privacidad.
+privado/
+
+# --- SECRETOS -------------------------------------------------------------
+# Contraseña de la base, claves de Supabase y tokens de despliegue.
+.env
+.env.*
+!.env.example
+
+# --- NODE / VITE ----------------------------------------------------------
+node_modules/
+dist/
+dev-dist/
+coverage/
+*.tsbuildinfo
+*.local
+
+# --- SUPABASE LOCAL -------------------------------------------------------
+supabase/.branches/
+supabase/.temp/
+
+# --- EDITOR / SO ----------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# --- VARIOS ---------------------------------------------------------------
+*.log
+.cache/
