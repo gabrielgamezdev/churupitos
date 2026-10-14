@@ -7,6 +7,11 @@
   "compatibility_date": "2026-10-01",
   // Sin telemetría de Wrangler: nada de este proyecto sale de casa sin necesidad.
   "send_metrics": false,
+  // Escrito a propósito para que no dependa del valor por defecto: la app vive en
+  // churupitos.<cuenta>.workers.dev, y no hace falta una URL pública extra por
+  // cada versión publicada.
+  "workers_dev": true,
+  "preview_urls": false,
   "assets": {
     "directory": "./apps/web/dist",
     // Cualquier ruta que no sea un archivo (/login, /cuentas/…) devuelve

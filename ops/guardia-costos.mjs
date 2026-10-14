@@ -15,9 +15,18 @@ import { readFileSync } from "node:fs";
 
 const CONFIG_FILE = process.argv[2] ?? "wrangler.jsonc";
 
-// Lo único que puede tener la configuración. Cualquier clave nueva, aunque sea
-// gratis, se añade aquí a propósito y con su ADR: así nunca entra sin querer.
-const ALLOWED_TOP_LEVEL = new Set(["$schema", "name", "compatibility_date", "send_metrics", "assets"]);
+// Lo único que puede tener la configuración. Cualquier clave nueva se añade aquí a
+// propósito, nunca sin querer; si puede cobrar por uso, además con su ADR.
+// `workers_dev` y `preview_urls` solo deciden en qué URLs se sirve: no cobran.
+const ALLOWED_TOP_LEVEL = new Set([
+  "$schema",
+  "name",
+  "compatibility_date",
+  "send_metrics",
+  "workers_dev",
+  "preview_urls",
+  "assets",
+]);
 const ALLOWED_ASSETS = new Set(["directory", "not_found_handling"]);
 
 // JSONC: el mismo JSON, con comentarios y comas finales. Se quitan los

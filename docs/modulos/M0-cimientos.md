@@ -26,8 +26,8 @@
    Falta: hacerlo público.
 7. [x] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
    migraciones aplicadas.
-8. [ ] **Cloudflare**: despliegue automático de `main` (configuración lista en
-   `wrangler.jsonc`; falta conectar el repo desde el panel).
+8. [x] **Cloudflare**: despliegue automático de `main`, sin previews por rama ni
+   Cloudflare Access.
 9. [ ] **En los teléfonos**: instalada en los dos y con sesión iniciada.
 
 ## Tope de complejidad
