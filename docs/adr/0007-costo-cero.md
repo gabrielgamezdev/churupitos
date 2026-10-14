@@ -1,6 +1,6 @@
 # ADR 0007 — Costo cero por diseño, y que no dependa de que alguien se dé cuenta
 
-- **Fecha:** 2026-10-15
+- **Fecha:** 2026-10-14
 - **Estado:** aceptada
 
 ## Contexto
@@ -11,7 +11,7 @@ pago y un plan que cobra por uso, y nadie revisa a tiempo lo que se configuró, 
 la persona ni el asistente que escribió el código. El autor no puede asumir una
 factura así.
 
-Lo que dicen las plataformas (comprobado el 2026-10-15 en su documentación):
+Lo que dicen las plataformas (comprobado el 2026-10-14 en su documentación):
 
 - **Cloudflare:** las peticiones a archivos estáticos son gratis y sin límite. El
   plan gratis de Workers no tiene cobros por exceso: pasado el límite diario,

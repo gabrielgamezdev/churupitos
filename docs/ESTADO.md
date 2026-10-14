@@ -6,7 +6,7 @@ El esquema completo de la base y el importador de todos los Excels, comprobado c
 a celda. Antes de escribir código se acuerda su plan en `docs/modulos/M1-historico.md`
 y nace `docs/DOMINIO.md`.
 
-M0 · Cimientos quedó cerrado el 2026-10-15: `docs/modulos/M0-cimientos.md`.
+M0 · Cimientos quedó cerrado el 2026-10-14: `docs/modulos/M0-cimientos.md`.
 
 ## Cómo se publica
 
