@@ -6,3 +6,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// La pone vite.config.ts al construir: el commit publicado, o «local».
+declare const __APP_VERSION__: string;

@@ -7,7 +7,15 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+// La versión que muestra la app: el commit con el que Cloudflare la construyó
+// (Workers Builds lo deja en WORKERS_CI_COMMIT_SHA), o «local» en la PC. Así se
+// sabe a simple vista si un teléfono ya tiene lo último.
+const appVersion = process.env.WORKERS_CI_COMMIT_SHA?.slice(0, 7) ?? "local";
+
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(appVersion),
+  },
   plugins: [
     // Genera src/routeTree.gen.ts a partir de src/routes/. Tiene que ir antes
     // que el plugin de React.

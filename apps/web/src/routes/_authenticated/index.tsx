@@ -24,6 +24,7 @@ function HomePage() {
       <Button variant="outline" className="h-11" onClick={() => void supabase.auth.signOut()}>
         Cerrar sesión
       </Button>
+      <p className="text-center text-xs text-muted-foreground">Versión {__APP_VERSION__}</p>
     </main>
   );
 }
