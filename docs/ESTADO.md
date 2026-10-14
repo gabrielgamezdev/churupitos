@@ -40,13 +40,8 @@ Del producto (las de dominio se mudan a `docs/DOMINIO.md` cuando nazca, en M1):
 - **Las comisiones se registran a mano** por ahora; nada automático.
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
-- **Repositorio público** en GitHub, como portafolio.
+- **Repositorio público** en GitHub, como portafolio, con licencia MIT.
 
 ## Pendiente de decidir
 
-- Antes del primer commit (paso 6 de M0):
-  - en qué cuenta de GitHub vive el repositorio;
-  - su correo `noreply`;
-  - revisar la lista privada de nombres del barrido;
-  - la licencia (propuesta: MIT).
 - Qué pantallas exactas tiene cada módulo de «ver» y qué mostrar de las deudas (antes de M2).

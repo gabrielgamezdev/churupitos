@@ -43,6 +43,13 @@ entero. **El registro se cierra con `enable_signup = false` en `[auth]`**, y la 
 
 ## La app
 
+### Lo que una ruta declara fuera de su componente va al bundle principal
+Con `autoCodeSplitting`, TanStack Router separa el **componente** de cada ruta, pero
+`validateSearch`, `beforeLoad` y compañía viajan en el bundle que se descarga al
+arrancar. Un `validateSearch: z.object(...)` en el login metió zod entero ahí
+(+23 KB comprimidos). **En esas opciones, funciones simples; zod, dentro del
+componente o de los formularios.**
+
 ### `gcTime` por debajo de `maxAge` rehidrata la caché vacía
 TanStack Query descarta la consulta en memoria antes de que caduque lo guardado en
 disco, y al arrancar la caché aparece vacía **sin un solo aviso**. Se ve como «la

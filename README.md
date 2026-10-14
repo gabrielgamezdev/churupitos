@@ -45,13 +45,19 @@ docs/          estado, módulos, trampas y decisiones de arquitectura
 
 Requisitos: Node 24, y Docker Desktop encendido para la base de datos local.
 
+La primera vez, copia `apps/web/.env.example` como `apps/web/.env.local` y pon la
+clave publicable que muestra `npx supabase status`.
+
 ```bash
 npm install          # instala todo y activa los hooks de git
 npm run db:start     # levanta Supabase en Docker (la primera vez descarga las imágenes)
-npm run dev          # la app en http://localhost:5173
+npm run dev          # la app en http://localhost:5173, con recarga en caliente
+npm run build        # la app construida, con su service worker
+npm run preview      # sirve lo construido en http://localhost:4173: así se prueba la PWA
 npm run check        # tipos, lint, pruebas, build y barrido de privacidad
 npm run db:test      # pruebas de la base: permisos por fila incluidos
 npm run db:reset     # borra la base local y la rehace: migraciones + datos inventados
+npm run db:types     # regenera los tipos de TypeScript desde la base local
 npm run db:stop      # apaga Supabase y libera la PC
 npm run barrido      # solo el barrido de privacidad, sobre todo el repositorio
 ```
@@ -61,9 +67,12 @@ que enviaría el login se ven en http://localhost:54324. Las cuentas de prueba, 
 datos inventados, son `ana@ejemplo.test` y `beto@ejemplo.test`, con la contraseña
 `churupitos-dev-1`.
 
+El *service worker* solo existe en lo construido: para probar la instalación o el
+aviso de versión nueva, `npm run build` y `npm run preview`, no `npm run dev`.
+
 Para el barrido completo hace falta la lista de nombres privada: copia
 `ops/barrido-nombres.example.txt` como `privado/barrido-nombres.txt` y rellénala.
 
 ## Licencia
 
-Pendiente de decidir.
+[MIT](LICENSE).

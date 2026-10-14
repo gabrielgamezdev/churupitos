@@ -17,11 +17,12 @@
    TanStack Router y Query. `npm run check` = tipos + lint + pruebas + build + barrido.
 3. [x] **Supabase local**: `supabase init` y `start`, una primera tabla con RLS y una
    prueba de la base que falla si alguna tabla queda sin RLS.
-4. [ ] **Login** contra el Supabase local: correo y contraseña, sesión que sobrevive
+4. [x] **Login** contra el Supabase local: correo y contraseña, sesión que sobrevive
    al cerrar la app, cerrar sesión.
-5. [ ] **Instalable**: manifest, iconos, *service worker* y aviso de versión nueva.
-6. [ ] **GitHub**: primer commit con el correo `noreply`, repo público y CI con el
-   secreto del barrido.
+5. [x] **Instalable**: manifest, iconos, *service worker* y aviso de versión nueva.
+   El icono es provisional: un sobre con una moneda, generado desde `public/favicon.svg`.
+6. [ ] **GitHub**: primeros commits con la identidad pública del autor, repo público
+   y CI con el secreto del barrido.
 7. [ ] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
    migraciones aplicadas.
 8. [ ] **Cloudflare**: despliegue automático de `main`.
