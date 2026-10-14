@@ -1,9 +1,19 @@
 # Estado
 
-## Ahora: M0 · Cimientos
+## Ahora: M1 · Histórico (por planificar)
 
-Repo, documentación, barrido de privacidad, PWA mínima con login y Supabase local
-y en la nube. Plan y casillas en `docs/modulos/M0-cimientos.md`.
+El esquema completo de la base y el importador de todos los Excels, comprobado celda
+a celda. Antes de escribir código se acuerda su plan en `docs/modulos/M1-historico.md`
+y nace `docs/DOMINIO.md`.
+
+M0 · Cimientos quedó cerrado el 2026-10-15: `docs/modulos/M0-cimientos.md`.
+
+## Cómo se publica
+
+Commits pequeños en local; **push** cuando hay algo que probar en el teléfono o al
+cerrar un paso con el check en verde. Un push sube todos los commits pendientes y
+dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
+(`db:push`), al final de cada paso y ya probadas en local.
 
 ## Los módulos
 

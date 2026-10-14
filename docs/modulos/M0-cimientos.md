@@ -1,6 +1,7 @@
 # M0 · Cimientos
 
-- **Estado:** en curso (desde 2026-10-12)
+- **Estado:** cerrado el 2026-10-15 (empezó el 2026-10-12). Congelado: lo que siga
+  vigente vive en `CLAUDE.md`, `README.md` y los ADR.
 - **Objetivo:** que los dos tengan la app instalada en el teléfono e inicien sesión,
   con todo lo que hace falta para construir lo demás sin miedo: privacidad, pruebas,
   base de datos local y en la nube, y despliegue.
@@ -21,14 +22,16 @@
    al cerrar la app, cerrar sesión.
 5. [x] **Instalable**: manifest, iconos, *service worker* y aviso de versión nueva.
    El icono es provisional: un sobre con una moneda, generado desde `public/favicon.svg`.
-6. [ ] **GitHub**: primeros commits con la identidad pública del autor, repo público
-   y CI (check en cada push; pruebas de la base cuando cambia `supabase/`).
-   Falta: hacerlo público.
+6. [x] **GitHub**: primeros commits con la identidad pública del autor, repo público
+   desde el 2026-10-15 y CI (check en cada push; pruebas de la base cuando cambia
+   `supabase/`).
 7. [x] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
    migraciones aplicadas.
 8. [x] **Cloudflare**: despliegue automático de `main`, sin previews por rama ni
    Cloudflare Access.
-9. [ ] **En los teléfonos**: instalada en los dos y con sesión iniciada.
+9. [x] **En los teléfonos**: instalada en el del autor, con sesión iniciada, el
+   saludo leído con RLS y el aviso de versión nueva probado. El segundo teléfono la
+   instala cuando pueda: es el mismo recorrido y no bloquea M1.
 
 ## Tope de complejidad
 - **Pantallas:** 2. El login y un inicio provisional con el nombre y «Cerrar sesión».
