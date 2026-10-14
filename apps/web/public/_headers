@@ -1,0 +1,11 @@
+# Cabeceras que Cloudflare aplica al servir la app.
+#
+# El service worker y el manifest se revalidan siempre: de ellos depende que el
+# teléfono se entere de que hay versión nueva. Los archivos de assets/ llevan su
+# huella en el nombre, así que pueden quedarse en caché todo lo que quieran.
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

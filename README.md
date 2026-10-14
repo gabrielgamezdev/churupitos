@@ -76,6 +76,22 @@ aviso de versión nueva, `npm run build` y `npm run preview`, no `npm run dev`.
 Para el barrido completo hace falta la lista de nombres privada: copia
 `ops/barrido-nombres.example.txt` como `privado/barrido-nombres.txt` y rellénala.
 
+## En la nube
+
+**La base.** Una sola vez, en una terminal propia (los dos comandos son interactivos):
+`npx supabase login` y `npx supabase link --project-ref <id del proyecto>`. Después:
+
+```bash
+npm run db:push -- --dry-run   # qué migraciones se aplicarían, sin tocar nada
+npm run db:push                # las aplica en la base de la nube (pide confirmación)
+```
+
+`db:push` nunca sube `supabase/seed.sql`: las cuentas inventadas solo existen en local.
+Las cuentas reales se crean a mano en el panel de Supabase.
+
+**La app.** Cloudflare la construye y la publica sola en cada push a `main`, según
+`wrangler.jsonc`.
+
 ## Licencia
 
 [MIT](LICENSE).

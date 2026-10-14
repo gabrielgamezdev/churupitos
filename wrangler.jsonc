@@ -1,0 +1,16 @@
+// Publicación de la PWA en Cloudflare (ADR 0005): solo archivos estáticos, sin
+// código de servidor. Cloudflare construye la app al subir a `main` y sirve
+// apps/web/dist.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "churupitos",
+  "compatibility_date": "2026-10-01",
+  // Sin telemetría de Wrangler: nada de este proyecto sale de casa sin necesidad.
+  "send_metrics": false,
+  "assets": {
+    "directory": "./apps/web/dist",
+    // Cualquier ruta que no sea un archivo (/login, /cuentas/…) devuelve
+    // index.html, y el router de la app decide qué pintar.
+    "not_found_handling": "single-page-application",
+  },
+}

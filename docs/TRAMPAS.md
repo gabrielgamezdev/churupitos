@@ -41,6 +41,18 @@ sea correcta. Esa clave no cierra el registro: desactiva el proveedor de correo
 entero. **El registro se cierra con `enable_signup = false` en `[auth]`**, y la de
 `[auth.email]` se queda en `true`.
 
+### `supabase login` falla dentro del asistente con `LoginMissingTokenError`
+*"Cannot use automatic login flow inside non-TTY environments"*. Los comandos que
+el asistente lanza (también con `!`) no tienen una terminal interactiva, y el login
+necesita una para abrir el navegador. **`npx supabase login` y `npx supabase link`
+se corren en una terminal propia**; así, además, ni el token ni la contraseña de la
+base pasan por la conversación. Después, la CLI ya funciona desde el asistente.
+
+### «Success. No rows returned» tras un `insert` no significa cero filas
+El editor SQL del panel de Supabase lo dice siempre que la sentencia no devuelve
+una tabla, haya insertado algo o no. **Para saber qué pasó, un `select` después** (o
+`insert … returning`).
+
 ## La app
 
 ### Lo que una ruta declara fuera de su componente va al bundle principal

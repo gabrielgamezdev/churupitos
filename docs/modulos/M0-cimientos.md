@@ -24,9 +24,10 @@
 6. [ ] **GitHub**: primeros commits con la identidad pública del autor, repo público
    y CI (check en cada push; pruebas de la base cuando cambia `supabase/`).
    Falta: hacerlo público.
-7. [ ] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
+7. [x] **Supabase en la nube**: proyecto, registro cerrado, las dos cuentas y las
    migraciones aplicadas.
-8. [ ] **Cloudflare**: despliegue automático de `main`.
+8. [ ] **Cloudflare**: despliegue automático de `main` (configuración lista en
+   `wrangler.jsonc`; falta conectar el repo desde el panel).
 9. [ ] **En los teléfonos**: instalada en los dos y con sesión iniciada.
 
 ## Tope de complejidad
