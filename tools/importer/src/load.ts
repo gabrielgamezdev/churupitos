@@ -5,10 +5,11 @@
 // el importador ninguna regla de la base.
 
 import { randomUUID } from "node:crypto";
-import type { Sql } from "postgres";
+import type { Sql, TransactionSql } from "postgres";
 import type { ImportPackage } from "./build-package.ts";
 import type { Catalog } from "./catalog.ts";
 import type { DraftOperation } from "./draft.ts";
+import type { OracleResult } from "./oracle.ts";
 
 // Cada tabla con sus filas, en el orden en que se escriben (padres antes que hijos).
 export type Rows = {
@@ -25,7 +26,12 @@ export type Plan = { rows: Rows; operationById: Map<string, DraftOperation> };
 
 export type LoadOutcome =
   | { status: "not_run"; reason: string }
-  | { status: "ok"; dryRun: boolean; counts: Record<keyof Rows, number> }
+  | {
+      status: "ok";
+      dryRun: boolean;
+      counts: Record<keyof Rows, number>;
+      oracle: OracleResult | null;
+    }
   | { status: "rejected"; message: string; operation: DraftOperation | null };
 
 // Los identificadores se generan aquí y no en la base, para escribir cada tabla de
@@ -109,12 +115,20 @@ const CHUNK = 1000;
 
 class Rollback extends Error {}
 
-export async function writeRows(sql: Sql, plan: Plan, dryRun: boolean): Promise<LoadOutcome> {
+// `inspect` corre dentro de la misma transacción, con todo ya escrito y comprobado:
+// es donde se compara con el Excel, también en seco.
+export async function writeRows(
+  sql: Sql,
+  plan: Plan,
+  dryRun: boolean,
+  inspect?: (tx: TransactionSql) => Promise<OracleResult>,
+): Promise<LoadOutcome> {
   const tables = Object.keys(plan.rows) as (keyof Rows)[];
+  let oracle: OracleResult | null = null;
   try {
     await sql.begin(async (tx) => {
-      // De hijos a padres, por las claves foráneas.
-      for (const table of [...tables].reverse()) await tx`delete from ${tx(table)}`;
+      // La base se vacía con su propia función, que lleva el candado del corte.
+      await tx`select public.reset_imported_data()`;
       for (const table of tables) {
         const rows = plan.rows[table];
         for (let i = 0; i < rows.length; i += CHUNK) {
@@ -124,13 +138,14 @@ export async function writeRows(sql: Sql, plan: Plan, dryRun: boolean): Promise<
       // Las comprobaciones de forma son diferidas: esto las hace correr ya, y no al
       // confirmar, para que también corran en seco.
       await tx`set constraints all immediate`;
+      if (inspect) oracle = await inspect(tx);
       if (dryRun) throw new Rollback();
     });
   } catch (error) {
     if (!(error instanceof Rollback)) return rejected(error, plan);
   }
   const counts = Object.fromEntries(tables.map((table) => [table, plan.rows[table].length]));
-  return { status: "ok", dryRun, counts: counts as Record<keyof Rows, number> };
+  return { status: "ok", dryRun, counts: counts as Record<keyof Rows, number>, oracle };
 }
 
 // La base dice qué operación rechazó en el detalle del error (las funciones de forma

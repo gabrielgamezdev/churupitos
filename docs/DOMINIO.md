@@ -164,6 +164,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Unos céntimos de diferencia en el arrastre (hasta 5) | Un ajuste `correction` el último día del mes anterior, para que su cierre dé lo del Excel |
 | Una fila de comisión («Comisión pago móvil», «Mantenimiento de cuenta»…) | Un asiento de comisión en la operación del movimiento de justo antes, o un gasto si va sola |
 | Filas que van juntas sin título (un préstamo entre sobres, un traspaso entre bancos) | Una operación, solo si no hay otra pareja posible; si no, cada fila queda sola |
+| El «$N de…» de cada línea de un cobro | Su valor en dólares, si cuadra con los Bs de la línea; si no, se reparte en proporción a los Bs (`R9`) |
 | Un ingreso ✅ del presupuesto | Enlazado al cobro que suma lo que llegó en fechas cercanas, aunque esté en el libro del mes anterior |
 | Un deudor sin moneda | En Bs si pasa de 1.000; si no, en $. Queda anotado |
 | La columna «Restante» | Calculada (`R2`, `R14`) |

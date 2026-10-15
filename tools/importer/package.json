@@ -6,6 +6,7 @@
   "scripts": {
     "read": "node src/cli.ts read",
     "dry-run": "node src/cli.ts dry-run",
+    "load": "node src/cli.ts load",
     "typecheck": "tsc",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",

@@ -24,6 +24,9 @@ type Income = { row: ExpectedIncomeRow; draft: ExpectedIncomeDraft };
 // enlaza lo cercano y luego, con lo que queda, lo que está algo más lejos.
 const WINDOWS_DAYS = [2, 4];
 const MATCH_TOLERANCE_CENTS = 1;
+// Cuánto se puede apartar un «$N de…» de lo que dicen sus bolívares: el redondeo de
+// la tasa, no un error de tecleo.
+const WRITTEN_TOLERANCE = 0.02;
 
 // `operations` son las del mes, y se pueden partir (ver `splitShared`); `earlier`,
 // las del mes anterior que no cobraron nada, porque un ingreso puede llegar el día
@@ -201,17 +204,27 @@ function assignUsdValues(
     return match ? (parseAmountText(match[1]!)?.cents ?? null) : null;
   });
   const writtenTotal = written.reduce<number>((sum, cents) => sum + (cents ?? 0), 0);
+  const local = lines.reduce((sum, line) => sum + line.amountCents, 0);
+  const proportional = lines.map((line) => Math.round((usdCents * line.amountCents) / local));
+  proportional[proportional.length - 1] =
+    usdCents - proportional.slice(0, -1).reduce((sum, cents) => sum + cents, 0);
+  // Lo escrito vale si dice lo mismo que los bolívares de su línea, que se calcularon
+  // como dólares × tasa: así se nota un «$30» escrito donde los Bs son de $35.
+  const agrees = (cents: number | null, i: number) =>
+    cents !== null &&
+    cents > 0 &&
+    Math.abs(cents - proportional[i]!) <= Math.max(1, proportional[i]! * WRITTEN_TOLERANCE);
   let values: number[];
-  if (written.every((cents) => cents !== null && cents > 0) && writtenTotal === usdCents) {
+  if (written.every(agrees) && writtenTotal === usdCents) {
     values = written as number[];
   } else {
-    const local = lines.reduce((sum, line) => sum + line.amountCents, 0);
-    values = lines.map((line) => Math.round((usdCents * line.amountCents) / local));
-    values[values.length - 1] =
-      usdCents - values.slice(0, -1).reduce((sum, cents) => sum + cents, 0);
+    values = proportional;
+    const contradicts = written.some((cents, i) => cents !== null && !agrees(cents, i));
     issues.warning(
-      "ALLOCATION_DERIVED",
-      `El reparto de «${operation.description}» se calculó por proporción`,
+      contradicts ? "ALLOCATION_TEXT_MISMATCH" : "ALLOCATION_DERIVED",
+      contradicts
+        ? `En «${operation.description}», los dólares escritos no cuadran con los Bs de sus líneas: se usan los Bs`
+        : `El reparto de «${operation.description}» se calculó por proporción`,
       operation.refs[0],
     );
   }

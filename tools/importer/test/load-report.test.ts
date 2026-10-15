@@ -135,7 +135,8 @@ describe("el informe", () => {
     budget_lines: 1,
     debts: 1,
   };
-  const report = buildReport(pkg, [month], { status: "ok", dryRun: true, counts });
+  const oracle = { checks: 5, differences: [], budgetNotes: [] };
+  const report = buildReport(pkg, [month], { status: "ok", dryRun: true, counts, oracle });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
     expect(report).toContain("aceptó las 3 operaciones y sus 4 asientos");
@@ -148,6 +149,38 @@ describe("el informe", () => {
     );
     expect(report).toContain("| 2026-01 | Bono | $ 1,00 | 2026-01-10, Bs 400,00 |  |");
     expect(report).toContain("| Debemos | Cuota de la tienda | $ 20,00 | 2026-02-15 |");
+  });
+
+  it("dice si los saldos coinciden con el Excel", () => {
+    expect(report).toContain("los 5 saldos comparados coinciden al céntimo.");
+  });
+
+  it("lista cada saldo que no coincide con el Excel y lo que el presupuesto calcula distinto", () => {
+    const withDifferences = buildReport(pkg, [month], {
+      status: "ok",
+      dryRun: true,
+      counts,
+      oracle: {
+        checks: 5,
+        differences: [
+          {
+            month: "2026-01",
+            what: "Cuenta Banco A",
+            currency: "VES",
+            excelCents: 40000,
+            appCents: 39999,
+          },
+        ],
+        budgetNotes: [
+          { month: "2026-01", message: "Plan de Ahorro: el Excel dice ✅ y la app, ⏳" },
+        ],
+      },
+    });
+    expect(withDifferences).toContain("**1 de 5 saldos no coinciden** (sección 2).");
+    expect(withDifferences).toContain(
+      "| 2026-01 | Cuenta Banco A | Bs 400,00 | Bs 399,99 | -Bs 0,01 |",
+    );
+    expect(withDifferences).toContain("- 2026-01: Plan de Ahorro: el Excel dice ✅ y la app, ⏳");
   });
 
   it("si la base rechaza la carga, dice qué operación y de qué filas", () => {

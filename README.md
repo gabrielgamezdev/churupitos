@@ -73,9 +73,13 @@ corresponde cada texto. Lo que imprime lleva datos reales: solo se corre en loca
 
 ```bash
 npm run import:read     # lee todos los meses y resume lo que encontró, con sus avisos
-npm run import:dry-run  # lo carga en el Supabase local, deja que la base lo compruebe y lo deshace;
+npm run import:dry-run  # lo carga en el Supabase local, lo compara con el Excel y lo deshace;
                         # el informe, con cada decisión por defecto, queda en privado/import/informe.md
+npm run import:load     # lo mismo, pero vacía la base local y se queda escrito
 ```
+
+La base solo se vacía con `reset_imported_data()`, que se niega si hay operaciones
+registradas desde la app: esas no están en ningún Excel (el candado del corte).
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
 que enviaría el login se ven en http://localhost:54324. Las cuentas de prueba, con

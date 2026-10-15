@@ -3,8 +3,9 @@
 // para la CI.
 //
 //   node src/cli.ts read      lee todos los meses y resume lo que encontró
-//   node src/cli.ts dry-run   lo carga en el Supabase local, lo deshace y escribe
-//                             el informe en privado/import/informe.md
+//   node src/cli.ts dry-run   lo carga en el Supabase local, lo compara con el Excel
+//                             y lo deshace; el informe va a privado/import/informe.md
+//   node src/cli.ts load      lo mismo, pero se queda escrito
 
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -17,6 +18,7 @@ import { planRows, writeRows } from "./load.ts";
 import type { LoadOutcome } from "./load.ts";
 import { readWorkbook } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
+import { compareWithExcel } from "./oracle.ts";
 import { buildReport } from "./report.ts";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
@@ -64,7 +66,8 @@ function read(): boolean {
   return errors === 0;
 }
 
-async function dryRun(): Promise<boolean> {
+// En seco o de verdad, siempre en el Supabase local: la nube llega en el paso 8.
+async function load(dryRun: boolean): Promise<boolean> {
   const catalog = loadCatalog(CATALOG_FILE);
   const months = readAllMonths(catalog);
   const pkg = buildPackage(months, catalog);
@@ -77,7 +80,9 @@ async function dryRun(): Promise<boolean> {
   if (errors.length === 0) {
     const sql = postgres(LOCAL_DATABASE, { max: 1, onnotice: () => {} });
     try {
-      outcome = await writeRows(sql, planRows(pkg, catalog), true);
+      outcome = await writeRows(sql, planRows(pkg, catalog), dryRun, (tx) =>
+        compareWithExcel(tx, months),
+      );
     } catch (error) {
       outcome = {
         status: "not_run",
@@ -90,21 +95,30 @@ async function dryRun(): Promise<boolean> {
 
   writeFileSync(REPORT_FILE, buildReport(pkg, months, outcome));
   printIssues(pkg.issues);
-  console.log(
-    outcome.status === "ok"
-      ? `\nLa base aceptó las ${outcome.counts.operations} operaciones, y no quedó nada escrito.`
-      : `\nNo se cargó: ${outcome.status === "rejected" ? outcome.message : outcome.reason}.`,
-  );
+  if (outcome.status !== "ok") {
+    const reason = outcome.status === "rejected" ? outcome.message : outcome.reason;
+    console.log(`\nNo se cargó: ${reason}.`);
+  } else {
+    const written = dryRun ? "y no quedó nada escrito" : "y quedaron escritas en el Supabase local";
+    const differences = outcome.oracle?.differences.length ?? 0;
+    console.log(`\nLa base aceptó las ${outcome.counts.operations} operaciones, ${written}.`);
+    console.log(
+      differences === 0
+        ? `Contra el Excel: los ${outcome.oracle?.checks} saldos comparados coinciden al céntimo.`
+        : `Contra el Excel: ${differences} saldos NO coinciden (ver el informe).`,
+    );
+  }
   console.log(`Informe: ${REPORT_FILE}`);
-  return outcome.status === "ok";
+  return outcome.status === "ok" && outcome.oracle?.differences.length === 0;
 }
 
 const [command] = process.argv.slice(2);
 try {
   if (command === "read") process.exitCode = read() ? 0 : 1;
-  else if (command === "dry-run") process.exitCode = (await dryRun()) ? 0 : 1;
+  else if (command === "dry-run") process.exitCode = (await load(true)) ? 0 : 1;
+  else if (command === "load") process.exitCode = (await load(false)) ? 0 : 1;
   else {
-    console.error("uso: node src/cli.ts read | dry-run");
+    console.error("uso: node src/cli.ts read | dry-run | load");
     process.exitCode = 2;
   }
 } catch (error) {

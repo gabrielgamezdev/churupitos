@@ -156,6 +156,18 @@ describe("los cobros", () => {
     expect(operations[0]!.entries.map((entry) => entry.usdValueCents)).toEqual([7500, 2500]);
   });
 
+  it("R9: si los «$N de…» no cuadran con los Bs de su línea, valen los Bs", () => {
+    // Tasa 100: la línea de Ahorro trae $35 en Bs aunque su concepto diga $30.
+    const rows = sheetRows("Banco A", [
+      ["2026-01-13", "Otro", "Quincena = Bs6500", 0],
+      ["2026-01-13", "Ahorro", "$30 de Ahorro", 350000],
+      ["2026-01-13", "Comida", "$35 de Comida", 300000],
+    ]);
+    const { operations, issues } = link([income(4, 6500, 650000, "2026-01-13")], rows);
+    expect(operations[0]!.entries.map((entry) => entry.usdValueCents)).toEqual([3500, 3000]);
+    expect(issues.map((issue) => issue.code)).toEqual(["ALLOCATION_TEXT_MISMATCH"]);
+  });
+
   it("un ingreso ✅ sin cobro que lo cuadre queda anotado", () => {
     const { issues } = link([income(4, 10000, 5000000, "2026-01-10")]);
     expect(issues.map((issue) => issue.code)).toEqual(["RECEIPT_NOT_FOUND"]);

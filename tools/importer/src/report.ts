@@ -47,6 +47,7 @@ const WARNINGS: Record<string, string> = {
 };
 const IN_OWN_SECTION = new Set([
   "ALLOCATION_DERIVED",
+  "ALLOCATION_TEXT_MISMATCH",
   "RECEIPT_NOT_FOUND",
   "RECEIPT_SPLIT",
   "RECEIPT_FROM_EARLIER",
@@ -68,8 +69,10 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
       (issue) => `  - ${issue.month ?? ""} ${issue.code}: ${issue.message}${where(issue)}`,
     ),
     `- **La base:** ${describeOutcome(outcome)}`,
+    `- **Contra el Excel:** ${describeOracle(outcome)}`,
     "",
-    "## 2. Lo que se va a escribir",
+    ...oracleSection(outcome),
+    "## 3. Lo que se va a escribir",
     "",
     table(
       [
@@ -105,7 +108,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
       }),
     ),
     "",
-    "## 3. El arrastre",
+    "## 4. El arrastre",
     "",
     "Decisión por defecto: «Lo que tenía antes» no se importa; se compara con el cierre del mes",
     "anterior y solo lo que no coincide queda como ajuste (DOMINIO.md §5).",
@@ -129,7 +132,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
     ),
     "",
     ...receiptsSection(pkg, warnings),
-    "## 5. Cómo se agruparon las filas",
+    "## 6. Cómo se agruparon las filas",
     "",
     "Decisión por defecto: ante la duda no se agrupa, y la fila queda sola. Los saldos no",
     "cambian por cómo se agrupe: solo el tipo de cada operación.",
@@ -142,7 +145,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
       ]),
     ),
     "",
-    "## 6. Filas raras",
+    "## 7. Filas raras",
     "",
   ];
 
@@ -160,7 +163,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
   }
 
   lines.push(
-    "## 7. Las deudas",
+    "## 8. Las deudas",
     "",
     "Decisión por defecto: solo la lista del último mes (D9).",
     "",
@@ -183,7 +186,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
 // Cada ingreso esperado con su cobro, mes a mes.
 function receiptsSection(pkg: ImportPackage, warnings: Issue[]): string[] {
   const lines = [
-    "## 4. Los cobros",
+    "## 5. Los cobros",
     "",
     "Decisión por defecto: cada ingreso esperado se enlaza con la operación que suma lo que",
     "llegó en fechas cercanas, si es la única posible. El valor en dólares de cada línea es",
@@ -196,9 +199,11 @@ function receiptsSection(pkg: ImportPackage, warnings: Issue[]): string[] {
       .map((issue) =>
         issue.code === "ALLOCATION_DERIVED"
           ? "reparto calculado"
-          : issue.code === "RECEIPT_SPLIT"
-            ? "partido"
-            : "del libro del mes anterior",
+          : issue.code === "ALLOCATION_TEXT_MISMATCH"
+            ? "los «$N de…» no cuadran con sus Bs: valen los Bs"
+            : issue.code === "RECEIPT_SPLIT"
+              ? "partido"
+              : "del libro del mes anterior",
       );
   lines.push(
     table(
@@ -224,6 +229,54 @@ function receiptsSection(pkg: ImportPackage, warnings: Issue[]): string[] {
   if (missing.length > 0) {
     lines.push("**Marcados ✅ en el Excel pero sin cobro encontrado:**", "");
     lines.push(...missing.map((issue) => `- ${issue.month}${where(issue)}: ${issue.message}`), "");
+  }
+  return lines;
+}
+
+function describeOracle(outcome: LoadOutcome): string {
+  const oracle = outcome.status === "ok" ? outcome.oracle : null;
+  if (!oracle) return "no se comparó.";
+  return oracle.differences.length === 0
+    ? `los ${oracle.checks} saldos comparados coinciden al céntimo.`
+    : `**${oracle.differences.length} de ${oracle.checks} saldos no coinciden** (sección 2).`;
+}
+
+// Los saldos que no coinciden con el Excel y lo que el presupuesto calcula distinto.
+function oracleSection(outcome: LoadOutcome): string[] {
+  const oracle = outcome.status === "ok" ? outcome.oracle : null;
+  if (!oracle) return [];
+  const lines = ["## 2. Contra el Excel", ""];
+  if (oracle.differences.length === 0) {
+    lines.push(
+      "Todos los saldos coinciden al céntimo: cada cuenta, cada sobre en cada moneda y los",
+      "totales con y sin «Otro», al cierre de cada mes, leídos como los leerá la app.",
+      "",
+    );
+  } else {
+    lines.push(
+      table(
+        ["Mes", "Qué", "Excel", "App", "Diferencia"],
+        oracle.differences.map((d) => [
+          d.month,
+          d.what,
+          money(d.excelCents, d.currency),
+          money(d.appCents, d.currency),
+          money(d.appCents - d.excelCents, d.currency),
+        ]),
+      ),
+      "",
+    );
+  }
+  if (oracle.budgetNotes.length > 0) {
+    lines.push(
+      "**El presupuesto: lo que la app calcula distinto del Excel** (R12, R18). Se anota y se",
+      "revisa, pero no impide nada. La app solo cuenta para el plan de un sobre lo que le",
+      "llega por los cobros: lo que recibe de otro sobre (una devolución) no cuenta.",
+      "",
+      "",
+      ...oracle.budgetNotes.map((note) => `- ${note.month}: ${note.message}`),
+      "",
+    );
   }
   return lines;
 }

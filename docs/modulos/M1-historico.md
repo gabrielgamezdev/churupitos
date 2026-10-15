@@ -42,7 +42,7 @@ cuesta una recarga, no datos.
 6. [x] **Informe en seco**: el importador corre sin escribir y lista cada caso raro
    con la decisión por defecto que tomó. Las que el autor quiera cambiar van al
    catálogo privado; las demás se quedan como están.
-7. [ ] **Carga local y oráculo**: vaciar y recargar el Supabase local (con el candado
+7. [x] **Carga local y oráculo**: vaciar y recargar el Supabase local (con el candado
    del corte) y comparar contra el Excel, primero el estado de hoy y luego cada mes
    hacia atrás, hasta cero diferencias.
 8. [ ] **Carga en la nube**: migraciones con `db:push`, importación a la nube y una
@@ -52,8 +52,10 @@ Cada paso termina con su commit; los pasos 3, 7 y 8 terminan además con un push
 
 ## Tope de complejidad
 - **Tablas:** como mucho 10, más las vistas de saldos.
-- **Importador:** si pasa de ~2.500 líneas, se para y se revisa el plan. El de la
-  versión anterior tenía más de 10.000, y el 28 % era el presupuesto histórico.
+- **Importador:** si pasa de ~2.500 líneas de código, se para y se revisa el plan.
+  Los comentarios y las líneas en blanco no cuentan: explican el porqué y no
+  complican nada (decidido el 2026-10-15). El de la versión anterior tenía unas
+  6.300 líneas de código, y el 28 % era el presupuesto histórico.
 - **Pantallas:** ninguna. La app sigue mostrando el saludo; las pantallas son M2.
 
 ## Fuera de M1
