@@ -105,6 +105,15 @@ npm run db:push                # las aplica en la base de la nube (pide confirma
 `db:push` nunca sube `supabase/seed.sql`: las cuentas inventadas solo existen en local.
 Las cuentas reales se crean a mano en el panel de Supabase.
 
+**Los datos.** El importador entra en la base de la nube con el servidor que dejó
+`supabase link` y con la contraseña de la base, que el autor escribe en `privado/.env`
+(`CLOUD_DATABASE_PASSWORD=`) y que no pasa por ningún otro sitio:
+
+```bash
+npm run import:dry-run:cloud   # lo carga en la nube, lo compara con el Excel y lo deshace
+npm run import:load:cloud      # lo mismo, y se queda escrito solo si todo coincide
+```
+
 **La app.** Cloudflare la construye y la publica sola en cada push a `main`, según
 `wrangler.jsonc`. El resto de su configuración vive en el panel de Cloudflare
 (Workers → el proyecto → *Settings* → *Build*), y es esta, por si hubiera que rehacerla:

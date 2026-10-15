@@ -116,15 +116,18 @@ const CHUNK = 1000;
 class Rollback extends Error {}
 
 // `inspect` corre dentro de la misma transacción, con todo ya escrito y comprobado:
-// es donde se compara con el Excel, también en seco.
+// es donde se compara con el Excel, también en seco. Con `requireClean`, un solo saldo
+// que no coincida deshace la carga entera: así se escribe en la nube.
 export async function writeRows(
   sql: Sql,
   plan: Plan,
   dryRun: boolean,
   inspect?: (tx: TransactionSql) => Promise<OracleResult>,
+  requireClean = false,
 ): Promise<LoadOutcome> {
   const tables = Object.keys(plan.rows) as (keyof Rows)[];
   let oracle: OracleResult | null = null;
+  let written = !dryRun;
   try {
     await sql.begin(async (tx) => {
       // La base se vacía con su propia función, que lleva el candado del corte.
@@ -139,13 +142,14 @@ export async function writeRows(
       // confirmar, para que también corran en seco.
       await tx`set constraints all immediate`;
       if (inspect) oracle = await inspect(tx);
-      if (dryRun) throw new Rollback();
+      if (requireClean && (oracle?.differences.length ?? 0) > 0) written = false;
+      if (!written) throw new Rollback();
     });
   } catch (error) {
     if (!(error instanceof Rollback)) return rejected(error, plan);
   }
   const counts = Object.fromEntries(tables.map((table) => [table, plan.rows[table].length]));
-  return { status: "ok", dryRun, counts: counts as Record<keyof Rows, number>, oracle };
+  return { status: "ok", dryRun: !written, counts: counts as Record<keyof Rows, number>, oracle };
 }
 
 // La base dice qué operación rechazó en el detalle del error (las funciones de forma

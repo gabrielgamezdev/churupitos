@@ -6,6 +6,9 @@
 //   node src/cli.ts dry-run   lo carga en el Supabase local, lo compara con el Excel
 //                             y lo deshace; el informe va a privado/import/informe.md
 //   node src/cli.ts load      lo mismo, pero se queda escrito
+//
+// Con `--cloud`, dry-run y load van a la base de la nube. Allí la carga solo se
+// queda escrita si todos los saldos coinciden con el Excel.
 
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -27,6 +30,39 @@ const CATALOG_FILE = join(ROOT, "privado/import/catalogo.yml");
 const REPORT_FILE = join(ROOT, "privado/import/informe.md");
 // La base de `npm run db:start`, con su contraseña de desarrollo, que es pública.
 const LOCAL_DATABASE = "postgresql://postgres:postgres@127.0.0.1:54322/postgres";
+// La de la nube: el servidor y el usuario los dejó `supabase link`, y la contraseña
+// la escribe el autor en privado/.env. Nunca pasa por la línea de órdenes ni se imprime.
+const POOLER_FILE = join(ROOT, "supabase/.temp/pooler-url");
+const SECRETS_FILE = join(ROOT, "privado/.env");
+
+type Target = { label: string; connect: () => postgres.Sql };
+
+function target(cloud: boolean): Target {
+  if (!cloud) {
+    return {
+      label: "el Supabase local",
+      connect: () => postgres(LOCAL_DATABASE, { max: 1, onnotice: () => {} }),
+    };
+  }
+  const pooler = new URL(readFileSync(POOLER_FILE, "utf8").trim());
+  process.loadEnvFile(SECRETS_FILE);
+  const password = process.env.CLOUD_DATABASE_PASSWORD;
+  if (!password) throw new CatalogError(`Falta CLOUD_DATABASE_PASSWORD en ${SECRETS_FILE}`);
+  return {
+    label: `la base de la nube (${pooler.hostname})`,
+    connect: () =>
+      postgres({
+        host: pooler.hostname,
+        port: Number(pooler.port || 5432),
+        user: decodeURIComponent(pooler.username),
+        password,
+        database: pooler.pathname.slice(1) || "postgres",
+        ssl: "require",
+        max: 1,
+        onnotice: () => {},
+      }),
+  };
+}
 
 function readAllMonths(catalog: Catalog): MonthData[] {
   return readdirSync(EXCELS_DIR)
@@ -67,7 +103,8 @@ function read(): boolean {
 }
 
 // En seco o de verdad, siempre en el Supabase local: la nube llega en el paso 8.
-async function load(dryRun: boolean): Promise<boolean> {
+async function load(dryRun: boolean, cloud: boolean): Promise<boolean> {
+  const where = target(cloud);
   const catalog = loadCatalog(CATALOG_FILE);
   const months = readAllMonths(catalog);
   const pkg = buildPackage(months, catalog);
@@ -78,15 +115,19 @@ async function load(dryRun: boolean): Promise<boolean> {
     reason: "hay errores en los Excels o en el catálogo",
   };
   if (errors.length === 0) {
-    const sql = postgres(LOCAL_DATABASE, { max: 1, onnotice: () => {} });
+    const sql = where.connect();
     try {
-      outcome = await writeRows(sql, planRows(pkg, catalog), dryRun, (tx) =>
-        compareWithExcel(tx, months),
+      outcome = await writeRows(
+        sql,
+        planRows(pkg, catalog),
+        dryRun,
+        (tx) => compareWithExcel(tx, months),
+        cloud,
       );
     } catch (error) {
       outcome = {
         status: "not_run",
-        reason: `no se pudo conectar con la base local (${String(error)})`,
+        reason: `no se pudo conectar con ${where.label} (${error instanceof Error ? error.message : "error desconocido"})`,
       };
     } finally {
       await sql.end();
@@ -99,7 +140,9 @@ async function load(dryRun: boolean): Promise<boolean> {
     const reason = outcome.status === "rejected" ? outcome.message : outcome.reason;
     console.log(`\nNo se cargó: ${reason}.`);
   } else {
-    const written = dryRun ? "y no quedó nada escrito" : "y quedaron escritas en el Supabase local";
+    const written = outcome.dryRun
+      ? "y no quedó nada escrito"
+      : `y quedaron escritas en ${where.label}`;
     const differences = outcome.oracle?.differences.length ?? 0;
     console.log(`\nLa base aceptó las ${outcome.counts.operations} operaciones, ${written}.`);
     console.log(
@@ -112,13 +155,14 @@ async function load(dryRun: boolean): Promise<boolean> {
   return outcome.status === "ok" && outcome.oracle?.differences.length === 0;
 }
 
-const [command] = process.argv.slice(2);
+const [command, ...flags] = process.argv.slice(2);
+const cloud = flags.includes("--cloud");
 try {
   if (command === "read") process.exitCode = read() ? 0 : 1;
-  else if (command === "dry-run") process.exitCode = (await load(true)) ? 0 : 1;
-  else if (command === "load") process.exitCode = (await load(false)) ? 0 : 1;
+  else if (command === "dry-run") process.exitCode = (await load(true, cloud)) ? 0 : 1;
+  else if (command === "load") process.exitCode = (await load(false, cloud)) ? 0 : 1;
   else {
-    console.error("uso: node src/cli.ts read | dry-run | load");
+    console.error("uso: node src/cli.ts read | dry-run [--cloud] | load [--cloud]");
     process.exitCode = 2;
   }
 } catch (error) {
