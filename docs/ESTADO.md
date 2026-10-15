@@ -64,5 +64,3 @@ del producto:
     y ajustarlo, y los mismos valores van al CSS de la app.
   - Cada pantalla con sus estados (con datos, vacía, cargando, error y sin conexión),
     en el plan de M2. Se dibujan antes en el lienzo *Design*, con datos inventados.
-- **El autor, en GitHub:** activar *Settings → Security → Private vulnerability
-  reporting*, que es el botón que cita `SECURITY.md`.
