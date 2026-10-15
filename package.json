@@ -18,6 +18,7 @@
     "privacy:scan": "node ops/barrido-privacidad.mjs --todo",
     "costs:check": "node ops/guardia-costos.mjs",
     "import:read": "npm run read -w tools/importer",
+    "import:dry-run": "npm run dry-run -w tools/importer",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",

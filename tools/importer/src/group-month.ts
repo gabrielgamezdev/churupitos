@@ -8,7 +8,7 @@
 // y, al final, cada comisión pegada al movimiento que la causó.
 
 import { daysBetween, entryOf, isFeeRow, rowRef } from "./draft.ts";
-import type { DraftOperation, OperationKind } from "./draft.ts";
+import type { DraftOperation, GroupingRule, OperationKind } from "./draft.ts";
 import type { Issues } from "./issues.ts";
 import type { LedgerRow } from "./ledger-sheet.ts";
 import { parseAmountText } from "./money.ts";
@@ -39,7 +39,13 @@ export function groupMonth(
   const sheets = Map.groupBy(rows, (row) => row.sheet);
   // El texto de un título que no encontró a sus hijos: describe la fila siguiente.
   const borrowedTitles = new Map<LedgerRow, LedgerRow>();
-  const groups: { kind: OperationKind; group: Group; description: string; extra?: Group }[] = [];
+  const groups: {
+    kind: OperationKind;
+    rule: GroupingRule;
+    group: Group;
+    description: string;
+    extra?: Group;
+  }[] = [];
 
   // --- Títulos: una fila de importe 0 que dice cuánto suman las siguientes (R4) ---
   const titles: Group[] = [];
@@ -82,11 +88,18 @@ export function groupMonth(
       : null;
     if (!partner || !kind || kind === "envelope_transfer") continue;
     merged.add(out).add(partner);
-    groups.push({ kind, group: out, extra: partner, description: out.title!.description });
+    groups.push({
+      kind,
+      rule: "title_pair",
+      group: out,
+      extra: partner,
+      description: out.title!.description,
+    });
   }
   for (const group of titles.filter((candidate) => !merged.has(candidate))) {
     groups.push({
       kind: sign(group) > 0 ? "income" : "expense",
+      rule: "title",
       group,
       description: group.title!.description,
     });
@@ -94,11 +107,12 @@ export function groupMonth(
 
   // --- Pares: dos filas que se anulan ---
   const free = () => rows.filter((row) => !used.has(row) && !fees.has(row));
-  const pair = (a: LedgerRow, b: LedgerRow, kind: OperationKind) => {
+  const pair = (a: LedgerRow, b: LedgerRow, kind: OperationKind, rule: GroupingRule) => {
     used.add(a).add(b);
     const [first, second] = a.amountCents < 0 ? [a, b] : [b, a];
     groups.push({
       kind,
+      rule,
       group: { title: null, rows: [first, second] },
       description: first.description,
     });
@@ -111,7 +125,7 @@ export function groupMonth(
       const [a, b] = [candidates[i]!, candidates[i + 1]!];
       if (used.has(a) || used.has(b) || a.row + 1 !== b.row) continue;
       if (a.date === b.date && a.amountCents === -b.amountCents && sameText(a, b))
-        pair(a, b, "envelope_transfer");
+        pair(a, b, "envelope_transfer", "adjacent");
     }
   }
 
@@ -130,7 +144,7 @@ export function groupMonth(
     )
       continue;
     const kind = pairKind(a, b, a.amountCents + b.amountCents, currencyOf);
-    if (kind) pair(a, b, kind);
+    if (kind) pair(a, b, kind, "same_text");
   }
 
   // El mismo importe en dos cuentas de la misma moneda, si cada una es la única
@@ -145,7 +159,7 @@ export function groupMonth(
     const ins = remaining.filter((row) => !used.has(row) && matches(out, row));
     if (ins.length !== 1) continue;
     const outs = remaining.filter((row) => !used.has(row) && matches(ins[0]!, row));
-    if (outs.length === 1 && outs[0] === out) pair(out, ins[0]!, "account_transfer");
+    if (outs.length === 1 && outs[0] === out) pair(out, ins[0]!, "account_transfer", "same_amount");
   }
 
   // --- Lo suelto ---
@@ -153,6 +167,7 @@ export function groupMonth(
     used.add(row);
     groups.push({
       kind: row.amountCents < 0 ? "expense" : "income",
+      rule: "single",
       group: { title: null, rows: [row] },
       description: row.description,
     });
@@ -160,7 +175,7 @@ export function groupMonth(
 
   // --- Las operaciones ---
   const operationOf = new Map<LedgerRow, DraftOperation>();
-  const operations = groups.map(({ kind, group, extra, description }) => {
+  const operations = groups.map(({ kind, rule, group, extra, description }) => {
     const members = [...group.rows, ...(extra?.rows ?? [])];
     const titleRows = [group.title, extra?.title].filter(
       (row) => row !== null && row !== undefined,
@@ -179,6 +194,7 @@ export function groupMonth(
       incomeKey: null,
       entries: members.map((row) => entryOf(row)),
       refs: [...titleRows, ...borrowed, ...members].map((row) => rowRef(month, row)),
+      groupedBy: rule,
     };
     members.forEach((row) => operationOf.set(row, operation));
     return operation;
@@ -209,6 +225,7 @@ export function groupMonth(
         incomeKey: null,
         entries: [entryOf(fee, true)],
         refs: [rowRef(month, fee)],
+        groupedBy: "fee",
       });
     });
   }

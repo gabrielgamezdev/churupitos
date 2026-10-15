@@ -39,7 +39,7 @@ cuesta una recarga, no datos.
 5. [x] **Agrupador**: de filas a operaciones (pares espejo, cobros con su reparto,
    cambios de divisa, comisiones). Ante la duda, no agrupa: deja la fila sola y la
    anota en el informe.
-6. [ ] **Informe en seco**: el importador corre sin escribir y lista cada caso raro
+6. [x] **Informe en seco**: el importador corre sin escribir y lista cada caso raro
    con la decisión por defecto que tomó. Las que el autor quiera cambiar van al
    catálogo privado; las demás se quedan como están.
 7. [ ] **Carga local y oráculo**: vaciar y recargar el Supabase local (con el candado

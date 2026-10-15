@@ -73,6 +73,8 @@ corresponde cada texto. Lo que imprime lleva datos reales: solo se corre en loca
 
 ```bash
 npm run import:read     # lee todos los meses y resume lo que encontró, con sus avisos
+npm run import:dry-run  # lo carga en el Supabase local, deja que la base lo compruebe y lo deshace;
+                        # el informe, con cada decisión por defecto, queda en privado/import/informe.md
 ```
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos

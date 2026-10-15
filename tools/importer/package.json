@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "read": "node src/cli.ts read",
+    "dry-run": "node src/cli.ts dry-run",
     "typecheck": "tsc",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
@@ -12,6 +13,7 @@
     "check": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
+    "postgres": "3.4.9",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "yaml": "2.9.1",
     "zod": "4.6.7"

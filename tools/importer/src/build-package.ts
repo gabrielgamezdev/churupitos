@@ -33,6 +33,7 @@ export type DebtDraft = {
 
 export type ImportPackage = {
   months: string[];
+  currencies: Record<string, Currency>;
   operations: DraftOperation[];
   expectedIncomes: ExpectedIncomeDraft[];
   budgetLines: BudgetLineDraft[];
@@ -55,6 +56,7 @@ export function buildPackage(months: MonthData[], catalog: Catalog): ImportPacka
   const allIncomes = sorted.flatMap((data) => data.budget?.incomes ?? []);
   const result: ImportPackage = {
     months: sorted.map((data) => data.month),
+    currencies: Object.fromEntries(currencies),
     operations: [],
     expectedIncomes: [],
     budgetLines: [],

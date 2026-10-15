@@ -102,12 +102,24 @@ export function linkReceipts(
     if (!parts) continue;
     operations.splice(operations.indexOf(operation), 1, ...parts.map((part) => part.operation));
     parts.forEach((part) => linked.set(part.income, part.operation));
+    issues.warning(
+      "RECEIPT_SPLIT",
+      `«${operation.description}» paga ${parts.length} ingresos a la vez: se parte en ${parts.length} cobros`,
+      operation.refs[0],
+    );
   }
 
   for (const income of incomes) {
     const operation = linked.get(income);
     if (operation && assignUsdValues(operation, income.draft.usdCents, currencyOf, issues)) {
       operation.incomeKey = income.draft.key;
+      if (operation.month !== month) {
+        issues.warning(
+          "RECEIPT_FROM_EARLIER",
+          `El cobro de «${income.row.sourceText}» está en el libro de ${operation.month}`,
+          operation.refs[0],
+        );
+      }
     } else if (income.row.checked) {
       issues.warning(
         "RECEIPT_NOT_FOUND",
@@ -178,6 +190,11 @@ function assignUsdValues(
 ): boolean {
   const lines = operation.entries.filter((entry) => !entry.isFee);
   if (currencyOf(lines[0]!.account) === "USD") return true;
+  // Una sola línea se lleva el cobro entero: no hay nada que repartir.
+  if (lines.length === 1) {
+    lines[0]!.usdValueCents = usdCents;
+    return true;
+  }
 
   const written = lines.map((line) => {
     const match = /^\$\s*(\d[\d.,]*)/.exec(line.description);
@@ -195,6 +212,7 @@ function assignUsdValues(
     issues.warning(
       "ALLOCATION_DERIVED",
       `El reparto de «${operation.description}» se calculó por proporción`,
+      operation.refs[0],
     );
   }
   // Una línea diminuta puede quedarse sin un céntimo: entonces no se enlaza.

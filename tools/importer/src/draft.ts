@@ -9,6 +9,17 @@ export type OperationKind =
 
 export type AdjustmentReason = "opening" | "carry_reassignment" | "interest" | "correction";
 
+// Cómo se decidió que estas filas van juntas: lo cuenta el informe.
+export type GroupingRule =
+  | "title" // un título y las filas que suman lo que dice
+  | "title_pair" // el mismo título en dos cuentas
+  | "adjacent" // dos filas seguidas que se anulan
+  | "same_text" // el mismo concepto dos veces
+  | "same_amount" // el mismo importe en dos cuentas
+  | "single" // una fila sola
+  | "fee" // una comisión sola
+  | "carry"; // deducido del arrastre
+
 export type DraftEntry = {
   account: string;
   envelope: string;
@@ -34,6 +45,7 @@ export type DraftOperation = {
   entries: DraftEntry[];
   // Las filas del Excel que la forman, títulos incluidos: `AAAA-MM:HOJA:fila`.
   refs: string[];
+  groupedBy: GroupingRule;
 };
 
 export const rowRef = (month: string, row: LedgerRow) => `${month}:${row.sheet}:${row.row}`;

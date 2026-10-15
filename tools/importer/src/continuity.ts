@@ -105,6 +105,7 @@ export function carryAdjustments(
         usdValueCents: null,
       })),
       refs: [],
+      groupedBy: "carry",
     };
     balances.apply(operation);
     adjustments.push(operation);
