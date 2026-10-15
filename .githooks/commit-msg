@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # El mensaje del commit también es público: pasa por el barrido de privacidad
-# y tiene que seguir Conventional Commits (CLAUDE.md, «Al hacer un commit»).
+# y tiene que seguir Conventional Commits (AGENTS.md, «Al hacer un commit»).
 set -euo pipefail
 
 msg_file="$1"

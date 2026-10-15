@@ -320,7 +320,7 @@ join public.operations o on o.id = e.operation_id
 join public.accounts a on a.id = e.account_id;
 
 -- ---------------------------------------------------------------------------
--- Permisos (regla 5 de CLAUDE.md)
+-- Permisos (regla 5 de AGENTS.md)
 -- ---------------------------------------------------------------------------
 
 alter table public.accounts enable row level security;

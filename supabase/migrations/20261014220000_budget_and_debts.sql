@@ -274,7 +274,7 @@ from public.debts
 group by direction, currency;
 
 -- ---------------------------------------------------------------------------
--- Permisos (regla 5 de CLAUDE.md), igual que el libro: en M1 la app solo lee
+-- Permisos (regla 5 de AGENTS.md), igual que el libro: en M1 la app solo lee
 -- ---------------------------------------------------------------------------
 
 alter table public.expected_incomes enable row level security;

@@ -1,4 +1,4 @@
--- Permisos por fila: la regla 5 de CLAUDE.md, comprobada.
+-- Permisos por fila: la regla 5 de AGENTS.md, comprobada.
 begin;
 create extension if not exists pgtap with schema extensions;
 
