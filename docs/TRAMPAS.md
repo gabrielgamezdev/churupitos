@@ -67,6 +67,14 @@ nunca confirma: una operación mal formada **pasa sin error y la prueba sale ver
 `set constraints all immediate`**, y registra cada operación con sus asientos en una
 sola sentencia (un `with … insert`), para que se compruebe entera.
 
+### `supabase test db --linked` no encuentra pgTAP en la nube
+Falla con *"function plan(integer) does not exist"* en cada archivo, aunque diga que
+la extensión ya existe: el usuario temporal con el que entra la CLI no tiene
+`extensions` en su `search_path`. **Para probar la nube, `npm run db:test:cloud`**, que
+corre los mismos archivos con la conexión del importador. Allí aparece además una
+función de Supabase (`rls_auto_enable`, la del RLS automático) que las pruebas
+tienen en cuenta.
+
 ### «Success. No rows returned» tras un `insert` no significa cero filas
 El editor SQL del panel de Supabase lo dice siempre que la sentencia no devuelve
 una tabla, haya insertado algo o no. **Para saber qué pasó, un `select` después** (o

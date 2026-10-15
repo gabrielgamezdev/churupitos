@@ -35,17 +35,20 @@ select is_empty(
   'todas las vistas de public leen con los permisos de quien pregunta'
 );
 
--- Lo mismo con las funciones: `security definer` corre como su dueño.
+-- Lo mismo con las funciones: `security definer` corre como su dueño. Las de
+-- disparador no cuentan, porque nadie puede llamarlas: solo las lanza la base. En la
+-- nube, Supabase tiene una así para activar el RLS en cada tabla nueva.
 select results_eq(
   $$
     select p.proname::text collate "default"
     from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and p.prosecdef
+      and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
     order by 1
   $$,
   $$ values ('is_household_member') $$,
-  'la única función de public que salta el RLS es la que dice si eres del hogar'
+  'la única función de public que salta el RLS y se puede llamar es la que dice si eres del hogar'
 );
 
 -- La base local trae las cuentas de seed.sql: se vacía para que la prueba no

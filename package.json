@@ -26,6 +26,7 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
+    "db:test:cloud": "node ops/cloud-db-test.mjs",
     "db:push": "supabase db push",
     "db:types": "supabase gen types typescript --local > apps/web/src/lib/database.types.ts && prettier --write apps/web/src/lib/database.types.ts"
   },

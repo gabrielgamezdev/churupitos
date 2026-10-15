@@ -100,6 +100,7 @@ Para el barrido completo hace falta la lista de nombres privada: copia
 ```bash
 npm run db:push -- --dry-run   # qué migraciones se aplicarían, sin tocar nada
 npm run db:push                # las aplica en la base de la nube (pide confirmación)
+npm run db:test:cloud          # las pruebas de la base, contra la nube y sin dejar nada
 ```
 
 `db:push` nunca sube `supabase/seed.sql`: las cuentas inventadas solo existen en local.
