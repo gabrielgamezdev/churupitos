@@ -33,7 +33,7 @@ cuesta una recarga, no datos.
    no suma cero (rechazado), un cambio de divisa, un arrastre entre meses.
 3. [x] **Esquema del presupuesto y las deudas**: ingresos esperados, cobros y su
    reparto, plan por sobre, deudas y deudores. Mismas pruebas, mismos datos inventados.
-4. [ ] **Lector de Excels** (`tools/importer`): de un `.xlsx` a filas limpias, con el
+4. [x] **Lector de Excels** (`tools/importer`): de un `.xlsx` a filas limpias, con el
    catálogo privado. Probado con un Excel **inventado** generado por las propias
    pruebas, nunca con uno real.
 5. [ ] **Agrupador**: de filas a operaciones (pares espejo, cobros con su reparto,

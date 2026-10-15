@@ -6,16 +6,18 @@
     "node": ">=24"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "tools/*"
   ],
   "scripts": {
     "prepare": "git config core.hooksPath .githooks",
     "dev": "npm run dev -w apps/web",
     "build": "npm run build -w apps/web",
     "preview": "npm run preview -w apps/web",
-    "check": "npm run check -w apps/web && npm run barrido && npm run costos",
+    "check": "npm run check -w apps/web && npm run check -w tools/importer && npm run barrido && npm run costos",
     "barrido": "node ops/barrido-privacidad.mjs --todo",
     "costos": "node ops/guardia-costos.mjs",
+    "importar:leer": "npm run leer -w tools/importer",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",

@@ -38,6 +38,7 @@ Por qué este stack: [ADR 0001](docs/adr/0001-stack.md) y
 ```
 apps/web/      la PWA
 supabase/      migraciones, pruebas de la base y datos inventados para desarrollar
+tools/importer el importador: de los Excels a la base, sin un solo dato dentro
 ops/           barrido de privacidad
 .githooks/     hooks de git: barrido y Conventional Commits
 .github/       CI: el check en cada push y las pruebas de la base cuando cambia
@@ -64,6 +65,14 @@ npm run db:types     # regenera los tipos de TypeScript desde la base local
 npm run db:stop      # apaga Supabase y libera la PC
 npm run barrido      # solo el barrido de privacidad, sobre todo el repositorio
 npm run costos       # comprueba que Cloudflare solo sirve estáticos (nada que cobre por uso)
+```
+
+**El importador** lee los Excels de `privado/excels/` con el catálogo de
+`privado/import/catalogo.yml`, que dice qué hoja es cada cuenta y a qué sobre
+corresponde cada texto. Lo que imprime lleva datos reales: solo se corre en local.
+
+```bash
+npm run importar:leer   # lee todos los meses y resume lo que encontró, con sus avisos
 ```
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
