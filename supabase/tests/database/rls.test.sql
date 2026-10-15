@@ -2,7 +2,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(5);
+select plan(7);
 
 -- Una tabla sin RLS es pública para cualquiera con la URL de la app. Esta prueba
 -- falla en cuanto una migración nueva olvide activarlo.
@@ -16,6 +16,36 @@ select is_empty(
       and not c.relrowsecurity
   $$,
   'todas las tablas de public tienen RLS activado'
+);
+
+-- Una vista lee, por defecto, con los permisos de su dueño, y así se salta el RLS
+-- de las tablas que consulta. Una vista materializada, además, guarda los datos.
+select is_empty(
+  $$
+    select c.relname
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relkind in ('v', 'm')
+      and not exists (
+        select 1 from unnest(c.reloptions) o
+        where o in ('security_invoker=true', 'security_invoker=on', 'security_invoker=1')
+      )
+  $$,
+  'todas las vistas de public leen con los permisos de quien pregunta'
+);
+
+-- Lo mismo con las funciones: `security definer` corre como su dueño.
+select results_eq(
+  $$
+    select p.proname::text collate "default"
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.prosecdef
+    order by 1
+  $$,
+  $$ values ('is_household_member') $$,
+  'la única función de public que salta el RLS es la que dice si eres del hogar'
 );
 
 -- La base local trae las cuentas de seed.sql: se vacía para que la prueba no

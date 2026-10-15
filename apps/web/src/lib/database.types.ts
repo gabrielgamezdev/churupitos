@@ -23,6 +23,112 @@ export type Database = {
   };
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          created_at: string;
+          currency: string;
+          id: string;
+          name: string;
+          position: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          currency: string;
+          id?: string;
+          name: string;
+          position?: number;
+        };
+        Update: {
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          name?: string;
+          position?: number;
+        };
+        Relationships: [];
+      };
+      entries: {
+        Row: {
+          account_id: string;
+          amount_cents: number;
+          description: string;
+          envelope_id: string;
+          id: string;
+          is_fee: boolean;
+          operation_id: string;
+          position: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id: string;
+          amount_cents: number;
+          description?: string;
+          envelope_id: string;
+          id?: string;
+          is_fee?: boolean;
+          operation_id: string;
+          position?: number;
+        };
+        Update: {
+          account_id?: string;
+          amount_cents?: number;
+          description?: string;
+          envelope_id?: string;
+          id?: string;
+          is_fee?: boolean;
+          operation_id?: string;
+          position?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "entries_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
+            referencedRelation: "operations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      envelopes: {
+        Row: {
+          created_at: string;
+          id: string;
+          is_third_party: boolean;
+          name: string;
+          position: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          is_third_party?: boolean;
+          name: string;
+          position?: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          is_third_party?: boolean;
+          name?: string;
+          position?: number;
+        };
+        Relationships: [];
+      };
       household_members: {
         Row: {
           created_at: string;
@@ -42,11 +148,131 @@ export type Database = {
         };
         Relationships: [];
       };
+      operations: {
+        Row: {
+          adjustment_reason: string | null;
+          created_at: string;
+          created_by: string | null;
+          date_approximate: boolean;
+          description: string;
+          id: string;
+          kind: string;
+          occurred_on: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          adjustment_reason?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          date_approximate?: boolean;
+          description?: string;
+          id?: string;
+          kind: string;
+          occurred_on: string;
+        };
+        Update: {
+          adjustment_reason?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          date_approximate?: boolean;
+          description?: string;
+          id?: string;
+          kind?: string;
+          occurred_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "operations_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
     };
     Views: {
-      [_ in never]: never;
+      account_ledger: {
+        Row: {
+          account_id: string | null;
+          amount_cents: number | null;
+          currency: string | null;
+          date_approximate: boolean | null;
+          description: string | null;
+          entry_id: string | null;
+          envelope_id: string | null;
+          is_fee: boolean | null;
+          kind: string | null;
+          occurred_on: string | null;
+          operation_description: string | null;
+          operation_id: string | null;
+          position: number | null;
+          running_balance_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "entries_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
+            referencedRelation: "operations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
+      account_balances: {
+        Args: { as_of?: string };
+        Returns: {
+          account_id: string;
+          balance_cents: number;
+          currency: string;
+          name: string;
+          position: number;
+        }[];
+      };
+      assert_operation_shape: { Args: { target: string }; Returns: undefined };
+      cell_balances: {
+        Args: { as_of?: string };
+        Returns: {
+          account_id: string;
+          balance_cents: number;
+          currency: string;
+          envelope_id: string;
+        }[];
+      };
+      currency_totals: {
+        Args: { as_of?: string };
+        Returns: {
+          currency: string;
+          own_cents: number;
+          third_party_cents: number;
+          total_cents: number;
+        }[];
+      };
+      envelope_balances: {
+        Args: { as_of?: string };
+        Returns: {
+          balance_cents: number;
+          currency: string;
+          envelope_id: string;
+        }[];
+      };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
     };
     Enums: {

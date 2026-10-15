@@ -136,7 +136,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   el orden de registro).
 - **R15 — Fecha aproximada.** Un asiento sin fecha toma la de la fila anterior de su
   hoja y queda marcado como aproximado.
-- **R16 — Las comisiones se registran a mano**, como asiento de comisión.
+- **R16 — Las comisiones se registran a mano**, como asiento de comisión, que
+  siempre es una salida: importe negativo.
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
   la cuota pagada se quita de la lista, como en el Excel.
 

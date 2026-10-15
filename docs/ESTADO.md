@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M1 · Histórico (por planificar)
+## Ahora: M1 · Histórico (en curso)
 
 El esquema completo de la base y el importador de todos los Excels, comprobado celda
-a celda. Antes de escribir código se acuerda su plan en `docs/modulos/M1-historico.md`
-y nace `docs/DOMINIO.md`.
+a celda. El plan y los pasos hechos están en `docs/modulos/M1-historico.md`; las
+reglas, en `docs/DOMINIO.md`.
 
 M0 · Cimientos quedó cerrado el 2026-10-14: `docs/modulos/M0-cimientos.md`.
 

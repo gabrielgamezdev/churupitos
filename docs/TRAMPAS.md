@@ -48,6 +48,14 @@ necesita una para abrir el navegador. **`npx supabase login` y `npx supabase lin
 se corren en una terminal propia**; así, además, ni el token ni la contraseña de la
 base pasan por la conversación. Después, la CLI ya funciona desde el asistente.
 
+### Las pruebas de la base no ven los triggers diferidos
+La forma de cada operación (R5) se comprueba con triggers `deferrable initially
+deferred`, que corren al confirmar. Una prueba de pgTAP acaba en `rollback`, así que
+nunca confirma: una operación mal formada **pasa sin error y la prueba sale verde**.
+**Cada archivo de pruebas que escriba en el libro empieza con
+`set constraints all immediate`**, y registra cada operación con sus asientos en una
+sola sentencia (un `with … insert`), para que se compruebe entera.
+
 ### «Success. No rows returned» tras un `insert` no significa cero filas
 El editor SQL del panel de Supabase lo dice siempre que la sentencia no devuelve
 una tabla, haya insertado algo o no. **Para saber qué pasó, un `select` después** (o

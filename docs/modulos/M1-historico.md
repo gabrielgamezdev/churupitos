@@ -1,7 +1,7 @@
 # M1 · Histórico
 
-- **Estado:** en planificación (desde 2026-10-14). Nada de código hasta que el autor
-  apruebe este plan y `docs/DOMINIO.md`.
+- **Estado:** en curso (desde 2026-10-14). El autor aprobó este plan y
+  `docs/DOMINIO.md` el 2026-10-14.
 - **Objetivo:** que la base tenga **todos** los meses de los Excels, tal cual, y que
   se pueda demostrar celda a celda que dicen lo mismo.
 
@@ -25,8 +25,8 @@ cuesta una recarga, no datos.
 - `npm run check` y las pruebas de la base en verde, en local y en la CI.
 
 ## Pasos
-1. [ ] **`DOMINIO.md` aprobado** por el autor.
-2. [ ] **Esquema del libro**: cuentas, sobres, operaciones y asientos, con los
+1. [x] **`DOMINIO.md` aprobado** por el autor.
+2. [x] **Esquema del libro**: cuentas, sobres, operaciones y asientos, con los
    invariantes de `R5` en la base y vistas de saldos por celda, cuenta y sobre.
    Pruebas de la base con datos inventados: un gasto en descubierto, un traspaso que
    no suma cero (rechazado), un cambio de divisa, un arrastre entre meses.
