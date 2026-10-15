@@ -7,6 +7,8 @@ export type Issue = {
   message: string;
   // Dónde: `HOJA!B12`. Solo se muestra en local: lleva nombres reales.
   ref?: string;
+  // El libro mensual, `AAAA-MM`, cuando se juntan los de varios meses.
+  month?: string;
 };
 
 export class Issues {

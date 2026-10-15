@@ -159,8 +159,13 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Una fila con importe | Un asiento |
 | Filas que van juntas | Una operación |
 | Una fila de importe 0 que hace de título | La descripción de su operación (`R4`) |
-| «Lo que tenía antes» | Nada: es el arrastre (`R7`); en el primer mes, un ajuste `opening` |
-| Un cambio de sobre al copiar el arrastre | Un ajuste `carry_reassignment` con fecha |
+| «Lo que tenía antes» | Nada: es el arrastre (`R7`); en el primer mes de cada cuenta, un ajuste `opening` el día 1 |
+| Un cambio de sobre al copiar el arrastre | Un ajuste `carry_reassignment` el día 1 |
+| Unos céntimos de diferencia en el arrastre (hasta 5) | Un ajuste `correction` el último día del mes anterior, para que su cierre dé lo del Excel |
+| Una fila de comisión («Comisión pago móvil», «Mantenimiento de cuenta»…) | Un asiento de comisión en la operación del movimiento de justo antes, o un gasto si va sola |
+| Filas que van juntas sin título (un préstamo entre sobres, un traspaso entre bancos) | Una operación, solo si no hay otra pareja posible; si no, cada fila queda sola |
+| Un ingreso ✅ del presupuesto | Enlazado al cobro que suma lo que llegó en fechas cercanas, aunque esté en el libro del mes anterior |
+| Un deudor sin moneda | En Bs si pasa de 1.000; si no, en $. Queda anotado |
 | La columna «Restante» | Calculada (`R2`, `R14`) |
 | Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes; los Bs, la fecha, la tasa y el ✅, del cobro (`R8`, `R18`) |
 | Distribución del PRESUPUESTO | El plan del mes; los Bs y el ✅, calculados (`R10`, `R18`) |

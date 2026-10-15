@@ -36,7 +36,7 @@ cuesta una recarga, no datos.
 4. [x] **Lector de Excels** (`tools/importer`): de un `.xlsx` a filas limpias, con el
    catálogo privado. Probado con un Excel **inventado** generado por las propias
    pruebas, nunca con uno real.
-5. [ ] **Agrupador**: de filas a operaciones (pares espejo, cobros con su reparto,
+5. [x] **Agrupador**: de filas a operaciones (pares espejo, cobros con su reparto,
    cambios de divisa, comisiones). Ante la duda, no agrupa: deja la fila sola y la
    anota en el informe.
 6. [ ] **Informe en seco**: el importador corre sin escribir y lista cada caso raro
