@@ -48,6 +48,79 @@ export type Database = {
         };
         Relationships: [];
       };
+      budget_lines: {
+        Row: {
+          action_note: string;
+          created_at: string;
+          envelope_id: string;
+          funding_note: string;
+          id: string;
+          month_start: string;
+          planned_usd_cents: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          action_note?: string;
+          created_at?: string;
+          envelope_id: string;
+          funding_note?: string;
+          id?: string;
+          month_start: string;
+          planned_usd_cents: number;
+        };
+        Update: {
+          action_note?: string;
+          created_at?: string;
+          envelope_id?: string;
+          funding_note?: string;
+          id?: string;
+          month_start?: string;
+          planned_usd_cents?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "budget_lines_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      debts: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          currency: string;
+          description: string;
+          direction: string;
+          due_on: string | null;
+          id: string;
+          position: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          currency: string;
+          description: string;
+          direction: string;
+          due_on?: string | null;
+          id?: string;
+          position?: number;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          currency?: string;
+          description?: string;
+          direction?: string;
+          due_on?: string | null;
+          id?: string;
+          position?: number;
+        };
+        Relationships: [];
+      };
       entries: {
         Row: {
           account_id: string;
@@ -58,6 +131,7 @@ export type Database = {
           is_fee: boolean;
           operation_id: string;
           position: number;
+          usd_value_cents: number | null;
         };
         ComputedFields: never;
         Insert: {
@@ -69,6 +143,7 @@ export type Database = {
           is_fee?: boolean;
           operation_id: string;
           position?: number;
+          usd_value_cents?: number | null;
         };
         Update: {
           account_id?: string;
@@ -79,6 +154,7 @@ export type Database = {
           is_fee?: boolean;
           operation_id?: string;
           position?: number;
+          usd_value_cents?: number | null;
         };
         Relationships: [
           {
@@ -94,6 +170,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "envelopes";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
+            referencedRelation: "expected_income_summary";
+            referencedColumns: ["operation_id"];
           },
           {
             foreignKeyName: "entries_operation_id_fkey";
@@ -129,6 +212,34 @@ export type Database = {
         };
         Relationships: [];
       };
+      expected_incomes: {
+        Row: {
+          created_at: string;
+          expected_usd_cents: number;
+          id: string;
+          month_start: string;
+          name: string;
+          position: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          expected_usd_cents: number;
+          id?: string;
+          month_start: string;
+          name: string;
+          position?: number;
+        };
+        Update: {
+          created_at?: string;
+          expected_usd_cents?: number;
+          id?: string;
+          month_start?: string;
+          name?: string;
+          position?: number;
+        };
+        Relationships: [];
+      };
       household_members: {
         Row: {
           created_at: string;
@@ -156,6 +267,7 @@ export type Database = {
           date_approximate: boolean;
           description: string;
           id: string;
+          income_id: string | null;
           kind: string;
           occurred_on: string;
         };
@@ -167,6 +279,7 @@ export type Database = {
           date_approximate?: boolean;
           description?: string;
           id?: string;
+          income_id?: string | null;
           kind: string;
           occurred_on: string;
         };
@@ -177,6 +290,7 @@ export type Database = {
           date_approximate?: boolean;
           description?: string;
           id?: string;
+          income_id?: string | null;
           kind?: string;
           occurred_on?: string;
         };
@@ -187,6 +301,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "household_members";
             referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "operations_income_id_fkey";
+            columns: ["income_id"];
+            isOneToOne: false;
+            referencedRelation: "expected_income_summary";
+            referencedColumns: ["expected_income_id"];
+          },
+          {
+            foreignKeyName: "operations_income_id_fkey";
+            columns: ["income_id"];
+            isOneToOne: false;
+            referencedRelation: "expected_incomes";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -229,7 +357,101 @@ export type Database = {
             foreignKeyName: "entries_operation_id_fkey";
             columns: ["operation_id"];
             isOneToOne: false;
+            referencedRelation: "expected_income_summary";
+            referencedColumns: ["operation_id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
             referencedRelation: "operations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      budget_checks: {
+        Row: {
+          allocated_ves_cents: number | null;
+          expected_usd_cents: number | null;
+          month_start: string | null;
+          planned_usd_cents: number | null;
+          received_ves_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
+      budget_summary: {
+        Row: {
+          action_note: string | null;
+          allocated_usd_cents: number | null;
+          allocated_ves_cents: number | null;
+          budget_line_id: string | null;
+          envelope_id: string | null;
+          funding_note: string | null;
+          is_delivered: boolean | null;
+          month_start: string | null;
+          planned_usd_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "budget_lines_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      debt_totals: {
+        Row: {
+          currency: string | null;
+          direction: string | null;
+          total_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
+      envelope_allocations: {
+        Row: {
+          allocated_usd_cents: number | null;
+          allocated_ves_cents: number | null;
+          envelope_id: string | null;
+          month_start: string | null;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "entries_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      expected_income_summary: {
+        Row: {
+          account_id: string | null;
+          currency: string | null;
+          expected_income_id: string | null;
+          expected_usd_cents: number | null;
+          is_received: boolean | null;
+          month_start: string | null;
+          name: string | null;
+          operation_id: string | null;
+          position: number | null;
+          received_cents: number | null;
+          received_on: string | null;
+          received_usd_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "entries_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "accounts";
             referencedColumns: ["id"];
           },
         ];
@@ -247,6 +469,7 @@ export type Database = {
         }[];
       };
       assert_operation_shape: { Args: { target: string }; Returns: undefined };
+      assert_receipt_shape: { Args: { target: string }; Returns: undefined };
       cell_balances: {
         Args: { as_of?: string };
         Returns: {

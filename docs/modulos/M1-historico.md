@@ -27,10 +27,11 @@ cuesta una recarga, no datos.
 ## Pasos
 1. [x] **`DOMINIO.md` aprobado** por el autor.
 2. [x] **Esquema del libro**: cuentas, sobres, operaciones y asientos, con los
-   invariantes de `R5` en la base y vistas de saldos por celda, cuenta y sobre.
+   invariantes de `R5` en la base y los saldos por celda, cuenta, sobre y moneda,
+   a hoy o al cierre de cualquier día, más el libro de cada cuenta.
    Pruebas de la base con datos inventados: un gasto en descubierto, un traspaso que
    no suma cero (rechazado), un cambio de divisa, un arrastre entre meses.
-3. [ ] **Esquema del presupuesto y las deudas**: ingresos esperados, cobros y su
+3. [x] **Esquema del presupuesto y las deudas**: ingresos esperados, cobros y su
    reparto, plan por sobre, deudas y deudores. Mismas pruebas, mismos datos inventados.
 4. [ ] **Lector de Excels** (`tools/importer`): de un `.xlsx` a filas limpias, con el
    catálogo privado. Probado con un Excel **inventado** generado por las propias

@@ -60,11 +60,14 @@ comisión, en el sobre que se elija. Por ahora se registran a mano (`R16`).
 
 **Ingreso esperado.** Lo que se espera cobrar en el mes de una fuente (Quincena, Bono,
 Tarjeta de alimentación…), en dólares, con su estado ✅ cobrado / ⏳ pendiente. Una
-misma fuente puede llegar en varios pagos, cada uno con su línea.
+misma fuente puede llegar en varios pagos, cada uno con su línea, y cada línea se
+cobra una sola vez.
 
 **Cobro y reparto.** Cuando el dinero llega: una operación de ingreso en la cuenta
-donde cayó, repartida entre sobres **en dólares** (`$100 de Ahorro`, `$50 del
-Pote`…). Cada línea del reparto es un asiento en la moneda de la cuenta.
+donde cayó, enlazada a su ingreso esperado y repartida entre sobres **en dólares**
+(`$100 de Ahorro`, `$50 del Pote`…). Cada línea del reparto es un asiento en la
+moneda de la cuenta que guarda además su valor en dólares; en una cuenta en dólares,
+ese valor es el propio importe.
 
 **Tasa.** La de **cada cobro**: Bs recibidos ÷ $ reconocidos. Nunca «la tasa del día»
 ni «del mes»: en un mismo mes conviven varias, y dos el mismo día (`R8`).
@@ -123,7 +126,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   cobro. Al pasar cada línea a bolívares se redondea, y la última absorbe la
   diferencia para que la suma sea exacta.
 - **R10 — Los Bs que recibe un sobre en el mes** son la suma de sus líneas de reparto.
-  Se calculan; no se copian de una fórmula.
+  Se calculan; no se copian de una fórmula. El mes de un reparto es el de su ingreso
+  esperado, no la fecha del cobro.
 - **R11 — «Otro» es un sobre.** «Total sin Otro» = total de las cuentas − lo que hay en
   «Otro», por moneda.
 - **R12 — Las cuatro comprobaciones del presupuesto**, las del formato condicional del
@@ -140,6 +144,9 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   siempre es una salida: importe negativo.
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
   la cuota pagada se quita de la lista, como en el Excel.
+- **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
+  cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
+  mes, en dólares, cubre lo planeado.
 
 ---
 
@@ -155,8 +162,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | «Lo que tenía antes» | Nada: es el arrastre (`R7`); en el primer mes, un ajuste `opening` |
 | Un cambio de sobre al copiar el arrastre | Un ajuste `carry_reassignment` con fecha |
 | La columna «Restante» | Calculada (`R2`, `R14`) |
-| Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes, con su estado |
-| Distribución del PRESUPUESTO | El plan del mes; los Bs, calculados (`R10`) |
+| Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes; los Bs, la fecha, la tasa y el ✅, del cobro (`R8`, `R18`) |
+| Distribución del PRESUPUESTO | El plan del mes; los Bs y el ✅, calculados (`R10`, `R18`) |
 | Restante en las cuentas | Calculado |
 | Deudas y deudores | La lista vigente: la del último mes |
 | Zona libre (borradores) | No se importa |
