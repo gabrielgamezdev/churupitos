@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "leer": "node src/cli.ts leer",
+    "read": "node src/cli.ts read",
     "typecheck": "tsc",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",

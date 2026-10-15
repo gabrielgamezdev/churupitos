@@ -14,7 +14,7 @@
       "Bash(git check-ignore*)",
       "Bash(node ops/barrido-privacidad.mjs*)",
       "Bash(npm run check*)",
-      "Bash(npm run barrido*)",
+      "Bash(npm run privacy:scan*)",
       "Bash(npm run build*)",
       "Bash(npm run typecheck*)",
       "Bash(npm test*)",

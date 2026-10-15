@@ -2,7 +2,7 @@
 // que lo que imprime lleva nombres y cifras reales: es para la PC del autor, nunca
 // para la CI.
 //
-//   node src/cli.ts leer     lee todos los meses y resume lo que encontró
+//   node src/cli.ts read     lee todos los meses y resume lo que encontró
 
 import { readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -56,9 +56,9 @@ function read() {
 
 const [command] = process.argv.slice(2);
 try {
-  if (command === "leer") process.exitCode = read() ? 0 : 1;
+  if (command === "read") process.exitCode = read() ? 0 : 1;
   else {
-    console.error("uso: node src/cli.ts leer");
+    console.error("uso: node src/cli.ts read");
     process.exitCode = 2;
   }
 } catch (error) {

@@ -145,8 +145,8 @@ firman con la identidad pública del autor, configurada en el repositorio
 
 ### Al escribir código
 
-- **Identificadores en inglés**: variables, constantes, funciones, tipos, tablas y
-  columnas. **Texto en español**: comentarios, mensajes al usuario, descripciones
+- **Identificadores en inglés**: variables, constantes, funciones, tipos, tablas,
+  columnas, scripts de npm y subcomandos. **Texto en español**: comentarios, mensajes al usuario, descripciones
   de las pruebas y commits. No se mezclan los dos idiomas en un mismo nombre.
 - Se comenta el **porqué**, no lo que hace la línea, y solo donde no es obvio.
 - TypeScript estricto. Nada de `any` sin un comentario que explique por qué.

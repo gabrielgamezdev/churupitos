@@ -63,8 +63,8 @@ npm run db:test      # pruebas de la base: permisos por fila incluidos
 npm run db:reset     # borra la base local y la rehace: migraciones + datos inventados
 npm run db:types     # regenera los tipos de TypeScript desde la base local
 npm run db:stop      # apaga Supabase y libera la PC
-npm run barrido      # solo el barrido de privacidad, sobre todo el repositorio
-npm run costos       # comprueba que Cloudflare solo sirve estáticos (nada que cobre por uso)
+npm run privacy:scan # solo el barrido de privacidad, sobre todo el repositorio
+npm run costs:check  # comprueba que Cloudflare solo sirve estáticos (nada que cobre por uso)
 ```
 
 **El importador** lee los Excels de `privado/excels/` con el catálogo de
@@ -72,7 +72,7 @@ npm run costos       # comprueba que Cloudflare solo sirve estáticos (nada que 
 corresponde cada texto. Lo que imprime lleva datos reales: solo se corre en local.
 
 ```bash
-npm run importar:leer   # lee todos los meses y resume lo que encontró, con sus avisos
+npm run import:read     # lee todos los meses y resume lo que encontró, con sus avisos
 ```
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
