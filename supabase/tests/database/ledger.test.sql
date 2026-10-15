@@ -9,6 +9,10 @@ select plan(40);
 -- nunca confirma. Inmediatas, se hacen al final de cada sentencia.
 set constraints all immediate;
 
+-- La base local puede tener una carga real del importador: se vacía aquí, y el
+-- rollback del final la deja como estaba.
+select public.reset_imported_data(include_app_data => true);
+
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-00000000000a', 'miembro.a@ejemplo.test'),
   ('00000000-0000-4000-8000-00000000000c', 'ajeno@ejemplo.test');

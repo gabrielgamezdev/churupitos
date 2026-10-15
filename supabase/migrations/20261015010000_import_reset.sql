@@ -19,8 +19,9 @@ begin
             hint = 'Si de verdad hay que recargar, se pide expresamente con include_app_data.';
   end if;
 
-  -- De hijos a padres, por las claves foráneas.
-  delete from public.entries;
+  -- Las operaciones primero: sus asientos se van con ellas en cascada, y así la
+  -- comprobación de forma (R5) nunca ve una operación sin asientos, ni siquiera con
+  -- las restricciones inmediatas. Lo demás, de hijos a padres.
   delete from public.operations;
   delete from public.expected_incomes;
   delete from public.budget_lines;
