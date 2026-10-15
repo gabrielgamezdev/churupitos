@@ -100,7 +100,19 @@ npm run db:push                # las aplica en la base de la nube (pide confirma
 Las cuentas reales se crean a mano en el panel de Supabase.
 
 **La app.** Cloudflare la construye y la publica sola en cada push a `main`, según
-`wrangler.jsonc`.
+`wrangler.jsonc`. El resto de su configuración vive en el panel de Cloudflare
+(Workers → el proyecto → *Settings* → *Build*), y es esta, por si hubiera que rehacerla:
+
+| Qué | Valor |
+|---|---|
+| Build / deploy | `npm run build` / `npx wrangler deploy` |
+| Variables, sin cifrar porque son públicas | `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` (Supabase → *Project Settings* → *API*), `NODE_VERSION=24` |
+| Rutas que disparan un build | `apps/web/*`, `package.json`, `package-lock.json`, `wrangler.jsonc` |
+| Previews por rama, Cloudflare Access | Apagados |
+
+En la base de la nube, la *Site URL* de Supabase Auth es la URL de la app (ADR 0005).
+Ningún secreto va en Cloudflare ni en el repositorio: la clave secreta de Supabase y
+la contraseña de la base no las usa la app.
 
 ## Licencia
 
