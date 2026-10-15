@@ -1,7 +1,12 @@
 # M1 · Histórico
 
-- **Estado:** en curso (desde 2026-10-14). El autor aprobó este plan y
-  `docs/DOMINIO.md` el 2026-10-14.
+- **Estado:** cerrado el 2026-10-15 (empezó el 2026-10-14). Congelado: lo que siga
+  vigente vive en `docs/DOMINIO.md`, `README.md`, `docs/TRAMPAS.md` y las migraciones.
+- **Resultado:** los diez meses en la base de la nube, y los 468 saldos comparados
+  (cada cuenta, cada sobre en cada moneda y los totales con y sin «Otro», al cierre de
+  cada mes) coinciden con el Excel al céntimo. El inicio de la app enseña los totales
+  de hoy, comprobados en el teléfono del autor; el segundo teléfono lo verá cuando
+  instale la app, y no bloquea M2.
 - **Objetivo:** que la base tenga **todos** los meses de los Excels, tal cual, y que
   se pueda demostrar celda a celda que dicen lo mismo.
 
@@ -45,7 +50,7 @@ cuesta una recarga, no datos.
 7. [x] **Carga local y oráculo**: vaciar y recargar el Supabase local (con el candado
    del corte) y comparar contra el Excel, primero el estado de hoy y luego cada mes
    hacia atrás, hasta cero diferencias.
-8. [ ] **Carga en la nube**: migraciones con `db:push`, importación a la nube y una
+8. [x] **Carga en la nube**: migraciones con `db:push`, importación a la nube y una
    comprobación desde el teléfono.
 
 Cada paso termina con su commit; los pasos 3, 7 y 8 terminan además con un push.

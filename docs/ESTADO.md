@@ -1,12 +1,13 @@
 # Estado
 
-## Ahora: M1 · Histórico (en curso)
+## Ahora: M2 · Inicio y cuentas (por planificar)
 
-El esquema completo de la base y el importador de todos los Excels, comprobado celda
-a celda. El plan y los pasos hechos están en `docs/modulos/M1-historico.md`; las
-reglas, en `docs/DOMINIO.md`.
+Una tarjeta por moneda → las cuentas de esa moneda → el libro de cada cuenta. Antes de
+escribir código se acuerda su plan en `docs/modulos/M2-*.md`, con las pantallas y sus
+estados.
 
-M0 · Cimientos quedó cerrado el 2026-10-14: `docs/modulos/M0-cimientos.md`.
+Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`) y M1 ·
+Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`).
 
 ## Cómo se publica
 
@@ -58,6 +59,8 @@ del producto:
 
 ## Pendiente de hacer
 
+- **Recargar con el Excel de octubre al día** cuando el autor lo tenga:
+  `import:load` en local y, si cuadra, `import:load:cloud` (comandos en el README).
 - **Al empezar M2, antes de la primera pantalla:**
   - `DESIGN_SYSTEM.md`: colores, tipografía, espaciados, componentes y cómo se pinta
     un importe. Se hace también como artefacto *Design System* de Claude, para verlo
