@@ -32,6 +32,17 @@ literal de Python de triple comilla una `\` antes del salto de línea se lo come
 **Usar cadenas *raw* (`r'''...'''`), o escribir el archivo con la herramienta de
 edición en vez de con un heredoc.**
 
+## Privacidad
+
+### Un ejemplo copiado del Excel se cuela en un comentario
+Al explicar el importador apetece citar una fila de verdad («el título del Bono de
+octubre»), y con ella entran el importe, el apodo o el banco. El barrido para los
+nombres de la lista y los importes con miles y céntimos, pero **no ve una cifra
+suelta** («$40», «20 USDT», «400000»): así llegaron algunas a GitHub, y sacarlas
+obligó a reescribir el historial.
+**Los ejemplos de comentarios, pruebas y documentos se inventan siempre**, con
+«Banco A», «Ahorro» y cifras redondas, aunque el caso real se haya visto en privado/.
+
 ## Supabase
 
 ### `[auth.email] enable_signup = false` apaga el login por correo
