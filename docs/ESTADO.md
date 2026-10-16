@@ -1,9 +1,9 @@
 # Estado
 
-## Ahora: M2 · Inicio y cuentas (en planificación)
+## Ahora: M2 · Inicio y cuentas (en curso)
 
 Una tarjeta por moneda → las cuentas de esa moneda → el libro de cada cuenta. El plan,
-en borrador, está en `docs/modulos/M2-inicio-y-cuentas.md`.
+aprobado, está en `docs/modulos/M2-inicio-y-cuentas.md`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`) y M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`).

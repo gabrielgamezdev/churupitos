@@ -1,7 +1,6 @@
 # M2 · Inicio y cuentas
 
-- **Estado:** en planificación (desde 2026-10-15). Nada de código hasta que el autor
-  apruebe este plan y el design system.
+- **Estado:** en curso (desde 2026-10-15). El plan y el design system están aprobados.
 - **Objetivo:** ver en el teléfono lo que hay hoy en cada moneda, las cuentas de cada
   una y el libro de cada cuenta, mes a mes, y poder compararlo con el Excel.
 
@@ -18,6 +17,9 @@
 - **La parte de «Otro» de cada cuenta se ve**, para que la suma de las cuentas cuadre
   con el total con «Otro».
 - **Sin barra de secciones**: en M2 solo existe el inicio. La barra llega en M3.
+- **Las pantallas no se dibujan antes**: se diseñan directamente en la app con el design
+  system, y lo que haya que mejorar del diseño sale al usarla. Los dos prefieren verla
+  funcionando antes que seguir afinando el diseño en papel.
 
 ## Pantallas
 
@@ -40,23 +42,21 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
 
 ## Pasos
 
-1. [ ] **Plan y design system aprobados** por el autor. El design system es
-   `docs/DESIGN_SYSTEM.md`; para conversar sobre él hay una guía de estilo de solo
-   lectura (un artefacto privado de Claude), que es una vista de ese documento.
-2. [ ] **Las pantallas dibujadas** en el lienzo de diseño, con datos inventados y en los
-   dos temas, antes de programarlas.
-3. [ ] **El design system en la app**: sus tokens en el CSS (claro y oscuro según el
+1. [x] **Plan y design system aprobados** por los dos (2026-10-15). El design system es
+   `docs/DESIGN_SYSTEM.md`; la guía de estilo de solo lectura (un artefacto privado de
+   Claude) es una vista de ese documento hasta el paso 2.
+2. [ ] **El design system en la app**: sus tokens en el CSS (claro y oscuro según el
    teléfono), los componentes base (importes, etiquetas, filas y estados) y una pantalla
    de galería con los componentes de verdad, que sustituye a la guía de estilo.
-4. [ ] **Los datos que faltan**: el emoji de cada sobre (columna, catálogo y recarga) y la
+3. [ ] **Los datos que faltan**: el emoji de cada sobre (columna, catálogo y recarga) y la
    parte de «Otro» de cada cuenta en `account_balances`.
-5. [ ] **Inicio**, con estirar para recargar y el aviso de sin conexión.
-6. [ ] **Una moneda**: sus cuentas.
-7. [ ] **Una cuenta**: cabecera, sus sobres, el mes y el libro, con el detalle de cada
+4. [ ] **Inicio**, con estirar para recargar y el aviso de sin conexión.
+5. [ ] **Una moneda**: sus cuentas.
+6. [ ] **Una cuenta**: cabecera, sus sobres, el mes y el libro, con el detalle de cada
    operación.
-8. [ ] **En los teléfonos**: los dos lo comparan con el Excel.
+7. [ ] **En los teléfonos**: los dos lo comparan con el Excel.
 
-Cada paso termina con su commit; los pasos 3, 7 y 8 terminan además con un push.
+Cada paso termina con su commit; los pasos 2, 6 y 7 terminan además con un push.
 
 ## Tope de complejidad
 

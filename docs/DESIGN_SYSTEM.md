@@ -51,7 +51,7 @@ tokens, así que nunca preguntan en qué tema están.
 | `brand` | `#065f46` | `#3ed69c` | El verde del sobre del icono: acciones, enlaces, foco y la moneda Bs |
 | `on-brand` | `#ffffff` | `#05261a` | Texto sobre un relleno `brand` |
 | `brand-soft` | `#d7f0e3` | `#0f3628` | Fondo tintado detrás de texto `brand` |
-| `coin` | `#f2b01e` | `#f2b01e` | El dorado de la moneda del icono. Solo el icono y la portada |
+| `coin` | `#fbbf24` | `#fbbf24` | El dorado de la moneda del icono. Solo el icono y la portada |
 | `money-in` | `#11743a` | `#4ade80` | Importe de lo que entra, con su `+` |
 | `money-out` | `#b42318` | `#f87171` | Importe de lo que sale, con su `−` |
 | `overdrawn` | `#a14a07` | `#fbbf24` | Saldo por debajo de cero |
