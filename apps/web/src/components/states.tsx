@@ -3,6 +3,46 @@ import { RefreshCw, WifiOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { describeUpdatedAt } from "@/lib/updated-at";
+import { useOnline } from "@/lib/use-online";
+
+// Lo que hace falta de una consulta de TanStack Query para decidir qué estado enseñar.
+interface QueryState {
+  dataUpdatedAt: number;
+  isError: boolean;
+  refetch: () => Promise<unknown>;
+}
+
+interface MissingDataProps {
+  queries: QueryState[];
+  // Qué no se pudo cargar: «No se pudieron cargar los saldos.»
+  errorMessage: string;
+  skeleton: React.ReactNode;
+}
+
+// Mientras falta algún dato de la pantalla: el error con su «Reintentar», el aviso de
+// que sin red no hay nada guardado o, si está en camino, el esqueleto.
+export function MissingData({ queries, errorMessage, skeleton }: MissingDataProps) {
+  const online = useOnline();
+  if (queries.some((query) => query.isError)) {
+    return (
+      <ErrorState
+        message={errorMessage}
+        onRetry={() => void Promise.all(queries.map((query) => query.refetch()))}
+      />
+    );
+  }
+  if (!online) return <EmptyState>Sin conexión, y todavía no hay datos guardados.</EmptyState>;
+  return skeleton;
+}
+
+// Si lo que se ve no está al día, dice por qué y de cuándo es: tan viejo como la más
+// vieja de sus consultas.
+export function StaleDataBanner({ queries }: { queries: QueryState[] }) {
+  const online = useOnline();
+  if (online && !queries.some((query) => query.isError)) return null;
+  const updatedAt = new Date(Math.min(...queries.map((query) => query.dataUpdatedAt)));
+  return <OfflineBanner updatedAt={updatedAt} reason={online ? "failed" : "offline"} />;
+}
 
 // Los estados de cada pantalla (docs/DESIGN_SYSTEM.md, «Estados»). Cargando es el
 // esqueleto de lo que va a venir: cada pantalla lo dibuja con `Skeleton`.

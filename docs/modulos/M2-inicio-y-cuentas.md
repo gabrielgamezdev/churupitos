@@ -54,7 +54,8 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
    `account_balances` (`third_party_cents`).
 4. [x] **Inicio** (2026-10-15), con estirar para recargar y el aviso de sin conexión. Lo
    visto se guarda en el teléfono 14 días, y sin red se entra con la sesión guardada.
-5. [ ] **Una moneda**: sus cuentas.
+5. [x] **Una moneda** (2026-10-15): sus cuentas (`/currencies/ves`, `/currencies/usd`), con
+   la parte de «Otro» de cada una. Las tarjetas del inicio llevan a ella.
 6. [ ] **Una cuenta**: cabecera, sus sobres, el mes y el libro, con el detalle de cada
    operación.
 7. [ ] **En los teléfonos**: los dos lo comparan con el Excel.

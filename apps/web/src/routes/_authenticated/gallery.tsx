@@ -1,14 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AccountRow } from "@/features/balances/account-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
 
 export const Route = createFileRoute("/_authenticated/gallery")({
@@ -93,17 +94,8 @@ function GalleryPage() {
   return (
     <div data-theme={theme} className="min-h-dvh bg-surface text-ink">
       <main className="mx-auto flex max-w-md flex-col gap-10 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
-        <header className="flex flex-col gap-4">
-          <div className="-ml-3 flex items-center gap-1">
-            <Link
-              to="/"
-              aria-label="Volver al inicio"
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
-            >
-              <ArrowLeft aria-hidden="true" />
-            </Link>
-            <h1 className="text-title">Galería</h1>
-          </div>
+        <div className="flex flex-col gap-4">
+          <ScreenHeader title="Galería" back={{ to: "/" }} backLabel="Volver al inicio" />
           <p className="text-body text-ink-muted">
             Los colores, los tipos y los componentes de la app, con datos inventados.
           </p>
@@ -124,7 +116,7 @@ function GalleryPage() {
               </button>
             ))}
           </div>
-        </header>
+        </div>
 
         <Section title="Colores">
           {COLOR_GROUPS.map((group) => (
@@ -232,25 +224,25 @@ function GalleryPage() {
           />
         </Section>
 
-        <Section title="Filas" description="Una cuenta en cero sigue en la lista, apagada.">
+        <Section
+          title="Cuentas"
+          description="Con su parte de «Otro» si la tienen. Una cuenta en cero sigue en la lista, apagada."
+        >
           <List>
-            <ListRow>
-              <span className="text-body">Banco A</span>
-              <Money cents={620000} currency="VES" className="text-amount" />
-            </ListRow>
-            <ListRow>
-              <span className="flex min-w-0 flex-col">
-                <span className="text-body">Banco C</span>
-                <span className="text-caption text-third-party">
-                  de los cuales <Money cents={270000} currency="VES" /> son «Otro»
-                </span>
-              </span>
-              <Money cents={900000} currency="VES" className="text-amount" />
-            </ListRow>
-            <ListRow className="text-ink-muted">
-              <span className="text-body">Tarjeta B</span>
-              <Money cents={0} currency="VES" className="text-amount" />
-            </ListRow>
+            <AccountRow name="Banco A" currency="VES" balanceCents={620000} thirdPartyCents={0} />
+            <AccountRow
+              name="Banco C"
+              currency="VES"
+              balanceCents={900000}
+              thirdPartyCents={270000}
+            />
+            <AccountRow name="Tarjeta B" currency="VES" balanceCents={0} thirdPartyCents={0} />
+            <AccountRow
+              name="Billetera D"
+              currency="USD"
+              balanceCents={-1500}
+              thirdPartyCents={0}
+            />
           </List>
         </Section>
 

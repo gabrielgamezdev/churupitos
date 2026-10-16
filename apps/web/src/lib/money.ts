@@ -7,6 +7,16 @@ export type Currency = "VES" | "USD";
 const SYMBOLS: Record<Currency, string> = { VES: "Bs", USD: "$" };
 
 export const CURRENCY_NAMES: Record<Currency, string> = { VES: "Bolívares", USD: "Dólares" };
+
+// Cada moneda en la dirección de su pantalla: /currencies/ves.
+export function currencySlug(currency: Currency): string {
+  return currency.toLowerCase();
+}
+
+export function currencyFromSlug(slug: string): Currency | null {
+  const code = slug.toUpperCase();
+  return code === "VES" || code === "USD" ? code : null;
+}
 const thousands = new Intl.NumberFormat("es-VE", { maximumFractionDigits: 0 });
 
 // El menos tipográfico (U+2212) y no el guion, como pide el design system.

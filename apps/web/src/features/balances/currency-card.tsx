@@ -1,9 +1,12 @@
 import { cn } from "cn";
+import { ChevronRight } from "lucide-react";
 
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
+import { CURRENCY_NAMES, type Currency } from "@/lib/money";
+
+import { currencyDetails } from "./currency-summary";
 
 interface CurrencyCardProps {
   currency: Currency;
@@ -12,6 +15,8 @@ interface CurrencyCardProps {
   totalCents: number;
   thirdPartyCents: number;
   accountCount: number;
+  // Si lleva a otra pantalla: la flecha lo dice.
+  tappable?: boolean;
   className?: string;
 }
 
@@ -22,13 +27,9 @@ export function CurrencyCard({
   totalCents,
   thirdPartyCents,
   accountCount,
+  tappable = false,
   className,
 }: CurrencyCardProps) {
-  const details = [
-    thirdPartyCents !== 0 && `Con «Otro»: ${formatMoney(totalCents, currency)}`,
-    accountCount === 1 ? "1 cuenta" : `${accountCount} cuentas`,
-  ].filter(Boolean);
-
   return (
     <article
       aria-label={CURRENCY_NAMES[currency]}
@@ -36,12 +37,17 @@ export function CurrencyCard({
     >
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-heading">{CURRENCY_NAMES[currency]}</h2>
-        <Badge variant={currency === "VES" ? "ves" : "usd"}>
-          {currency === "VES" ? "Bs" : "$"}
-        </Badge>
+        <span className="flex items-center gap-1">
+          <Badge variant={currency === "VES" ? "ves" : "usd"}>
+            {currency === "VES" ? "Bs" : "$"}
+          </Badge>
+          {tappable && <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />}
+        </span>
       </div>
       <Money cents={ownCents} currency={currency} className="text-display-amount" />
-      <p className="text-caption text-ink-muted">{details.join(" · ")}</p>
+      <p className="text-caption text-ink-muted">
+        {currencyDetails(currency, totalCents, thirdPartyCents, accountCount)}
+      </p>
     </article>
   );
 }

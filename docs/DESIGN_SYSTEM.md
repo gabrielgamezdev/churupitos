@@ -120,11 +120,16 @@ tabulares.
 Los de M2. Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
-`List` y `ListRow`, `PullToRefresh` (estirar para recargar) y los estados
-(`EmptyState`, `ErrorState`, `OfflineBanner`). Las genéricas son de shadcn, adaptadas a
-este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas), `Skeleton`,
-`Input` y `Label`. Los de cada pantalla viven con ella en `features/` (`CurrencyCard`,
-en `features/balances/`) y entran en la galería al construirse.
+`List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
+estirar y recargar), `ScreenHeader` y los estados (`MissingData`, `StaleDataBanner` y,
+debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
+adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
+`Skeleton`, `Input` y `Label`. Los de cada pantalla viven con ella en `features/`
+(`CurrencyCard` y `AccountRow`, en `features/balances/`) y entran en la galería al
+construirse.
+
+La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
+se entró directo por la dirección, va a la pantalla de arriba.
 
 | Componente | Qué es |
 |---|---|
