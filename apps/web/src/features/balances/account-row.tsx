@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
@@ -11,13 +14,21 @@ interface AccountRowProps {
   balanceCents: number;
   // Cuánto de ese saldo es de «Otro» (R11): así la lista cuadra con el total con «Otro».
   thirdPartyCents: number;
+  // Con él, toda la fila lleva a la cuenta.
+  accountId?: string;
 }
 
 // Una cuenta en la lista de su moneda, con su saldo de hoy. Una cuenta en cero sigue
 // en la lista, apagada: en el Excel también está su hoja.
-export function AccountRow({ name, currency, balanceCents, thirdPartyCents }: AccountRowProps) {
-  return (
-    <ListRow className={cn(balanceCents === 0 && "text-ink-muted")}>
+export function AccountRow({
+  name,
+  currency,
+  balanceCents,
+  thirdPartyCents,
+  accountId,
+}: AccountRowProps) {
+  const content = (
+    <>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="flex min-w-0 items-center gap-2">
           <span className="truncate text-body">{name}</span>
@@ -29,7 +40,20 @@ export function AccountRow({ name, currency, balanceCents, thirdPartyCents }: Ac
           </span>
         )}
       </span>
-      <Money cents={balanceCents} currency={currency} className="text-amount" />
+      <span className="flex shrink-0 items-center gap-1">
+        <Money cents={balanceCents} currency={currency} className="text-amount" />
+        {accountId && <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />}
+      </span>
+    </>
+  );
+
+  const muted = cn(balanceCents === 0 && "text-ink-muted");
+  if (!accountId) return <ListRow className={muted}>{content}</ListRow>;
+  return (
+    <ListRow asChild className={muted}>
+      <Link to="/accounts/$accountId" params={{ accountId }}>
+        {content}
+      </Link>
     </ListRow>
   );
 }

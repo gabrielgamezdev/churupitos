@@ -9,6 +9,18 @@ import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EnvelopeSplit } from "@/features/accounts/envelope-split";
+import {
+  SAMPLE_ACCOUNT_BY_ID,
+  SAMPLE_ENVELOPE_BY_ID,
+  SAMPLE_ENVELOPE_ROWS,
+  SAMPLE_LEDGER,
+  SAMPLE_OPERATIONS,
+  SAMPLE_TODAY,
+} from "@/features/accounts/gallery-samples";
+import { LedgerList } from "@/features/accounts/ledger-list";
+import { MonthPicker } from "@/features/accounts/month-picker";
+import { OperationEntries } from "@/features/accounts/operation-detail";
 import { AccountRow } from "@/features/balances/account-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
 
@@ -88,6 +100,7 @@ const TYPE_STYLES: [className: string, name: string, sample: string][] = [
 // construirse.
 function GalleryPage() {
   const [theme, setTheme] = useState<ThemeChoice>(undefined);
+  const [month, setMonth] = useState("2026-10");
   const offlineSince = new Date();
   offlineSince.setHours(8, 15, 0, 0);
 
@@ -244,6 +257,46 @@ function GalleryPage() {
               thirdPartyCents={0}
             />
           </List>
+        </Section>
+
+        <Section
+          title="Sobres de una cuenta"
+          description="Cuánto hay hoy de cada sobre en ella. Suman el saldo de la cuenta."
+        >
+          <EnvelopeSplit currency="VES" rows={SAMPLE_ENVELOPE_ROWS} />
+        </Section>
+
+        <Section title="Selector de mes" description="Con lo que había al empezar y al cerrar.">
+          <MonthPicker
+            month={month}
+            isCurrent={month === "2026-10"}
+            currency="VES"
+            openingCents={300000}
+            closingCents={620000}
+            onChange={setMonth}
+          />
+        </Section>
+
+        <Section
+          title="Libro"
+          description="Lo más nuevo arriba. Al tocar un movimiento se despliega su operación entera."
+        >
+          <LedgerList
+            currency="VES"
+            entries={SAMPLE_LEDGER}
+            envelopeById={SAMPLE_ENVELOPE_BY_ID}
+            today={SAMPLE_TODAY}
+            renderDetail={(entry) => {
+              const operation = SAMPLE_OPERATIONS[entry.operationId];
+              return operation ? (
+                <OperationEntries
+                  operation={operation}
+                  accountById={SAMPLE_ACCOUNT_BY_ID}
+                  envelopeById={SAMPLE_ENVELOPE_BY_ID}
+                />
+              ) : null;
+            }}
+          />
         </Section>
 
         <Section title="Estados">

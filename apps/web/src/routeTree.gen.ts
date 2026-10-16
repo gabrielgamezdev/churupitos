@@ -13,6 +13,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
+import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -34,6 +35,12 @@ const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAccountsAccountIdRoute =
+  AuthenticatedAccountsAccountIdRouteImport.update({
+    id: '/accounts/$accountId',
+    path: '/accounts/$accountId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCurrenciesCurrencyRoute =
   AuthenticatedCurrenciesCurrencyRouteImport.update({
     id: '/currencies/$currency',
@@ -45,12 +52,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
+  '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/': typeof AuthenticatedIndexRoute
+  '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
 }
 export interface FileRoutesById {
@@ -59,19 +68,31 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/_authenticated/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/gallery' | '/currencies/$currency'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/gallery'
+    | '/accounts/$accountId'
+    | '/currencies/$currency'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/gallery' | '/' | '/currencies/$currency'
+  to:
+    | '/login'
+    | '/gallery'
+    | '/'
+    | '/accounts/$accountId'
+    | '/currencies/$currency'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/gallery'
     | '/_authenticated/'
+    | '/_authenticated/accounts/$accountId'
     | '/_authenticated/currencies/$currency'
   fileRoutesById: FileRoutesById
 }
@@ -110,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGalleryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/accounts/$accountId': {
+      id: '/_authenticated/accounts/$accountId'
+      path: '/accounts/$accountId'
+      fullPath: '/accounts/$accountId'
+      preLoaderRoute: typeof AuthenticatedAccountsAccountIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/currencies/$currency': {
       id: '/_authenticated/currencies/$currency'
       path: '/currencies/$currency'
@@ -123,12 +151,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAccountsAccountIdRoute: typeof AuthenticatedAccountsAccountIdRoute
   AuthenticatedCurrenciesCurrencyRoute: typeof AuthenticatedCurrenciesCurrencyRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAccountsAccountIdRoute: AuthenticatedAccountsAccountIdRoute,
   AuthenticatedCurrenciesCurrencyRoute: AuthenticatedCurrenciesCurrencyRoute,
 }
 

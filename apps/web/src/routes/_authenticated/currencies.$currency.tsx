@@ -63,6 +63,7 @@ function CurrencyAccounts({ currency }: { currency: Currency }) {
             {rows.map((row) => (
               <AccountRow
                 key={row.accountId}
+                accountId={row.accountId}
                 name={row.name}
                 currency={currency}
                 balanceCents={row.balanceCents}

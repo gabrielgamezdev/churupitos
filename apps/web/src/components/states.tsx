@@ -36,11 +36,13 @@ export function MissingData({ queries, errorMessage, skeleton }: MissingDataProp
 }
 
 // Si lo que se ve no está al día, dice por qué y de cuándo es: tan viejo como la más
-// vieja de sus consultas.
+// vieja de sus consultas que tienen datos (las que no, tienen su propio estado).
 export function StaleDataBanner({ queries }: { queries: QueryState[] }) {
   const online = useOnline();
-  if (online && !queries.some((query) => query.isError)) return null;
-  const updatedAt = new Date(Math.min(...queries.map((query) => query.dataUpdatedAt)));
+  const loaded = queries.filter((query) => query.dataUpdatedAt > 0);
+  if (loaded.length === 0) return null;
+  if (online && !loaded.some((query) => query.isError)) return null;
+  const updatedAt = new Date(Math.min(...loaded.map((query) => query.dataUpdatedAt)));
   return <OfflineBanner updatedAt={updatedAt} reason={online ? "failed" : "offline"} />;
 }
 

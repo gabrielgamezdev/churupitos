@@ -6,8 +6,13 @@ import { onlineManager, QueryClient } from "@tanstack/react-query";
 // 24 días, o la caché vuelve vacía.
 export const CACHE_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 
+// Lo traído hace menos de un minuto no se vuelve a pedir al cambiar de pantalla o de
+// mes: ir y volver por el libro no gasta consultas (ni el freno, ADR 0007). Estirar
+// hacia abajo recarga igual.
+const STALE_TIME_MS = 60_000;
+
 export const queryClient = new QueryClient({
-  defaultOptions: { queries: { gcTime: CACHE_MAX_AGE_MS } },
+  defaultOptions: { queries: { gcTime: CACHE_MAX_AGE_MS, staleTime: STALE_TIME_MS } },
 });
 
 export const queryPersister = createAsyncStoragePersister({

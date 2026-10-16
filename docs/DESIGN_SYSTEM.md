@@ -125,8 +125,9 @@ estirar y recargar), `ScreenHeader` y los estados (`MissingData`, `StaleDataBann
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
 `Skeleton`, `Input` y `Label`. Los de cada pantalla viven con ella en `features/`
-(`CurrencyCard` y `AccountRow`, en `features/balances/`) y entran en la galería al
-construirse.
+(`CurrencyCard` y `AccountRow` en `features/balances/`; `EnvelopeSplit`, `MonthPicker`,
+`LedgerList` y `OperationDetail` en `features/accounts/`) y entran en la galería al
+construirse, con datos inventados.
 
 La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
 se entró directo por la dirección, va a la pantalla de arriba.
