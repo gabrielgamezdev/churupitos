@@ -59,8 +59,6 @@ del producto:
 
 ## Pendiente de hacer
 
-- **Recargar con el Excel de octubre al día** cuando el autor lo tenga:
-  `import:load` en local y, si cuadra, `import:load:cloud` (comandos en el README).
 - **Al empezar M2, antes de la primera pantalla:**
   - `DESIGN_SYSTEM.md`: colores, tipografía, espaciados, componentes y cómo se pinta
     un importe. Se hace también como artefacto *Design System* de Claude, para verlo
