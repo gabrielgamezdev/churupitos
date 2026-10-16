@@ -1,10 +1,9 @@
 # Estado
 
-## Ahora: M2 · Inicio y cuentas (por planificar)
+## Ahora: M2 · Inicio y cuentas (en planificación)
 
-Una tarjeta por moneda → las cuentas de esa moneda → el libro de cada cuenta. Antes de
-escribir código se acuerda su plan en `docs/modulos/M2-*.md`, con las pantallas y sus
-estados.
+Una tarjeta por moneda → las cuentas de esa moneda → el libro de cada cuenta. El plan,
+en borrador, está en `docs/modulos/M2-inicio-y-cuentas.md`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`) y M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`).
@@ -48,6 +47,7 @@ del producto:
   compara, se ajusta el importador y se recarga todo.
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
+- **Claro y oscuro, según el teléfono** (2026-10-15).
 - **Repositorio público** en GitHub, como portafolio, con licencia MIT.
 - **Costo cero**: planes gratis y sin método de pago en Cloudflare, Supabase y GitHub,
   y Cloudflare solo sirve estáticos (ADR 0007). La app lleva un freno: más de 60
@@ -55,13 +55,12 @@ del producto:
 
 ## Pendiente de decidir
 
-- Qué pantallas exactas tiene cada módulo de «ver» y qué mostrar de las deudas (antes de M2).
+- Qué pantallas exactas tienen M3, M4 y M5, y qué mostrar de las deudas (antes de cada uno).
 
-## Pendiente de hacer
+## Más adelante
 
-- **Al empezar M2, antes de la primera pantalla:**
-  - `DESIGN_SYSTEM.md`: colores, tipografía, espaciados, componentes y cómo se pinta
-    un importe. Se hace también como artefacto *Design System* de Claude, para verlo
-    y ajustarlo, y los mismos valores van al CSS de la app.
-  - Cada pantalla con sus estados (con datos, vacía, cargando, error y sin conexión),
-    en el plan de M2. Se dibujan antes en el lienzo *Design*, con datos inventados.
+Ideas del autor que no son de ningún módulo todavía. No son indispensables, pero no se
+pierden:
+
+- **Ajustes**: elegir el tema (claro, oscuro o el del teléfono).
+- **Temas propios** después: un oscuro con otros colores, por ejemplo.
