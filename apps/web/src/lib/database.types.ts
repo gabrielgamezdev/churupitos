@@ -190,6 +190,7 @@ export type Database = {
       envelopes: {
         Row: {
           created_at: string;
+          emoji: string | null;
           id: string;
           is_third_party: boolean;
           name: string;
@@ -198,6 +199,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           created_at?: string;
+          emoji?: string | null;
           id?: string;
           is_third_party?: boolean;
           name: string;
@@ -205,6 +207,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          emoji?: string | null;
           id?: string;
           is_third_party?: boolean;
           name?: string;
@@ -466,6 +469,7 @@ export type Database = {
           currency: string;
           name: string;
           position: number;
+          third_party_cents: number;
         }[];
       };
       assert_operation_shape: { Args: { target: string }; Returns: undefined };
@@ -497,6 +501,7 @@ export type Database = {
         }[];
       };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
+      reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

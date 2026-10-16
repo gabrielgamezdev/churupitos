@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(40);
+select plan(44);
 
 -- Las comprobaciones de forma son diferidas: se harían al confirmar, y esta prueba
 -- nunca confirma. Inmediatas, se hacen al final de cada sentencia.
@@ -250,6 +250,17 @@ select throws_ok(
   'D6: solo hay un sobre «Otro»'
 );
 
+select lives_ok(
+  $$ update public.envelopes set emoji = '🏦' where name = 'Ahorro' $$,
+  'un sobre lleva su emoji, como en el Excel'
+);
+
+select throws_ok(
+  $$ update public.envelopes set emoji = '' where name = 'Comida' $$,
+  '23514', null,
+  'un emoji vacío no es un emoji'
+);
+
 -- ---------------------------------------------------------------------------
 -- Los saldos, leídos con la sesión de un miembro: así se prueba también que el
 -- RLS los deja pasar
@@ -282,6 +293,24 @@ select results_eq(
        ('Banco C', 'VES', 40000::bigint),
        ('Billetera B', 'USD', 30500::bigint) $$,
   'R2: cada cuenta es la suma de sus celdas'
+);
+
+select results_eq(
+  $$ select name, third_party_cents from public.account_balances() order by position $$,
+  $$ values
+       ('Banco A', 0::bigint),
+       ('Banco C', 0::bigint),
+       ('Billetera B', 10000::bigint) $$,
+  'R11: cada cuenta dice cuánto de su saldo es «Otro»'
+);
+
+select is_empty(
+  $$ select t.currency
+     from public.currency_totals() t
+     join (select currency, sum(third_party_cents) as third_party
+           from public.account_balances() group by currency) a using (currency)
+     where a.third_party <> t.third_party_cents $$,
+  'R11: la parte de «Otro» de las cuentas suma la de su moneda'
 );
 
 select results_eq(

@@ -61,6 +61,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
         id: envelopeIds.get(envelope.name),
         name: envelope.name,
         is_third_party: envelope.thirdParty,
+        emoji: envelope.emoji,
         position: envelope.position,
       })),
       expected_incomes: pkg.expectedIncomes.map((income) => ({

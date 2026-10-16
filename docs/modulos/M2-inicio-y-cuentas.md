@@ -49,8 +49,9 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
    según el teléfono), los componentes base (importes, etiquetas, filas y estados) y la
    galería (`/gallery`) con los componentes de verdad, que sustituye a la guía de estilo.
    Los componentes de cada pantalla entran en la galería al construirse.
-3. [ ] **Los datos que faltan**: el emoji de cada sobre (columna, catálogo y recarga) y la
-   parte de «Otro» de cada cuenta en `account_balances`.
+3. [x] **Los datos que faltan** (2026-10-15): el emoji de cada sobre (columna, catálogo y
+   recarga, en local y en la nube) y la parte de «Otro» de cada cuenta en
+   `account_balances` (`third_party_cents`).
 4. [ ] **Inicio**, con estirar para recargar y el aviso de sin conexión.
 5. [ ] **Una moneda**: sus cuentas.
 6. [ ] **Una cuenta**: cabecera, sus sobres, el mes y el libro, con el detalle de cada

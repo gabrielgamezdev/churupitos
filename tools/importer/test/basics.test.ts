@@ -61,11 +61,30 @@ describe("el catálogo", () => {
   const base = {
     accounts: [{ name: "Banco A", currency: "VES", sheets: ["BANCO A"] }],
     envelopes: [
-      { name: "Ahorro", aliases: ["🏦 Ahorro"] },
+      { name: "Ahorro", emoji: "🏦", aliases: ["🏦 Ahorro"] },
       { name: "Otro", third_party: true, aliases: ["Otro"] },
     ],
     incomes: [{ name: "Bono", aliases: ["💰 Bono"] }],
   };
+
+  it("lleva el emoji con el que la app pinta cada sobre", () => {
+    const catalog = buildCatalog(base);
+    expect(catalog.envelopes.map((e) => [e.name, e.emoji])).toEqual([
+      ["Ahorro", "🏦"],
+      ["Otro", null],
+    ]);
+  });
+
+  it("acepta un emoji compuesto y rechaza lo que no es un emoji", () => {
+    const withEmoji = (emoji: string) => ({
+      ...base,
+      envelopes: [{ name: "Familia", emoji, aliases: ["Familia"] }],
+    });
+    expect(buildCatalog(withEmoji("👨‍👩‍👧‍👦")).envelopes[0]?.emoji).toBe("👨‍👩‍👧‍👦");
+    expect(buildCatalog(withEmoji("❤️‍🩹")).envelopes[0]?.emoji).toBe("❤️‍🩹");
+    expect(() => buildCatalog(withEmoji("Ahorro"))).toThrow(CatalogError);
+    expect(() => buildCatalog(withEmoji("🏦 Ahorro"))).toThrow(CatalogError);
+  });
 
   it("traduce cada texto del Excel a su sobre", () => {
     const catalog = buildCatalog(base);

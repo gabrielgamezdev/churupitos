@@ -174,8 +174,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Deudas y deudores | La lista vigente: la del último mes |
 | Zona libre (borradores) | No se importa |
 
-El catálogo que dice qué hoja es qué cuenta y cómo se llama cada sobre en cada mes
-vive en `privado/import/catalogo.yml`, porque lleva los nombres reales.
+El catálogo que dice qué hoja es qué cuenta, cómo se llama cada sobre en cada mes y
+con qué emoji lo pinta la app vive en `privado/import/catalogo.yml`, porque lleva los nombres reales.
 
 ---
 

@@ -12,6 +12,15 @@ const name = z.string().trim().min(1).max(40);
 // Cada texto tal cual aparece en los Excels. Un nombre canónico no es alias de sí
 // mismo salvo que se escriba también aquí, porque en el Excel lleva emoji.
 const aliases = z.array(z.string().trim().min(1)).min(1);
+// El emoji con el que se pinta un sobre: uno solo, aunque sea compuesto (👨‍👩‍👧‍👦).
+const emoji = z
+  .string()
+  .trim()
+  .regex(
+    /^\p{Extended_Pictographic}(?:\p{Emoji_Modifier}|\ufe0f|\u200d\p{Extended_Pictographic})*$/u,
+    "no es un emoji",
+  )
+  .max(16);
 
 const catalogSchema = z.object({
   accounts: z.array(
@@ -27,6 +36,8 @@ const catalogSchema = z.object({
       name,
       // «Otro»: dinero ajeno que pasa por las cuentas (R11).
       third_party: z.boolean().default(false),
+      // El de la app; los alias solo sirven para reconocer el sobre en el Excel.
+      emoji: emoji.optional(),
       aliases,
     }),
   ),
@@ -39,7 +50,7 @@ export type CatalogInput = z.input<typeof catalogSchema>;
 
 export type Catalog = {
   accounts: { name: string; currency: Currency; position: number }[];
-  envelopes: { name: string; thirdParty: boolean; position: number }[];
+  envelopes: { name: string; thirdParty: boolean; emoji: string | null; position: number }[];
   incomes: { name: string; position: number }[];
   budgetSheet: string;
   accountBySheet: Map<string, string>;
@@ -105,6 +116,7 @@ export function buildCatalog(input: unknown): Catalog {
     envelopes: data.envelopes.map((envelope, i) => ({
       name: envelope.name,
       thirdParty: envelope.third_party,
+      emoji: envelope.emoji ?? null,
       position: i + 1,
     })),
     incomes: data.incomes.map((income, i) => ({ name: income.name, position: i + 1 })),
