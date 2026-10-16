@@ -1,12 +1,14 @@
 # Estado
 
-## Ahora: M2 · Inicio y cuentas (en curso)
+## Ahora: M3 · Sobres (por planificar)
 
-Una tarjeta por moneda → las cuentas de esa moneda → el libro de cada cuenta. El plan,
-aprobado, está en `docs/modulos/M2-inicio-y-cuentas.md`.
+Cuánto tiene cada sobre y en qué cuenta: la vista «cuánto tengo en dónde» del Excel.
+Trae la barra de secciones, que M2 dejó para cuando hubiera más de una. Antes de
+empezar se acuerdan sus pantallas y se escribe su plan en `docs/modulos/`.
 
-Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`) y M1 ·
-Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`).
+Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
+Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`) y M2 · Inicio y cuentas el
+2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`).
 
 ## Cómo se publica
 

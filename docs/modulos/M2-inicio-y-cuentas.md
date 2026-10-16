@@ -1,6 +1,12 @@
 # M2 · Inicio y cuentas
 
-- **Estado:** en curso (desde 2026-10-15). El plan y el design system están aprobados.
+- **Estado:** cerrado el 2026-10-15 (empezó el mismo día). Congelado: lo que siga vigente
+  vive en `docs/DESIGN_SYSTEM.md`, `docs/TRAMPAS.md`, el código de `apps/web` y las
+  migraciones.
+- **Resultado:** el inicio, cada moneda, cada cuenta y el libro mes a mes, comparados
+  con el Excel en el teléfono: todo coincide. Los dos temas, estirar para recargar y el
+  modo sin conexión (también con la sesión caducada) se probaron además en Chrome con
+  la app construida.
 - **Objetivo:** ver en el teléfono lo que hay hoy en cada moneda, las cuentas de cada
   una y el libro de cada cuenta, mes a mes, y poder compararlo con el Excel.
 
@@ -59,7 +65,7 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
 6. [x] **Una cuenta** (2026-10-15): cabecera, sus sobres, el mes y el libro, con el
    detalle de cada operación (`/accounts/<id>?month=2026-09`). Cambiar de mes no deja
    rastro en el historial: el atrás de Android sale de la cuenta.
-7. [ ] **En los teléfonos**: los dos lo comparan con el Excel.
+7. [x] **En los teléfonos** (2026-10-15): comparado con el Excel, todo coincide.
 
 Cada paso termina con su commit; los pasos 2, 6 y 7 terminan además con un push.
 
