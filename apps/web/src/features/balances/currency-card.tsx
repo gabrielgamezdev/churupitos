@@ -1,10 +1,10 @@
-import { cn } from "cn";
 import { ChevronRight } from "lucide-react";
 
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CURRENCY_NAMES, type Currency } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 import { currencyDetails } from "./currency-summary";
 

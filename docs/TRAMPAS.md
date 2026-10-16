@@ -99,6 +99,15 @@ puesto en `style` ni siquiera se traduce.
 **Los tokens se declaran en `:root, [data-theme]`, y el tema se fija con `data-theme`.**
 Lo que sale de verdad se ve en `apps/web/dist/assets/*.css`.
 
+### Un color o un tamaño de texto desaparece al pasar por `cn`
+`cn` junta clases y, si dos chocan, se queda con la última. Solo conoce los tamaños
+de Tailwind (`text-sm`…): `text-amount` o `text-label` los toma por colores, así que
+`cn("text-money-in", "text-amount")` tira el color sin avisar. Los importes salían
+sin su verde o su rojo y las etiquetas, con el tamaño del texto de alrededor.
+**`cn` se importa de `@/lib/utils`, que conoce los nombres del design system**; eslint
+rechaza el paquete `cn` a secas, que es como lo trae shadcn al añadir un componente.
+Un nombre nuevo en `@theme` (styles.css) se añade también allí.
+
 ### La caché guardada vuelve vacía al abrir la app
 TanStack Query tira las consultas sin uso al cumplirse su `gcTime`, y al arrancar la
 caché aparece vacía **sin un solo aviso**: lo guardado está bien, pero se descarta

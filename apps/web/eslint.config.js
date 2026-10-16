@@ -19,6 +19,15 @@ export default defineConfig([
       ecmaVersion: 2023,
       globals: globals.browser,
     },
+    rules: {
+      // El `cn` del paquete no conoce los estilos del design system y, al mezclar
+      // clases, tiraba colores (src/lib/utils.ts). shadcn lo importa así al añadir
+      // un componente: hay que cambiarlo a mano.
+      "no-restricted-imports": [
+        "error",
+        { paths: [{ name: "cn", message: 'Importa `cn` de "@/lib/utils".' }] },
+      ],
+    },
   },
   {
     // Los componentes de shadcn exportan sus variantes junto al componente

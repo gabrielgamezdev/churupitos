@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "cn";
+import { cn } from "@/lib/utils";
 
 // Adaptado de shadcn al design system: alto `tap`, borde de control y el foco común.
 // El texto va a 16 px para que el navegador no amplíe la pantalla al escribir.

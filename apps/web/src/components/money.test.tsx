@@ -9,6 +9,11 @@ describe("Money", () => {
     expect(screen.getByText("+Bs 400,00")).toHaveAttribute("data-tone", "in");
   });
 
+  it("el tamaño que se le pida no le quita el color", () => {
+    render(<Money cents={40000} currency="VES" kind="movement" className="text-amount" />);
+    expect(screen.getByText("+Bs 400,00")).toHaveClass("text-money-in", "text-amount");
+  });
+
   it("un movimiento que sale lleva «−» y el color de lo que sale", () => {
     render(<Money cents={-2000} currency="USD" kind="movement" />);
     expect(screen.getByText("−$ 20,00")).toHaveAttribute("data-tone", "out");

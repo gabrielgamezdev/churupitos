@@ -1,10 +1,9 @@
-import { cn } from "cn";
-
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Currency } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 interface AccountRowProps {
   name: string;

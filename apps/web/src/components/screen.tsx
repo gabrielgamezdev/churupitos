@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { cn } from "cn";
 
 import { PullToRefresh } from "@/components/pull-to-refresh";
+import { cn } from "@/lib/utils";
 
 // El marco de cada pantalla: una columna para el pulgar, que respeta las barras del
 // sistema y se recarga entera al estirar hacia abajo.

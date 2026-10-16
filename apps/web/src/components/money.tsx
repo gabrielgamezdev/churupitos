@@ -1,6 +1,5 @@
-import { cn } from "cn";
-
 import { formatMoney, type Currency } from "@/lib/money";
+import { cn } from "@/lib/utils";
 
 export type MoneyKind = "movement" | "balance";
 type Tone = "in" | "out" | "overdrawn" | "neutral";

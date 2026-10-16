@@ -1,9 +1,9 @@
-import { cn } from "cn";
 import { RefreshCw, WifiOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { describeUpdatedAt } from "@/lib/updated-at";
 import { useOnline } from "@/lib/use-online";
+import { cn } from "@/lib/utils";
 
 // Lo que hace falta de una consulta de TanStack Query para decidir qué estado enseñar.
 interface QueryState {

@@ -1,6 +1,7 @@
-import { cn } from "cn";
 import { RefreshCw } from "lucide-react";
 import { useEffect, useEffectEvent, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 // Cuánto hay que estirar (en píxeles de pantalla) para recargar, y hasta dónde baja
 // el indicador. El dedo recorre el doble: el tirón se frena a la mitad.

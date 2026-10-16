@@ -1,5 +1,6 @@
-import { cn } from "cn";
 import { Slot } from "radix-ui";
+
+import { cn } from "@/lib/utils";
 
 // Las listas del design system: un bloque `surface-raised` con filas separadas por
 // una línea fina. Casi todo en M2 es una lista; solo las tarjetas de moneda no.
