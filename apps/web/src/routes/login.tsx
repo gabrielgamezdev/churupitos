@@ -33,10 +33,8 @@ function LoginPage() {
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-8 px-4 py-8">
       <div className="flex flex-col items-center gap-3 text-center">
         <img src="/favicon.svg" alt="" className="size-16" />
-        <h1 className="text-2xl font-semibold">Churupitos</h1>
-        <p className="text-sm text-muted-foreground">
-          Inicia sesión para ver las finanzas del hogar.
-        </p>
+        <h1 className="text-title">Churupitos</h1>
+        <p className="text-body text-ink-muted">Inicia sesión para ver las finanzas del hogar.</p>
       </div>
       <LoginForm onSubmit={signIn} />
     </main>

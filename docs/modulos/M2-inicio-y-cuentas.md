@@ -44,10 +44,11 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
 
 1. [x] **Plan y design system aprobados** por los dos (2026-10-15). El design system es
    `docs/DESIGN_SYSTEM.md`; la guía de estilo de solo lectura (un artefacto privado de
-   Claude) es una vista de ese documento hasta el paso 2.
-2. [ ] **El design system en la app**: sus tokens en el CSS (claro y oscuro según el
-   teléfono), los componentes base (importes, etiquetas, filas y estados) y una pantalla
-   de galería con los componentes de verdad, que sustituye a la guía de estilo.
+   Claude) fue una vista de ese documento hasta el paso 2.
+2. [x] **El design system en la app** (2026-10-15): sus tokens en el CSS (claro y oscuro
+   según el teléfono), los componentes base (importes, etiquetas, filas y estados) y la
+   galería (`/gallery`) con los componentes de verdad, que sustituye a la guía de estilo.
+   Los componentes de cada pantalla entran en la galería al construirse.
 3. [ ] **Los datos que faltan**: el emoji de cada sobre (columna, catálogo y recarga) y la
    parte de «Otro» de cada cuenta en `account_balances`.
 4. [ ] **Inicio**, con estirar para recargar y el aviso de sin conexión.

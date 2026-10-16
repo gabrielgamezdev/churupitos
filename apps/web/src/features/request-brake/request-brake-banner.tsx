@@ -13,14 +13,14 @@ export function RequestBrakeBanner() {
   return (
     <div
       role="alert"
-      className="fixed inset-x-4 top-[max(1rem,env(safe-area-inset-top))] z-50 mx-auto flex max-w-sm flex-col gap-2 rounded-lg border border-destructive/40 bg-card p-3 shadow-lg"
+      className="fixed inset-x-4 top-[max(1rem,env(safe-area-inset-top))] z-50 mx-auto flex max-w-sm flex-col gap-2 rounded-lg border border-destructive/40 bg-surface-raised p-3 shadow-lg"
     >
-      <p className="text-sm font-medium">La app hizo demasiadas consultas seguidas y se frenó.</p>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body font-medium">La app hizo demasiadas consultas seguidas y se frenó.</p>
+      <p className="text-body text-ink-muted">
         Es un error de la app, y así no gasta tus datos móviles. Recarga para seguir; si vuelve a
         pasar, hay que revisarlo.
       </p>
-      <Button size="sm" className="self-end" onClick={() => window.location.reload()}>
+      <Button className="self-end" onClick={() => window.location.reload()}>
         Recargar
       </Button>
     </div>

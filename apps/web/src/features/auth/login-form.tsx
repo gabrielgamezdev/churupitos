@@ -42,13 +42,12 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
           inputMode="email"
           autoComplete="username"
           autoCapitalize="none"
-          className="h-11 text-base"
           aria-invalid={errors.email ? true : undefined}
           aria-describedby={errors.email ? "email-error" : undefined}
           {...register("email")}
         />
         {errors.email && (
-          <p id="email-error" className="text-sm text-destructive">
+          <p id="email-error" className="text-body text-destructive">
             {errors.email.message}
           </p>
         )}
@@ -60,25 +59,24 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
           id="password"
           type="password"
           autoComplete="current-password"
-          className="h-11 text-base"
           aria-invalid={errors.password ? true : undefined}
           aria-describedby={errors.password ? "password-error" : undefined}
           {...register("password")}
         />
         {errors.password && (
-          <p id="password-error" className="text-sm text-destructive">
+          <p id="password-error" className="text-body text-destructive">
             {errors.password.message}
           </p>
         )}
       </div>
 
       {errors.root && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-body text-destructive">
           {errors.root.message}
         </p>
       )}
 
-      <Button type="submit" disabled={isSubmitting} className="h-11 text-base">
+      <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Entrando…" : "Entrar"}
       </Button>
     </form>

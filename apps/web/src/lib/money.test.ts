@@ -13,8 +13,14 @@ describe("formatMoney", () => {
     expect(formatMoney(200000, "VES")).toBe("Bs 2.000,00"); // barrido:permitido (cifra inventada)
   });
 
-  it("pone el signo delante de la moneda", () => {
-    expect(formatMoney(-500, "USD")).toBe("-$ 5,00");
+  it("pone delante de la moneda el menos tipográfico, no el guion", () => {
+    expect(formatMoney(-500, "USD")).toBe("−$ 5,00");
+  });
+
+  it("a un movimiento le pone también el «+»", () => {
+    expect(formatMoney(40000, "VES", { signed: true })).toBe("+Bs 400,00");
+    expect(formatMoney(-32000, "VES", { signed: true })).toBe("−Bs 320,00");
+    expect(formatMoney(0, "USD", { signed: true })).toBe("$ 0,00");
   });
 
   it("rechaza lo que no es un entero de céntimos", () => {

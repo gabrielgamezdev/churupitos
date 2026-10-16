@@ -89,6 +89,16 @@ arrancar. Un `validateSearch: z.object(...)` en el login metió zod entero ahí
 (+23 KB comprimidos). **En esas opciones, funciones simples; zod, dentro del
 componente o de los formularios.**
 
+### Un contenedor con otro tema sigue pintando el del teléfono
+Con los colores en `light-dark()` declarados solo en `:root`, poner `color-scheme: dark`
+en un contenedor no cambia nada, aunque en `npm run dev` pueda parecer que sí. El build
+(Lightning CSS, dentro de Tailwind) traduce `light-dark()` a variables auxiliares
+(`--lightningcss-light` y `-dark`) para navegadores viejos, y una variable se resuelve
+donde se declara: los hijos heredan el color de `:root` ya resuelto. Un `color-scheme`
+puesto en `style` ni siquiera se traduce.
+**Los tokens se declaran en `:root, [data-theme]`, y el tema se fija con `data-theme`.**
+Lo que sale de verdad se ve en `apps/web/dist/assets/*.css`.
+
 ### `gcTime` por debajo de `maxAge` rehidrata la caché vacía
 TanStack Query descarta la consulta en memoria antes de que caduque lo guardado en
 disco, y al arrancar la caché aparece vacía **sin un solo aviso**. Se ve como «la

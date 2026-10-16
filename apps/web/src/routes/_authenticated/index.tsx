@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useCurrencyTotals } from "@/features/balances/use-currency-totals";
 import { useCurrentMember } from "@/features/household/use-current-member";
 import { formatMoney } from "@/lib/money";
@@ -19,15 +19,18 @@ function HomePage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 px-4 py-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">{greeting(member)}</h1>
-        <p className="text-sm text-muted-foreground">{session.user.email}</p>
+        <h1 className="text-title">{greeting(member)}</h1>
+        <p className="text-body text-ink-muted">{session.user.email}</p>
       </div>
       <TodayTotals />
       {/* Al cerrar sesión, main.tsx vacía la caché y la ruta protegida manda al login. */}
-      <Button variant="outline" className="h-11" onClick={() => void supabase.auth.signOut()}>
+      <Button variant="outline" onClick={() => void supabase.auth.signOut()}>
         Cerrar sesión
       </Button>
-      <p className="text-center text-xs text-muted-foreground">Versión {__APP_VERSION__}</p>
+      <Link to="/gallery" className={buttonVariants({ variant: "link" })}>
+        Galería de componentes
+      </Link>
+      <p className="text-center text-caption text-ink-muted">Versión {__APP_VERSION__}</p>
     </main>
   );
 }
@@ -36,22 +39,22 @@ function HomePage() {
 // sesión de quien lo usa. M2 la sustituye por una tarjeta por moneda.
 function TodayTotals() {
   const totals = useCurrencyTotals();
-  if (totals.isPending) return <p className="text-sm text-muted-foreground">Cargando saldos…</p>;
+  if (totals.isPending) return <p className="text-body text-ink-muted">Cargando saldos…</p>;
   if (totals.isError)
-    return <p className="text-sm text-destructive">No se pudieron cargar los saldos.</p>;
+    return <p className="text-body text-destructive">No se pudieron cargar los saldos.</p>;
   if (totals.data.length === 0) {
-    return <p className="text-sm text-muted-foreground">Todavía no hay datos importados.</p>;
+    return <p className="text-body text-ink-muted">Todavía no hay datos importados.</p>;
   }
 
   return (
     <section aria-label="Lo que hay hoy" className="flex flex-col gap-1">
-      <p className="text-sm text-muted-foreground">Hoy, sin «Otro»</p>
+      <p className="text-body text-ink-muted">Hoy, sin «Otro»</p>
       {totals.data.map((total) => (
-        <p key={total.currency} className="text-xl font-semibold tabular-nums">
+        <p key={total.currency} className="text-title">
           {formatMoney(total.ownCents, total.currency)}
         </p>
       ))}
-      <p className="text-xs text-muted-foreground tabular-nums">
+      <p className="text-caption text-ink-muted">
         Con «Otro»:{" "}
         {totals.data.map((total) => formatMoney(total.totalCents, total.currency)).join(" · ")}
       </p>

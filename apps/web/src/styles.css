@@ -3,128 +3,160 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-@custom-variant dark (&:is(.dark *));
+/* Los tokens de docs/DESIGN_SYSTEM.md, que es quien manda: un valor de aquí que no
+   coincida con el documento es un error. Cada color se escribe una vez con sus dos
+   valores, y light-dark() elige según el `color-scheme`: la app sigue al teléfono, y
+   un contenedor con `data-theme="light"` o `"dark"` fija el suyo (la galería lo hace).
+   Por eso los componentes no usan la variante `dark:`. */
+:root {
+  color-scheme: light dark;
+}
+[data-theme="light"] {
+  color-scheme: light;
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Los tokens se declaran también en cada `data-theme`, no solo en :root: el build
+   traduce light-dark() a variables para navegadores viejos, y una variable heredada
+   ya llega resuelta con el tema de :root. */
+:root,
+[data-theme] {
+  --surface: light-dark(#f6f8f6, #0d1411);
+  --surface-raised: light-dark(#ffffff, #151f1a);
+  --surface-sunken: light-dark(#ecf1ed, #0a0f0c);
+  --hairline: light-dark(#dde5df, #24302a);
+  --line-strong: light-dark(#7d8f85, #62756b);
+  --ink: light-dark(#13201a, #e7eee9);
+  --ink-muted: light-dark(#56675e, #9fb1a7);
+  --brand: light-dark(#065f46, #3ed69c);
+  --on-brand: light-dark(#ffffff, #05261a);
+  --brand-soft: light-dark(#d7f0e3, #0f3628);
+  --coin: #fbbf24;
+  --money-in: light-dark(#11743a, #4ade80);
+  --money-out: light-dark(#b42318, #f87171);
+  --overdrawn: light-dark(#a14a07, #fbbf24);
+  --overdrawn-soft: light-dark(#fdebd5, #3a2a07);
+  --third-party: light-dark(#46597a, #a9bddf);
+  --third-party-soft: light-dark(#e5ebf4, #1d2636);
+  --ves: var(--brand);
+  --ves-soft: var(--brand-soft);
+  --usd: light-dark(#855300, #f9cf55);
+  --usd-soft: light-dark(#fbefcf, #3a2c08);
+  --focus-ring: var(--brand);
+}
+
+/* Lo que traiga un componente nuevo de shadcn con `dark:` sigue también al teléfono. */
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-hairline: var(--hairline);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-brand: var(--brand);
+  --color-on-brand: var(--on-brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-coin: var(--coin);
+  --color-money-in: var(--money-in);
+  --color-money-out: var(--money-out);
+  --color-overdrawn: var(--overdrawn);
+  --color-overdrawn-soft: var(--overdrawn-soft);
+  --color-third-party: var(--third-party);
+  --color-third-party-soft: var(--third-party-soft);
+  --color-ves: var(--ves);
+  --color-ves-soft: var(--ves-soft);
+  --color-usd: var(--usd);
+  --color-usd-soft: var(--usd-soft);
+  --color-focus-ring: var(--focus-ring);
+
+  /* Los nombres que esperan los componentes de shadcn, apuntando a los nuestros. El
+     código propio usa los de arriba; `destructive` es el rojo de los errores. */
+  --color-background: var(--surface);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface-raised);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface-raised);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--brand);
+  --color-primary-foreground: var(--on-brand);
+  --color-secondary: var(--surface-sunken);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--surface-sunken);
+  --color-muted-foreground: var(--ink-muted);
+  --color-accent: var(--surface-sunken);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: var(--money-out);
+  --color-border: var(--hairline);
+  --color-input: var(--line-strong);
+  --color-ring: var(--focus-ring);
+}
+
+@theme {
+  --font-sans: "Geist Variable", system-ui, sans-serif;
   --font-heading: var(--font-sans);
-  --font-sans: "Geist Variable", sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
 
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  /* Los ocho estilos de texto: `text-display-amount`, `text-title`… */
+  --text-display-amount: 2rem;
+  --text-display-amount--line-height: 2.375rem;
+  --text-display-amount--letter-spacing: -0.02em;
+  --text-display-amount--font-weight: 650;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.625rem;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 600;
+  --text-heading: 1rem;
+  --text-heading--line-height: 1.375rem;
+  --text-heading--font-weight: 600;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.375rem;
+  --text-body--font-weight: 400;
+  --text-amount: 0.9375rem;
+  --text-amount--line-height: 1.375rem;
+  --text-amount--font-weight: 600;
+  --text-amount-small: 0.8125rem;
+  --text-amount-small--line-height: 1.125rem;
+  --text-amount-small--font-weight: 500;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.125rem;
+  --text-caption--font-weight: 400;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1rem;
+  --text-label--letter-spacing: 0.02em;
+  --text-label--font-weight: 600;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* La rejilla de 4 px es la de Tailwind (`p-4` = 16 px); `tap` es el alto mínimo
+     de todo lo que se toca. */
+  --spacing-tap: 3rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+
+  /* En oscuro no hay sombra que se vea: es un filo claro. */
+  --shadow-card:
+    0 1px 2px light-dark(rgb(19 32 26 / 6%), transparent),
+    0 2px 8px light-dark(rgb(19 32 26 / 5%), transparent),
+    0 0 0 1px light-dark(transparent, rgb(231 238 233 / 6%));
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+    @apply border-hairline;
   }
   html {
-    @apply font-sans;
+    @apply font-sans tabular-nums;
+    /* El resaltado azul de Android al tocar: las filas ya tienen el suyo. */
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-surface text-body text-ink;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-focus-ring;
   }
 }

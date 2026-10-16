@@ -1,10 +1,9 @@
 # Design system
 
 **La autoridad del diseño de Churupitos**: cómo se ve y cómo habla la app. Si un valor
-de aquí no coincide con el CSS de la app (`apps/web/src/styles.css`, desde el paso 3
-de M2), es un error. La guía de estilo, un artefacto privado de Claude y de solo
-lectura, es una vista de este documento para conversar sobre el diseño; cuando existan
-los componentes, la sustituye una pantalla de galería dentro de la app.
+de aquí no coincide con el CSS de la app (`apps/web/src/styles.css`), es un error. La
+**galería** de la app (`/gallery`, enlazada desde el inicio) enseña los colores, los
+tipos y los componentes de verdad, con datos inventados y en los dos temas.
 
 Los ejemplos son inventados: «Banco A», sobres genéricos y cifras redondas (regla 1).
 
@@ -64,9 +63,14 @@ tokens, así que nunca preguntan en qué tema están.
 | `usd-soft` | `#fbefcf` | `#3a2c08` | Fondo de la etiqueta «$» |
 | `focus-ring` | = `brand` | = `brand` | Anillo de foco: 2px sólidos, separados 2px del control |
 
-- `money-in` y `money-out` son **solo para movimientos**. Un saldo positivo nunca lleva color.
+- Entre los importes, `money-in` y `money-out` son **solo para movimientos**: un saldo
+  positivo nunca lleva color.
 - Sobre un relleno `brand`, el texto es `on-brand`, nunca un blanco escrito a mano.
 - `coin` nunca es texto ni un estado.
+- En el código, cada token es una clase de Tailwind: `bg-surface`, `text-ink-muted`,
+  `border-hairline`… Los componentes de shadcn usan sus propios nombres (`primary`,
+  `muted-foreground`…), que apuntan a estos; el código propio usa los de esta tabla.
+  `destructive` es `money-out`: el rojo de los errores de un formulario.
 
 ## Temas
 
@@ -74,6 +78,10 @@ La app sigue al teléfono: claro u oscuro según su configuración. El oscuro es
 casi negro, no un gris; su `brand` se aclara y el texto sobre él pasa a ser oscuro.
 Elegir el tema a mano y los temas propios están apuntados para más adelante
 (`docs/ESTADO.md`).
+
+En el CSS, cada color se escribe una vez con sus dos valores (`light-dark()`), y un
+contenedor con `data-theme="light"` o `"dark"` fija su tema: lo usa la galería, y
+servirá para elegirlo a mano. Por eso los componentes no usan la variante `dark:`.
 
 ## Tipografía
 
@@ -90,15 +98,19 @@ Una sola familia: **Geist**, variable, la que ya carga la app (`@fontsource-vari
 | `caption` | 13 / 18 px | 400 | Notas y datos secundarios, en `ink-muted` |
 | `label` | 12 / 16 px, +0,02 em | 600 | Etiquetas (Bs, $, Otro, Descubierto, Comisión) y encabezados de día |
 
+Cada estilo es una clase: `text-display-amount`, `text-title`… Toda la app usa números
+tabulares.
+
 ## Espacio y forma
 
 - **Rejilla de 4 px:** `space-1` 4 · `space-2` 8 · `space-3` 12 · `space-4` 16 ·
-  `space-5` 20 · `space-6` 24 · `space-8` 32.
+  `space-5` 20 · `space-6` 24 · `space-8` 32. Es la escala de Tailwind: `p-4` = 16 px.
 - Cada pantalla deja `space-4` a los lados y `space-6` entre secciones.
 - **`tap` = 48 px:** el alto mínimo de todo lo que se toca. Es una app para el pulgar.
+  En el código, `h-tap`, `min-h-tap` y `size-tap`.
 - **Radios:** `radius-sm` 6 px en etiquetas; `radius-md` 10 px en botones, campos y el
   selector de mes; `radius-lg` 16 px en tarjetas y bloques de lista; `radius-pill` en
-  el aviso de sin conexión.
+  el aviso de sin conexión. En el código, `rounded-sm`, `-md`, `-lg` y `-full`.
 - **Sombra:** solo las tarjetas de moneda del inicio llevan `shadow-card`. En oscuro es
   un filo claro, no una sombra. Lo demás son listas: filas separadas por `hairline`
   dentro de un bloque `surface-raised`.
@@ -106,6 +118,12 @@ Una sola familia: **Geist**, variable, la que ya carga la app (`@fontsource-vari
 ## Componentes
 
 Los de M2. Cada uno lee de la base; ninguno calcula un saldo (`R2`).
+
+Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
+`List` y `ListRow`, y los estados (`EmptyState`, `ErrorState`, `OfflineBanner`). Las
+genéricas son de shadcn, adaptadas a este documento, en `components/ui/`: `Button`,
+`Badge` (las etiquetas), `Skeleton`, `Input` y `Label`. Los demás se construyen con su
+pantalla y entran en la galería.
 
 | Componente | Qué es |
 |---|---|

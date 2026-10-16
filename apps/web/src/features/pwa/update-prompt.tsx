@@ -24,15 +24,13 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-sm items-center gap-2 rounded-lg border bg-card p-3 shadow-lg"
+      className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-sm items-center gap-2 rounded-lg border bg-surface-raised p-3 shadow-lg"
     >
-      <p className="flex-1 text-sm">Hay una versión nueva de la app.</p>
-      <Button variant="ghost" size="sm" onClick={() => setNeedRefresh(false)}>
+      <p className="flex-1 text-body">Hay una versión nueva de la app.</p>
+      <Button variant="ghost" onClick={() => setNeedRefresh(false)}>
         Luego
       </Button>
-      <Button size="sm" onClick={() => void updateServiceWorker(true)}>
-        Actualizar
-      </Button>
+      <Button onClick={() => void updateServiceWorker(true)}>Actualizar</Button>
     </div>
   );
 }

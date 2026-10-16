@@ -27,8 +27,9 @@ export default defineConfig({
       // recargar a mitad de un registro (ver src/features/pwa/update-prompt.tsx).
       registerType: "prompt",
       // Iconos y enlaces del <head> generados desde public/favicon.svg
-      // (ver pwa-assets.config.ts).
-      pwaAssets: { config: true, overrideManifestIcons: true },
+      // (ver pwa-assets.config.ts). El theme-color no: index.html pone uno por tema,
+      // y el que inyecta el plugin (sin tema) les ganaría.
+      pwaAssets: { config: true, overrideManifestIcons: true, injectThemeColor: false },
       manifest: {
         name: "Churupitos",
         short_name: "Churupitos",
@@ -38,8 +39,10 @@ export default defineConfig({
         scope: "/",
         display: "standalone",
         orientation: "portrait",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
+        // El manifiesto solo admite un color: el fondo claro (surface). En oscuro,
+        // la barra del sistema la pone el theme-color de index.html.
+        theme_color: "#f6f8f6",
+        background_color: "#f6f8f6",
       },
       workbox: {
         // Solo el «cascarón» de la app. Los datos van a Supabase y nunca se
