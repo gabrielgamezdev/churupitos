@@ -4,8 +4,7 @@ Las leen todos los asistentes de código; Claude Code las carga desde `CLAUDE.md
 
 App de finanzas del hogar para dos personas, en Venezuela: bolívares y dólares,
 presupuesto por sobres y varias cuentas. Es una **PWA para Android** que sustituye
-unos Excels mensuales. Hasta el día del corte, esos Excels siguen siendo la fuente
-de verdad y la app se recarga desde ellos.
+unos Excels mensuales, que hasta el día del corte son la fuente de verdad.
 
 Es la tercera versión. Las dos anteriores se abandonaron por crecer antes de que
 nadie las usara: aquí se construye **por módulos pequeños, y cada uno se prueba en
@@ -19,6 +18,7 @@ los teléfonos antes de empezar el siguiente**.
 |---|---|
 | `docs/ESTADO.md` | En qué módulo estamos, qué toca y las decisiones de producto |
 | `docs/DOMINIO.md` | **La autoridad del dominio**: el método del Excel, sus reglas `R1…` y las decisiones `D1…` |
+| `docs/DESIGN_SYSTEM.md` | **La autoridad del diseño**: colores, tipos, cifras, componentes y voz |
 | `docs/modulos/` | El plan del módulo en curso: qué entra, qué no y cuándo está hecho |
 | `docs/TRAMPAS.md` | Fallos que ya costaron tiempo. **Leerlo ahorra horas** |
 | `docs/adr/` | Decisiones de arquitectura, una por archivo, con su porqué |
@@ -37,7 +37,7 @@ versiones compitiendo. Cada dato vive en un solo sitio y los demás enlazan.
 
 | Documento | Trato |
 |---|---|
-| `AGENTS.md`, `README.md`, `docs/ESTADO.md`, `docs/DOMINIO.md`, `docs/TRAMPAS.md` | **Vivos** |
+| `AGENTS.md`, `README.md`, `docs/ESTADO.md`, `docs/DOMINIO.md`, `docs/DESIGN_SYSTEM.md`, `docs/TRAMPAS.md` | **Vivos** |
 | `docs/modulos/Mn-*.md` | **Vivo mientras dure el módulo.** Al cerrarlo se congela |
 | `docs/adr/` | **Se supersede, no se edita.** Si la decisión cambia, se escribe un ADR nuevo que reemplaza al anterior, y el viejo se marca como sustituido |
 
@@ -48,6 +48,7 @@ pruebas, cuántos archivos) no se escriben a mano.
 ### Al cambiar algo, revisar en concreto
 
 - ¿Cambió una regla de negocio? → `docs/DOMINIO.md` primero, y la prueba que la cita.
+- ¿Cambió el diseño? → `docs/DESIGN_SYSTEM.md` y los tokens del CSS de la app, a la vez.
 - ¿Cambió una orden que se teclea? → `README.md`, y solo ahí.
 - ¿Se cerró o abrió un módulo? → `docs/ESTADO.md` y su `docs/modulos/Mn-*.md`.
 - ¿Costó tiempo un fallo no evidente? → `docs/TRAMPAS.md`.

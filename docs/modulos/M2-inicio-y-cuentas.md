@@ -40,13 +40,14 @@ guardado, con la hora). Se recargan al volver la red y al estirar hacia abajo.
 
 ## Pasos
 
-1. [ ] **Plan y design system aprobados** por el autor. El design system está como
-   artefacto de Claude (privado), con sus tokens y una vista previa de cada componente.
+1. [ ] **Plan y design system aprobados** por el autor. El design system es
+   `docs/DESIGN_SYSTEM.md`; para conversar sobre él hay una guía de estilo de solo
+   lectura (un artefacto privado de Claude), que es una vista de ese documento.
 2. [ ] **Las pantallas dibujadas** en el lienzo de diseño, con datos inventados y en los
    dos temas, antes de programarlas.
-3. [ ] **El design system en el repo**: `docs/DESIGN_SYSTEM.md`, los mismos tokens en el
-   CSS de la app (claro y oscuro según el teléfono) y los componentes base: importes,
-   etiquetas, filas y estados.
+3. [ ] **El design system en la app**: sus tokens en el CSS (claro y oscuro según el
+   teléfono), los componentes base (importes, etiquetas, filas y estados) y una pantalla
+   de galería con los componentes de verdad, que sustituye a la guía de estilo.
 4. [ ] **Los datos que faltan**: el emoji de cada sobre (columna, catálogo y recarga) y la
    parte de «Otro» de cada cuenta en `account_balances`.
 5. [ ] **Inicio**, con estirar para recargar y el aviso de sin conexión.
