@@ -152,6 +152,9 @@
     @apply font-sans tabular-nums;
     /* El resaltado azul de Android al tocar: las filas ya tienen el suyo. */
     -webkit-tap-highlight-color: transparent;
+    /* Sin el «estirar para recargar» del navegador, que recargaría la página entera:
+       la app tiene el suyo (src/components/pull-to-refresh.tsx). */
+    overscroll-behavior-y: contain;
   }
   body {
     @apply bg-surface text-body text-ink;

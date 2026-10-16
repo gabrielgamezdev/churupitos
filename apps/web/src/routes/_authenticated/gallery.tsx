@@ -9,6 +9,7 @@ import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CurrencyCard } from "@/features/balances/currency-card";
 
 export const Route = createFileRoute("/_authenticated/gallery")({
   component: GalleryPage,
@@ -211,6 +212,26 @@ function GalleryPage() {
           </div>
         </Section>
 
+        <Section
+          title="Tarjetas de moneda"
+          description="En grande, lo del hogar; debajo, el total con «Otro» si lo hay."
+        >
+          <CurrencyCard
+            currency="VES"
+            ownCents={1250000}
+            totalCents={1520000}
+            thirdPartyCents={270000}
+            accountCount={6}
+          />
+          <CurrencyCard
+            currency="USD"
+            ownCents={34000}
+            totalCents={34000}
+            thirdPartyCents={0}
+            accountCount={5}
+          />
+        </Section>
+
         <Section title="Filas" description="Una cuenta en cero sigue en la lista, apagada.">
           <List>
             <ListRow>
@@ -255,6 +276,8 @@ function GalleryPage() {
           </div>
           <h3 className="text-heading">Sin conexión</h3>
           <OfflineBanner updatedAt={offlineSince} />
+          <h3 className="text-heading">Sin actualizar</h3>
+          <OfflineBanner updatedAt={offlineSince} reason="failed" />
         </Section>
 
         <Section title="Botones">

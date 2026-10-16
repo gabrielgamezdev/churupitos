@@ -89,7 +89,7 @@ Una sola familia: **Geist**, variable, la que ya carga la app (`@fontsource-vari
 
 | Estilo | Tamaño / interlineado | Peso | Para qué |
 |---|---|---|---|
-| `display-amount` | 32 / 38 px, −0,02 em | 650 | El saldo grande de la pantalla. Una vez por pantalla |
+| `display-amount` | 32 / 38 px, −0,02 em | 650 | El saldo grande: uno por pantalla, salvo en el inicio, uno por tarjeta de moneda |
 | `title` | 20 / 26 px, −0,01 em | 600 | El título de una pantalla |
 | `heading` | 16 / 22 px | 600 | Secciones y el nombre de una moneda en su tarjeta |
 | `body` | 15 / 22 px | 400 | El concepto de un movimiento y el texto corrido |
@@ -120,15 +120,16 @@ tabulares.
 Los de M2. Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
-`List` y `ListRow`, y los estados (`EmptyState`, `ErrorState`, `OfflineBanner`). Las
-genéricas son de shadcn, adaptadas a este documento, en `components/ui/`: `Button`,
-`Badge` (las etiquetas), `Skeleton`, `Input` y `Label`. Los demás se construyen con su
-pantalla y entran en la galería.
+`List` y `ListRow`, `PullToRefresh` (estirar para recargar) y los estados
+(`EmptyState`, `ErrorState`, `OfflineBanner`). Las genéricas son de shadcn, adaptadas a
+este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas), `Skeleton`,
+`Input` y `Label`. Los de cada pantalla viven con ella en `features/` (`CurrencyCard`,
+en `features/balances/`) y entran en la galería al construirse.
 
 | Componente | Qué es |
 |---|---|
 | **Money** | Pinta un importe: movimiento con signo, saldo o descubierto |
-| **CurrencyCard** | Una moneda en el inicio: lo vuestro en grande; el total con «Otro» y cuántas cuentas, debajo |
+| **CurrencyCard** | Una moneda en el inicio: lo del hogar (sin «Otro») en grande; debajo, el total con «Otro» si lo hay y cuántas cuentas |
 | **AccountRow** | Una cuenta en la lista de su moneda, con su parte de «Otro» si la tiene. Las cuentas en cero siguen, en `ink-muted` |
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
@@ -142,8 +143,11 @@ pantalla y entran en la galería.
 - **Cargando:** el esqueleto de lo que va a venir, en `surface-sunken`. Sin ruedas que giran.
 - **Vacío:** qué falta: «Sin movimientos en septiembre».
 - **Error:** qué pasó y qué hacer: «No se pudieron cargar los saldos.» y «Reintentar».
-- **Sin conexión:** lo último guardado, con el aviso «Sin conexión · datos de las 8:15».
-  Al volver la red se recarga sola, y también al estirar hacia abajo.
+- **Sin conexión:** lo último guardado, con el aviso «Sin conexión · datos de las 8:15»
+  (si no es de hoy, con el día). Al volver la red se recarga sola, y también al estirar
+  hacia abajo.
+- **Sin actualizar:** hay red pero la base no respondió. Lo último guardado, con el
+  aviso «No se pudo actualizar · datos de las 8:15».
 
 ## Voz y textos
 

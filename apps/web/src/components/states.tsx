@@ -38,13 +38,17 @@ export function ErrorState({ message, onRetry, className }: ErrorStateProps) {
 }
 
 interface OfflineBannerProps {
-  // Cuándo se guardó lo que se está viendo.
+  // Cuándo se trajo lo que se está viendo.
   updatedAt: Date;
+  // Sin red, o con red pero sin respuesta de la base: en los dos casos se ve lo
+  // último guardado.
+  reason?: "offline" | "failed";
   className?: string;
 }
 
-// Sin conexión: se ve lo último guardado, y el aviso dice de cuándo es.
-export function OfflineBanner({ updatedAt, className }: OfflineBannerProps) {
+// Lo que se ve no está al día: el aviso dice por qué y de cuándo es.
+export function OfflineBanner({ updatedAt, reason = "offline", className }: OfflineBannerProps) {
+  const Icon = reason === "offline" ? WifiOff : RefreshCw;
   return (
     <p
       role="status"
@@ -53,8 +57,9 @@ export function OfflineBanner({ updatedAt, className }: OfflineBannerProps) {
         className,
       )}
     >
-      <WifiOff aria-hidden="true" className="size-5 shrink-0" />
-      Sin conexión · datos {describeUpdatedAt(updatedAt)}
+      <Icon aria-hidden="true" className="size-5 shrink-0" />
+      {reason === "offline" ? "Sin conexión" : "No se pudo actualizar"} · datos{" "}
+      {describeUpdatedAt(updatedAt)}
     </p>
   );
 }

@@ -5,6 +5,8 @@
 export type Currency = "VES" | "USD";
 
 const SYMBOLS: Record<Currency, string> = { VES: "Bs", USD: "$" };
+
+export const CURRENCY_NAMES: Record<Currency, string> = { VES: "Bolívares", USD: "Dólares" };
 const thousands = new Intl.NumberFormat("es-VE", { maximumFractionDigits: 0 });
 
 // El menos tipográfico (U+2212) y no el guion, como pide el design system.

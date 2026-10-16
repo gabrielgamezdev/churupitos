@@ -99,8 +99,20 @@ puesto en `style` ni siquiera se traduce.
 **Los tokens se declaran en `:root, [data-theme]`, y el tema se fija con `data-theme`.**
 Lo que sale de verdad se ve en `apps/web/dist/assets/*.css`.
 
-### `gcTime` por debajo de `maxAge` rehidrata la caché vacía
-TanStack Query descarta la consulta en memoria antes de que caduque lo guardado en
-disco, y al arrancar la caché aparece vacía **sin un solo aviso**. Se ve como «la
-app no guarda nada» y se busca el fallo en el almacén, que está bien.
-**Los dos valen lo mismo y comparten constante.**
+### La caché guardada vuelve vacía al abrir la app
+TanStack Query tira las consultas sin uso al cumplirse su `gcTime`, y al arrancar la
+caché aparece vacía **sin un solo aviso**: lo guardado está bien, pero se descarta
+nada más recuperarlo. Pasa con un `gcTime` menor que el `maxAge` de lo guardado, y
+también con uno de más de 24,8 días (2³¹ ms): el `setTimeout` que lo programa se
+desborda y salta al instante (con 30 días, en M2). Se ve como «la app no guarda
+nada» y se busca el fallo en el almacén.
+**`gcTime` y `maxAge` comparten constante, de menos de 24 días**
+(`apps/web/src/lib/query-client.ts`).
+
+### Sin red y con la sesión caducada, la app se queda en blanco o va al login
+La sesión de Supabase caduca cada hora. Sin red, `getSession` intenta renovarla, se
+queda segundos reintentando y acaba diciendo que no hay sesión. Y TanStack Query
+arranca creyendo que hay red, así que reintenta cada consulta antes de enseñar nada.
+**Sin red, la ruta protegida usa la sesión guardada (`readStoredSession`) y la caché
+arranca sabiendo que no hay red.** Se prueba con la app construida (`npm run preview`)
+y Chrome sin red: con `npm run dev` no hay service worker.

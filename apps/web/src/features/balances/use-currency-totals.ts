@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 export type CurrencyTotal = {
   currency: Currency;
   totalCents: number;
+  thirdPartyCents: number;
   ownCents: number;
 };
 
@@ -20,6 +21,7 @@ export const currencyTotalsQuery = queryOptions({
       .map((row) => ({
         currency: row.currency as Currency,
         totalCents: row.total_cents,
+        thirdPartyCents: row.third_party_cents,
         ownCents: row.own_cents,
       }))
       .sort((a, b) => (a.currency === "VES" ? -1 : b.currency === "VES" ? 1 : 0));
