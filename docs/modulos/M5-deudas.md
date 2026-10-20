@@ -1,7 +1,6 @@
 # M5 · Deudas
 
-- **Estado:** en planificación (desde 2026-10-20). Nada de código hasta que el autor
-  apruebe este plan.
+- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
 - **Objetivo:** ver en el teléfono lo que deben y lo que les deben, con las cuotas por
   fecha y el total pendiente, como los bloques 📉 Deudas y 🔫 Deudores del Excel. Y
   poder compararlo con el Excel.
@@ -22,12 +21,13 @@
   propias no existen aquí: pagar una cuota es un gasto (`R17`) y un préstamo entre
   sobres que se quiere recordar es una deuda más (`D7`).
 
-## Propuesto, por confirmar
+## Decisiones (2026-10-20)
 
 - **Una sola pantalla, Deudas**, con dos partes: lo que deben y lo que les deben. Son
   pocas filas, así que van una debajo de la otra en vez de en solapas.
 - **Arriba, lo pendiente**: lo que deben y lo que les deben, cada moneda por su lado y
-  nunca sumadas (`R1`).
+  nunca sumadas (`R1`). Solo lo pendiente: la fila «Total» del Excel suma también las
+  pagadas.
 - **Lo que deben, por mes de vencimiento**: «Noviembre», «Diciembre»… con lo que suma
   cada mes, y al final las que no tienen fecha. Cada cuota con su concepto, su importe y
   cuándo vence («15 de noviembre · en 26 días»); una que venció y sigue sin pagar lo
@@ -53,10 +53,10 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
 
 ## Pasos
 
-1. [ ] **Plan aprobado** por el autor.
-2. [ ] **Las pagadas del mes en la base**: si se aprueban, una columna que diga si está
-   pagada, `debt_totals` sin ellas, el importador (`D9` revisada) y la recarga, en
-   local y en la nube.
+1. [x] **Plan aprobado** por el autor (2026-10-20).
+2. [ ] **Las pagadas del mes en la base**: una columna que diga si está pagada,
+   `debt_totals` sin ellas, el importador (`D9` revisada) y la recarga, en local y en la
+   nube.
 3. [ ] **Deudas**: lo pendiente, lo que deben por mes con sus vencimientos, las pagadas
    plegadas y lo que les deben.
 4. [ ] **En los teléfonos**: lo comparan con el Excel.
@@ -68,7 +68,7 @@ Cada paso termina con su commit; los pasos 3 y 4 terminan además con un push.
 - **Pantallas:** 1 (Deudas), que sustituye a la de «en construcción».
 - **Nada se escribe**: ni un formulario. Crear una deuda, pagar una cuota y quitarla es
   de M10.
-- **Datos:** como mucho una columna nueva; ninguna tabla nueva.
+- **Datos:** una columna nueva; ninguna tabla nueva.
 
 ## Fuera de M5
 

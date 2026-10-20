@@ -1,9 +1,9 @@
 # Estado
 
-## Ahora: M5 · Deudas (en planificación)
+## Ahora: M5 · Deudas (en curso)
 
 Las cuotas por fecha y el total pendiente, lo que deben y lo que les deben. Su sección
-ya está en la barra, en construcción. El plan, en borrador, está en
+ya está en la barra, en construcción. El plan, aprobado, está en
 `docs/modulos/M5-deudas.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
@@ -63,10 +63,7 @@ del producto:
 
 ## Pendiente de decidir
 
-- Qué pantallas exactas tiene M5 y qué mostrar de las deudas (antes de empezarlo).
-- M5: desde octubre de 2026 el Excel marca las deudas pagadas (✅) en vez de borrarlas.
-  Hoy solo se importa la lista vigente; falta decidir si la app enseña también las
-  pagadas del mes.
+- Qué pantallas exactas tienen M6 y los siguientes (antes de cada uno).
 
 ## Más adelante
 
