@@ -142,6 +142,11 @@ export async function writeRows(
           await tx`insert into ${tx(table)} ${tx(rows.slice(i, i + CHUNK) as Record<string, string>[])}`;
         }
       }
+      // Las posiciones importadas son las filas del Excel. Lo que se registre después en
+      // la app sigue desde la última, para quedar detrás de lo importado del mismo día
+      // (R14).
+      await tx`select setval(pg_get_serial_sequence('public.entries', 'position'),
+        (select coalesce(max(position), 0) + 1 from public.entries), false)`;
       // Las comprobaciones de forma son diferidas: esto las hace correr ya, y no al
       // confirmar, para que también corran en seco.
       await tx`set constraints all immediate`;

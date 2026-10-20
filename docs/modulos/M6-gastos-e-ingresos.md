@@ -65,9 +65,9 @@ usará, y el Excel se irá dejando poco a poco.
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-10-20).
-2. [ ] **Escribir en la base**: el ADR 0008 y las funciones de guardar y borrar una
-   operación, con sus permisos y sus pruebas (`R5`, `R6`, `R16`, solo lo de la app),
-   en local y en la nube.
+2. [x] **Escribir en la base** (2026-10-20, también en la nube): el ADR 0008 y las
+   funciones de guardar y borrar una operación, con sus permisos y sus pruebas (`R5`,
+   `R6`, `R16`, solo lo de la app).
 3. [ ] **Registrar**: la pantalla con un sobre, la comisión y el aviso de descubierto; el
    botón en el inicio, en cada cuenta y en cada sobre.
 4. [ ] **Repartir entre varios sobres.**

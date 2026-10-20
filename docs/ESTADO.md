@@ -55,6 +55,9 @@ del producto:
   desde los Excels; un candado impide hacerlo después del corte sin pedirlo.
 - **Los Excels son el respaldo hasta el corte**: si algo de la app no convence, se
   compara, se ajusta el importador y se recarga todo.
+- **Hasta el corte se registra en paralelo** (2026-10-20): en el Excel y en la app. Al
+  recargar, lo registrado en la app se borra a propósito, porque el Excel ya lo tiene, y
+  lo importado no se corrige desde la app.
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Claro y oscuro, según el teléfono** (2026-10-15).

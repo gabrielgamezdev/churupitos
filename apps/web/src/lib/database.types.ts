@@ -548,6 +548,7 @@ export type Database = {
           total_cents: number;
         }[];
       };
+      delete_operation: { Args: { op_id: string }; Returns: undefined };
       envelope_balances: {
         Args: { as_of?: string };
         Returns: {
@@ -558,6 +559,16 @@ export type Database = {
       };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
+      save_operation: {
+        Args: {
+          op_date: string;
+          op_description: string;
+          op_entries: Json;
+          op_id: string;
+          op_kind: string;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;
