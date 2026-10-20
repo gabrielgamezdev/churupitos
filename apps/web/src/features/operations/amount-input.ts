@@ -27,3 +27,10 @@ export function parseAmountInput(text: string): number | null {
   const cents = Number(whole || "0") * 100 + Number(fraction.padEnd(2, "0"));
   return Number.isSafeInteger(cents) && cents > 0 ? cents : null;
 }
+
+// Un importe como se teclearía, para volver a enseñarlo en un formulario: sin signo, sin
+// separador de miles y con coma («1500,00»), que `parseAmountInput` lee igual.
+export function amountInputText(cents: number): string {
+  const absolute = Math.abs(cents);
+  return `${Math.floor(absolute / 100)},${String(absolute % 100).padStart(2, "0")}`;
+}

@@ -43,6 +43,8 @@ interface OperationFormProps {
   initial: OperationFormValues;
   // Al corregir, los asientos que la operación ya tenía: no cuentan en lo de antes.
   previousEntries?: EntryInput[];
+  // Solo las cuentas de una moneda: al registrar el pago de una deuda, la suya.
+  onlyCurrency?: Currency;
   onSaved: () => void;
 }
 
@@ -53,6 +55,7 @@ export function OperationForm({
   operationId,
   initial,
   previousEntries = [],
+  onlyCurrency,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -145,17 +148,19 @@ export function OperationForm({
           {...register("accountId")}
         >
           <option value="">Elige la cuenta</option>
-          {CURRENCIES.map((currency) => (
-            <optgroup key={currency} label={CURRENCY_NAMES[currency]}>
-              {(accounts.data ?? [])
-                .filter((row) => row.currency === currency)
-                .map((row) => (
-                  <option key={row.accountId} value={row.accountId}>
-                    {row.name}
-                  </option>
-                ))}
-            </optgroup>
-          ))}
+          {CURRENCIES.filter((currency) => !onlyCurrency || currency === onlyCurrency).map(
+            (currency) => (
+              <optgroup key={currency} label={CURRENCY_NAMES[currency]}>
+                {(accounts.data ?? [])
+                  .filter((row) => row.currency === currency)
+                  .map((row) => (
+                    <option key={row.accountId} value={row.accountId}>
+                      {row.name}
+                    </option>
+                  ))}
+              </optgroup>
+            ),
+          )}
         </NativeSelect>
       </Field>
 

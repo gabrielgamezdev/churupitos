@@ -105,7 +105,7 @@ probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
    pagó y quién la agregó; las funciones de guardar (también en lote), marcar pagada y
    borrar, con sus pruebas; el candado del corte con las deudas; el importador.
 8. [x] **Agregar y corregir deudas** (2026-10-20), con las cuotas en lote.
-9. [ ] **Marcar pagada y borrar**, con «Registrar el pago».
+9. [x] **Marcar pagada y borrar** (2026-10-20), con «Registrar el pago».
 10. [ ] **En los teléfonos**: lo usan unos días.
 
 Cada paso termina con su commit; los pasos 9 y 10 terminan además con un push.

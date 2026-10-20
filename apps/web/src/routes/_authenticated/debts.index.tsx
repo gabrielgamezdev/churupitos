@@ -10,6 +10,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DebtActions } from "@/features/debts/debt-actions";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
 import { summarizeDebts } from "@/features/debts/debt-view";
 import { debtsQuery, debtTotalsQuery, type Debt } from "@/features/debts/queries";
@@ -71,7 +72,12 @@ function DebtsPage() {
           <EmptyState className="rounded-lg bg-surface-raised">No deben nada.</EmptyState>
         ) : (
           groups.map((group) => (
-            <DebtGroupList key={group.month ?? "sin-fecha"} group={group} today={todayDay} />
+            <DebtGroupList
+              key={group.month ?? "sin-fecha"}
+              group={group}
+              today={todayDay}
+              renderActions={(debt) => <DebtActions debt={debt} />}
+            />
           ))
         )}
         <PaidDebts debts={paid} today={todayDay} />
@@ -86,7 +92,12 @@ function DebtsPage() {
         ) : (
           <List>
             {receivable.pending.map((debt) => (
-              <DebtRow key={debt.id} debt={debt} today={todayDay} />
+              <DebtRow
+                key={debt.id}
+                debt={debt}
+                today={todayDay}
+                actions={<DebtActions debt={debt} />}
+              />
             ))}
           </List>
         )}
@@ -127,7 +138,12 @@ function PaidDebts({ debts, today }: { debts: Debt[]; today: string }) {
       <CollapsibleContent>
         <List>
           {debts.map((debt) => (
-            <DebtRow key={debt.id} debt={debt} today={today} />
+            <DebtRow
+              key={debt.id}
+              debt={debt}
+              today={today}
+              actions={<DebtActions debt={debt} />}
+            />
           ))}
         </List>
       </CollapsibleContent>

@@ -1,5 +1,8 @@
+import { ChevronDown } from "lucide-react";
+
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Currency } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
@@ -10,13 +13,21 @@ import type { Debt, DebtDirection, DebtTotal } from "./queries";
 
 const CURRENCIES: Currency[] = ["VES", "USD"];
 
+interface DebtRowProps {
+  debt: Debt;
+  today: string;
+  // Lo que se despliega al tocarla: marcarla pagada, corregirla, borrarla. Sin ello, la
+  // fila solo se lee (la galería).
+  actions?: React.ReactNode;
+}
+
 // Una deuda: su concepto, cuándo vence y cuánto es, en su moneda. Una pagada va con ✅ y
 // en `ink-muted`; una vencida sin pagar dice desde cuándo, en `overdrawn`.
-export function DebtRow({ debt, today }: { debt: Debt; today: string }) {
+export function DebtRow({ debt, today, actions }: DebtRowProps) {
   const paid = debt.paidOn !== null;
   const due = debt.dueOn && !paid ? dueLabel(debt.dueOn, today) : null;
-  return (
-    <ListRow className={cn(paid && "text-ink-muted")}>
+  const content = (
+    <>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="text-body">
           {paid && <span aria-label="Pagada">✅ </span>}
@@ -29,13 +40,46 @@ export function DebtRow({ debt, today }: { debt: Debt; today: string }) {
           </span>
         )}
       </span>
-      <Money cents={debt.amountCents} currency={debt.currency} className="shrink-0 text-amount" />
-    </ListRow>
+      <span className="flex shrink-0 items-center gap-1">
+        <Money cents={debt.amountCents} currency={debt.currency} className="text-amount" />
+        {actions && (
+          <ChevronDown
+            aria-hidden="true"
+            className="size-4 text-ink-muted transition-transform group-data-[state=open]:rotate-180"
+          />
+        )}
+      </span>
+    </>
+  );
+
+  if (!actions) return <ListRow className={cn(paid && "text-ink-muted")}>{content}</ListRow>;
+  return (
+    <Collapsible asChild>
+      <li>
+        <CollapsibleTrigger
+          className={cn(
+            "group flex min-h-tap w-full items-center justify-between gap-3 px-4 py-3 text-left active:bg-surface-sunken",
+            paid && "text-ink-muted",
+          )}
+        >
+          {content}
+        </CollapsibleTrigger>
+        <CollapsibleContent className="px-4 pb-3">{actions}</CollapsibleContent>
+      </li>
+    </Collapsible>
   );
 }
 
 // Lo que se debe en un mes: su nombre y lo que suma en cada moneda, y sus cuotas.
-export function DebtGroupList({ group, today }: { group: DebtGroup; today: string }) {
+export function DebtGroupList({
+  group,
+  today,
+  renderActions,
+}: {
+  group: DebtGroup;
+  today: string;
+  renderActions?: (debt: Debt) => React.ReactNode;
+}) {
   return (
     <section aria-label={group.label} className="flex flex-col gap-1">
       <h3 className="flex justify-between gap-3 px-1 text-label text-ink-muted">
@@ -44,7 +88,7 @@ export function DebtGroupList({ group, today }: { group: DebtGroup; today: strin
       </h3>
       <List>
         {group.debts.map((debt) => (
-          <DebtRow key={debt.id} debt={debt} today={today} />
+          <DebtRow key={debt.id} debt={debt} today={today} actions={renderActions?.(debt)} />
         ))}
       </List>
     </section>

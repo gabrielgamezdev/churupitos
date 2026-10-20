@@ -122,16 +122,17 @@ Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
-estirar y recargar), `ScreenHeader` y los estados (`MissingData`, `StaleDataBanner` y,
+estirar y recargar), `ScreenHeader`, `Field` y `AmountInput` (los campos de los
+formularios), `floatingActionClass` (el botón que flota) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
-`Collapsible`, `Input`, `Label` y `NativeSelect`, una lista del sistema con el aspecto de
-`Input`. Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
+`Collapsible`, `Input`, `Label`, `NativeSelect` (una lista del sistema con el aspecto de
+`Input`) y `Segmented` (una de pocas opciones a la vista, como Gasto o Ingreso). Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
 `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
-`DebtTotals`, `DebtGroupList` y `DebtRow` en `debts/`, y `OperationForm`, `AmountInput`,
-`RegisterButton` y `OperationActions` en `operations/`) y los del libro, que comparten
+`DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
+`OperationForm`, `RegisterButton` y `OperationActions` en `operations/`) y los del libro, que comparten
 cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker` y
 `OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
 
@@ -153,7 +154,9 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y ✅ entregado, ⏳ con lo que le llegó o ⏳ pendiente (`R18`); debajo, la fuente de fondos y la acción. Lleva al sobre. Los de $0 van aparte, plegados |
 | **DebtTotals** | Lo pendiente: lo que deben y lo que les deben, cada moneda por su lado y sin las pagadas |
 | **DebtGroupList** | Lo que deben en un mes de vencimiento (o sin fecha): su nombre y lo que suma arriba, y sus cuotas |
-| **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted` |
+| **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
+| **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que se confirma ahí mismo. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
+| **DebtForm** | Agregar o corregir una deuda: quién debe, concepto, moneda, monto y fecha límite. Al agregar, «Agregar en cuotas»: cuántas y cada cuánto, con la lista de las cuotas y sus fechas |
 | **RegisterButton** | «Registrar», en `brand` y flotando sobre la barra, en el inicio, una cuenta y un sobre: abre Registrar con esa cuenta o ese sobre elegidos |
 | **OperationForm** | Registrar: Gasto o Ingreso, monto, cuenta, sobre, concepto, fecha y la comisión si la hubo. Debajo, cómo queda cada sobre de la cuenta; un descubierto lleva su etiqueta y se guarda igual (`R6`). Sin red, «Guardar» se apaga y lo dice |
 | **AmountInput** | Un monto con el símbolo de su moneda delante y el teclado numérico; se lee en céntimos con enteros |

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { parseAmountInput } from "@/features/operations/amount-input";
+import { amountInputText, parseAmountInput } from "@/features/operations/amount-input";
 import type { Currency } from "@/lib/money";
 
 import type { Debt, DebtDirection } from "./queries";
@@ -59,11 +59,10 @@ export function emptyDebtForm(direction: DebtDirection = "payable"): DebtFormVal
 
 // Una deuda guardada, como la vuelve a enseñar el formulario para corregirla.
 export function debtFormValues(debt: Debt): DebtFormValues {
-  const absolute = debt.amountCents;
   return {
     ...emptyDebtForm(debt.direction),
     description: debt.description,
-    amount: `${Math.floor(absolute / 100)},${String(absolute % 100).padStart(2, "0")}`,
+    amount: amountInputText(debt.amountCents),
     currency: debt.currency,
     dueOn: debt.dueOn ?? "",
   };

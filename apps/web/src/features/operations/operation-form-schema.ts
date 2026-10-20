@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { parseAmountInput } from "./amount-input";
-import type { OperationDraft } from "./operation-draft";
+import { amountInputText, parseAmountInput } from "./amount-input";
+import type { OperationDraft, OperationKind } from "./operation-draft";
 
 // El formulario de Registrar. Los montos son texto, como se teclean; pasan a céntimos
 // al leerlos. Solo comprueba que haya algo que mandar: las reglas las impone la base.
@@ -43,18 +43,25 @@ export type OperationFormValues = z.infer<typeof operationFormSchema>;
 
 export const FEE_DESCRIPTION = "Comisión";
 
-// Un formulario vacío, con lo que ya viene elegido.
+// Un formulario vacío, con lo que ya viene elegido o escrito: la cuenta o el sobre desde
+// los que se abrió, o el pago de una deuda.
 export function emptyOperationForm(
   day: string,
   accountId = "",
   envelopeId = "",
+  prefill: { kind?: OperationKind; amountCents?: number; description?: string } = {},
 ): OperationFormValues {
   return {
-    kind: "expense",
+    kind: prefill.kind ?? "expense",
     accountId,
     day,
-    description: "",
-    lines: [{ envelopeId, amount: "" }],
+    description: prefill.description ?? "",
+    lines: [
+      {
+        envelopeId,
+        amount: prefill.amountCents === undefined ? "" : amountInputText(prefill.amountCents),
+      },
+    ],
     hasFee: false,
     fee: { envelopeId: "", amount: "", description: FEE_DESCRIPTION },
   };
@@ -108,18 +115,13 @@ export function operationFormValues(operation: {
     description: operation.description,
     lines: lines.map((entry) => ({
       envelopeId: entry.envelopeId,
-      amount: amountText(entry.amountCents),
+      amount: amountInputText(entry.amountCents),
     })),
     hasFee: fee !== undefined,
     fee: {
       envelopeId: fee?.envelopeId ?? "",
-      amount: fee ? amountText(fee.amountCents) : "",
+      amount: fee ? amountInputText(fee.amountCents) : "",
       description: fee?.description || FEE_DESCRIPTION,
     },
   };
-}
-
-function amountText(cents: number): string {
-  const absolute = Math.abs(cents);
-  return `${Math.floor(absolute / 100)},${String(absolute % 100).padStart(2, "0")}`;
 }
