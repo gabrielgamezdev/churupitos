@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useForm, useWatch } from "react-hook-form";
+import { X } from "lucide-react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
@@ -17,6 +18,7 @@ import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
 import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
 
+import { parseAmountInput } from "./amount-input";
 import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
 import {
   FEE_DESCRIPTION,
@@ -70,6 +72,7 @@ export function OperationForm({
     defaultValues: initial,
   });
 
+  const lines = useFieldArray({ control, name: "lines" });
   const values = useWatch({ control }) as OperationFormValues;
   const account = accounts.data?.find((row) => row.accountId === values.accountId);
   const cells = useQuery({
@@ -113,6 +116,9 @@ export function OperationForm({
   };
 
   const lineError = errors.lines?.[0];
+  const split = lines.fields.length > 1;
+  const total = values.lines.reduce((sum, line) => sum + (parseAmountInput(line.amount) ?? 0), 0);
+  const addLine = () => lines.append({ envelopeId: "", amount: "" });
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-5">
       <div
@@ -140,14 +146,16 @@ export function OperationForm({
         })}
       </div>
 
-      <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
-        <AmountInput
-          id="amount"
-          currency={account?.currency}
-          invalid={Boolean(lineError?.amount)}
-          {...register("lines.0.amount")}
-        />
-      </Field>
+      {!split && (
+        <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
+          <AmountInput
+            id="amount"
+            currency={account?.currency}
+            invalid={Boolean(lineError?.amount)}
+            {...register("lines.0.amount")}
+          />
+        </Field>
+      )}
 
       <Field label="Cuenta" htmlFor="account" error={errors.accountId?.message}>
         <NativeSelect
@@ -170,16 +178,76 @@ export function OperationForm({
         </NativeSelect>
       </Field>
 
-      <Field label="Sobre" htmlFor="envelope" error={lineError?.envelopeId?.message}>
-        <EnvelopeSelect
-          id="envelope"
-          envelopes={envelopeOptions}
-          account={account}
-          cellByEnvelope={cellByEnvelope}
-          invalid={Boolean(lineError?.envelopeId)}
-          {...register("lines.0.envelopeId")}
-        />
-      </Field>
+      {split ? (
+        // Un gasto repartido: cada sobre con su parte, y el total debajo.
+        <fieldset className="flex flex-col gap-3">
+          <legend className="pb-2 text-body font-medium">Sobres</legend>
+          {lines.fields.map((field, index) => {
+            const error = errors.lines?.[index];
+            return (
+              <div key={field.id} className="flex flex-col gap-2 rounded-lg bg-surface-raised p-3">
+                <div className="flex items-center gap-1">
+                  <span className="min-w-0 flex-1">
+                    <EnvelopeSelect
+                      aria-label={`Sobre ${index + 1}`}
+                      envelopes={envelopeOptions}
+                      account={account}
+                      cellByEnvelope={cellByEnvelope}
+                      invalid={Boolean(error?.envelopeId)}
+                      {...register(`lines.${index}.envelopeId`)}
+                    />
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Quitar el sobre ${index + 1}`}
+                    onClick={() => lines.remove(index)}
+                  >
+                    <X aria-hidden="true" />
+                  </Button>
+                </div>
+                <AmountInput
+                  aria-label={`Monto del sobre ${index + 1}`}
+                  currency={account?.currency}
+                  invalid={Boolean(error?.amount)}
+                  {...register(`lines.${index}.amount`)}
+                />
+                {(error?.envelopeId ?? error?.amount) && (
+                  <p className="text-body text-destructive">
+                    {error?.envelopeId?.message ?? error?.amount?.message}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+          <Button type="button" variant="outline" onClick={addLine}>
+            Agregar otro sobre
+          </Button>
+          {account && (
+            <p className="flex justify-between px-1 text-body">
+              <span>Total</span>
+              <Money cents={total} currency={account.currency} className="text-amount" />
+            </p>
+          )}
+        </fieldset>
+      ) : (
+        <div className="flex flex-col gap-1">
+          <Field label="Sobre" htmlFor="envelope" error={lineError?.envelopeId?.message}>
+            <EnvelopeSelect
+              id="envelope"
+              envelopes={envelopeOptions}
+              account={account}
+              cellByEnvelope={cellByEnvelope}
+              invalid={Boolean(lineError?.envelopeId)}
+              {...register("lines.0.envelopeId")}
+            />
+          </Field>
+          <Button type="button" variant="link" className="self-start px-0" onClick={addLine}>
+            Repartir entre varios sobres
+          </Button>
+        </div>
+      )}
 
       <Field label="Concepto" htmlFor="description">
         <Input id="description" autoComplete="off" {...register("description")} />
