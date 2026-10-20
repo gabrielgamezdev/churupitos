@@ -1,0 +1,55 @@
+import { queryOptions } from "@tanstack/react-query";
+
+import type { Currency } from "@/lib/money";
+import { supabase } from "@/lib/supabase";
+
+// Los sobres y lo que tiene cada uno. Toda suma la hace la base (R2): aquí solo se
+// lee y se le da forma.
+
+export type Envelope = {
+  id: string;
+  name: string;
+  emoji: string | null;
+  isThirdParty: boolean;
+  position: number;
+};
+
+// Todos los sobres, en el orden del presupuesto del Excel.
+export const envelopesQuery = queryOptions({
+  queryKey: ["envelopes"],
+  queryFn: async (): Promise<Envelope[]> => {
+    const { data, error } = await supabase
+      .from("envelopes")
+      .select("id, name, emoji, is_third_party, position")
+      .order("position");
+    if (error) throw error;
+    return data.map((row) => ({
+      id: row.id,
+      name: row.name,
+      emoji: row.emoji,
+      isThirdParty: row.is_third_party,
+      position: row.position,
+    }));
+  },
+});
+
+export type EnvelopeBalance = { envelopeId: string; currency: Currency; balanceCents: number };
+
+// Lo que tiene cada sobre en cada moneda: hoy, o al cierre de un día (R7).
+export function envelopeBalancesQuery(day?: string) {
+  return queryOptions({
+    queryKey: ["envelope-balances", day ?? "today"],
+    queryFn: async (): Promise<EnvelopeBalance[]> => {
+      const { data, error } = await supabase.rpc(
+        "envelope_balances",
+        day ? { as_of: day } : undefined,
+      );
+      if (error) throw error;
+      return data.map((row) => ({
+        envelopeId: row.envelope_id,
+        currency: row.currency as Currency,
+        balanceCents: row.balance_cents,
+      }));
+    },
+  });
+}

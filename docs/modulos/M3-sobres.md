@@ -17,8 +17,8 @@
   en la v2. Primero lo que tiene en cada moneda y en qué cuentas está, y después el
   libro.
 - **La lista de sobres** va en el orden del presupuesto, con lo que tiene cada uno en
-  Bs y en $ por separado; «Otro» al final. Los sobres en cero (los de meses pasados que
-  ya no se usan) van al final, juntos y plegados, para que no estorben.
+  Bs y en $ por separado; «Otro» al final. Los sobres en cero (ya gastados este mes, o
+  de meses pasados que no se usan) van al final, juntos y plegados, para que no estorben.
 - **El libro de un sobre** mezcla las dos monedas por fecha, cada movimiento con su
   cuenta y el restante del sobre en su moneda. El selector de mes enseña el saldo al
   empezar y al cerrar de cada moneda que tenga. Un filtro por moneda, como el de la v2,
@@ -51,7 +51,7 @@ Todas con los estados de M2: cargando, vacío, error, sin conexión y estirar pa
    primera pantalla de cualquier sección.
 3. [x] **El libro del sobre en la base** (2026-10-19, también en la nube): la vista `envelope_ledger`, con el restante del
    sobre en cada moneda después de cada asiento (R2, R14), sus permisos y sus pruebas.
-4. [ ] **Sobres**: la lista.
+4. [x] **Sobres**: la lista (2026-10-19).
 5. [ ] **Un sobre**: lo que tiene, en qué cuentas, el mes y el libro; los enlaces entre
    cuentas y sobres.
 6. [ ] **En los teléfonos**: lo comparan con el Excel.

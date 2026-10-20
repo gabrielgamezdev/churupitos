@@ -13,6 +13,7 @@ import { EnvelopeSplit } from "@/features/accounts/envelope-split";
 import {
   SAMPLE_ACCOUNT_BY_ID,
   SAMPLE_ENVELOPE_BY_ID,
+  SAMPLE_ENVELOPES,
   SAMPLE_ENVELOPE_ROWS,
   SAMPLE_LEDGER,
   SAMPLE_OPERATIONS,
@@ -22,6 +23,7 @@ import { LedgerList } from "@/features/accounts/ledger-list";
 import { MonthPicker } from "@/features/accounts/month-picker";
 import { OperationEntries } from "@/features/accounts/operation-detail";
 import { AccountRow } from "@/features/balances/account-row";
+import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
 
 export const Route = createFileRoute("/_authenticated/gallery")({
@@ -256,6 +258,17 @@ function GalleryPage() {
               balanceCents={-1500}
               thirdPartyCents={0}
             />
+          </List>
+        </Section>
+
+        <Section
+          title="Lista de sobres"
+          description="Lo que tiene cada sobre en cada moneda, sin sumarlas."
+        >
+          <List>
+            <EnvelopeRow envelope={SAMPLE_ENVELOPES[0]!} balances={{ VES: 400000, USD: 2000 }} />
+            <EnvelopeRow envelope={SAMPLE_ENVELOPES[2]!} balances={{ VES: -5000 }} />
+            <EnvelopeRow envelope={SAMPLE_ENVELOPES[3]!} balances={{ USD: 10000 }} />
           </List>
         </Section>
 

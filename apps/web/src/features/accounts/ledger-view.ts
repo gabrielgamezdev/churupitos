@@ -1,4 +1,6 @@
-import type { Cell, Envelope, LedgerEntry } from "./queries";
+import type { Envelope } from "@/features/envelopes/queries";
+
+import type { Cell, LedgerEntry } from "./queries";
 
 export type EnvelopeRow = { envelope: Envelope; balanceCents: number };
 

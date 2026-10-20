@@ -3,34 +3,8 @@ import { queryOptions } from "@tanstack/react-query";
 import { firstDay, lastDay } from "@/lib/months";
 import { supabase } from "@/lib/supabase";
 
-// Las consultas de la pantalla de una cuenta. Todo saldo y todo restante lo suma la
+// Las consultas de la pantalla de una cuenta (los sobres están en features/envelopes). Todo saldo y todo restante lo suma la
 // base (R2); aquí solo se lee y se le da forma.
-
-export type Envelope = {
-  id: string;
-  name: string;
-  emoji: string | null;
-  isThirdParty: boolean;
-  position: number;
-};
-
-export const envelopesQuery = queryOptions({
-  queryKey: ["envelopes"],
-  queryFn: async (): Promise<Envelope[]> => {
-    const { data, error } = await supabase
-      .from("envelopes")
-      .select("id, name, emoji, is_third_party, position")
-      .order("position");
-    if (error) throw error;
-    return data.map((row) => ({
-      id: row.id,
-      name: row.name,
-      emoji: row.emoji,
-      isThirdParty: row.is_third_party,
-      position: row.position,
-    }));
-  },
-});
 
 export type Cell = { envelopeId: string; balanceCents: number };
 

@@ -5,11 +5,12 @@ import { List } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import type { Envelope } from "@/features/envelopes/queries";
 import type { Currency } from "@/lib/money";
 import { dayLabel } from "@/lib/months";
 
 import { groupByDay } from "./ledger-view";
-import type { Envelope, LedgerEntry } from "./queries";
+import type { LedgerEntry } from "./queries";
 
 interface LedgerListProps {
   currency: Currency;

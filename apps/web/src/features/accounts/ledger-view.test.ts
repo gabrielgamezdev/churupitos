@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import type { Envelope } from "@/features/envelopes/queries";
+
 import { envelopeRows, groupByDay } from "./ledger-view";
-import type { Envelope, LedgerEntry } from "./queries";
+import type { LedgerEntry } from "./queries";
 
 const envelope = (id: string, position: number, isThirdParty = false): Envelope => ({
   id,

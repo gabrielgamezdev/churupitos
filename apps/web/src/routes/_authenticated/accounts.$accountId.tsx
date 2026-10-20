@@ -13,14 +13,10 @@ import { LedgerList } from "@/features/accounts/ledger-list";
 import { envelopeRows } from "@/features/accounts/ledger-view";
 import { MonthPicker } from "@/features/accounts/month-picker";
 import { OperationDetail } from "@/features/accounts/operation-detail";
-import {
-  accountCellsQuery,
-  balancesAtQuery,
-  envelopesQuery,
-  ledgerQuery,
-} from "@/features/accounts/queries";
+import { accountCellsQuery, balancesAtQuery, ledgerQuery } from "@/features/accounts/queries";
 import { AccountRowSkeleton } from "@/features/balances/account-row";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
+import { envelopesQuery } from "@/features/envelopes/queries";
 import { CURRENCY_NAMES, currencySlug, formatMoney } from "@/lib/money";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
 

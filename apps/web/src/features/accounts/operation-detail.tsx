@@ -6,8 +6,9 @@ import { MissingData } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AccountBalance } from "@/features/balances/use-account-balances";
+import type { Envelope } from "@/features/envelopes/queries";
 
-import { operationQuery, type Envelope, type OperationDetail as Operation } from "./queries";
+import { operationQuery, type OperationDetail as Operation } from "./queries";
 
 // Los tipos de operación con las palabras del Excel (DOMINIO.md, §3).
 const KIND_LABELS: Record<string, string> = {

@@ -2,8 +2,10 @@
 // redondas. Cuadran entre sí: el libro termina en el saldo de la cuenta y los sobres
 // suman lo mismo.
 
+import type { Envelope } from "@/features/envelopes/queries";
+
 import type { EnvelopeRow } from "./ledger-view";
-import type { Envelope, LedgerEntry, OperationDetail } from "./queries";
+import type { LedgerEntry, OperationDetail } from "./queries";
 
 const envelope = (id: string, name: string, emoji: string | null, position: number) => ({
   id,
