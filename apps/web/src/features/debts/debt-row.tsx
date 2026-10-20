@@ -13,12 +13,13 @@ const CURRENCIES: Currency[] = ["VES", "USD"];
 // Una deuda: su concepto, cuándo vence y cuánto es, en su moneda. Una pagada va con ✅ y
 // en `ink-muted`; una vencida sin pagar dice desde cuándo, en `overdrawn`.
 export function DebtRow({ debt, today }: { debt: Debt; today: string }) {
-  const due = debt.dueOn && !debt.isPaid ? dueLabel(debt.dueOn, today) : null;
+  const paid = debt.paidOn !== null;
+  const due = debt.dueOn && !paid ? dueLabel(debt.dueOn, today) : null;
   return (
-    <ListRow className={cn(debt.isPaid && "text-ink-muted")}>
+    <ListRow className={cn(paid && "text-ink-muted")}>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="text-body">
-          {debt.isPaid && <span aria-label="Pagada">✅ </span>}
+          {paid && <span aria-label="Pagada">✅ </span>}
           {debt.description}
         </span>
         {debt.dueOn && (

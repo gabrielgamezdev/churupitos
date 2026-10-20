@@ -5,7 +5,7 @@
 import type { ImportPackage } from "./build-package.ts";
 import type { DraftOperation, GroupingRule } from "./draft.ts";
 import type { Issue } from "./issues.ts";
-import type { LoadOutcome } from "./load.ts";
+import type { AppData, LoadOutcome } from "./load.ts";
 import type { Currency } from "./money.ts";
 import type { MonthData } from "./read-workbook.ts";
 
@@ -176,7 +176,7 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
         debt.description,
         money(debt.amountCents, debt.currency),
         debt.dueOn ?? "",
-        debt.paid ? "✅" : "",
+        debt.paidOn ? "✅" : "",
       ]),
     ),
     "",
@@ -304,17 +304,21 @@ function describeOutcome(outcome: LoadOutcome): string {
     `aceptó las ${outcome.counts.operations} operaciones y sus ${outcome.counts.entries} asientos, ` +
     `con todas sus reglas comprobadas (${total} filas en total).` +
     (outcome.dryRun ? " Era en seco: no quedó nada escrito." : "") +
-    (outcome.appOperations > 0
-      ? ` ${outcome.dryRun ? "Habría borrado" : "Borró"} ${appOperationsLabel(outcome.appOperations)}, que el Excel ya tiene.`
+    (appDataLabel(outcome.appData)
+      ? ` ${outcome.dryRun ? "Habría borrado" : "Borró"} ${appDataLabel(outcome.appData)}, que el Excel ya tiene.`
       : "")
   );
 }
 
-// «1 operación registrada en la app», «2 operaciones registradas en la app».
-export function appOperationsLabel(count: number): string {
-  return count === 1
-    ? "1 operación registrada en la app"
-    : `${count} operaciones registradas en la app`;
+// «1 operación y 2 deudas registradas en la app»; vacío si no hay nada.
+export function appDataLabel({ operations, debts }: AppData): string {
+  const parts = [
+    operations === 1 ? "1 operación" : operations > 1 ? `${operations} operaciones` : "",
+    debts === 1 ? "1 deuda" : debts > 1 ? `${debts} deudas` : "",
+  ].filter(Boolean);
+  if (parts.length === 0) return "";
+  const one = operations + debts === 1;
+  return `${parts.join(" y ")} ${one ? "registrada" : "registradas"} en la app`;
 }
 
 const where = (issue: Issue) => (issue.ref ? ` ${issue.ref}` : "");

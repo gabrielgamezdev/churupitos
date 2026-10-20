@@ -146,7 +146,7 @@ describe("el informe", () => {
     dryRun: true,
     counts,
     oracle,
-    appOperations: 0,
+    appData: { operations: 0, debts: 0 },
   });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
@@ -161,10 +161,10 @@ describe("el informe", () => {
       dryRun: false,
       counts,
       oracle,
-      appOperations: 2,
+      appData: { operations: 2, debts: 1 },
     });
     expect(discarded).toContain(
-      "Borró 2 operaciones registradas en la app, que el Excel ya tiene.",
+      "Borró 2 operaciones y 1 deuda registradas en la app, que el Excel ya tiene.",
     );
   });
 
@@ -185,7 +185,7 @@ describe("el informe", () => {
       status: "ok",
       dryRun: true,
       counts,
-      appOperations: 0,
+      appData: { operations: 0, debts: 0 },
       oracle: {
         checks: 5,
         differences: [

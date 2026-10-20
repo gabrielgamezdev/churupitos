@@ -150,8 +150,9 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 - **R16 — Las comisiones se registran a mano**, como asiento de comisión, que
   siempre es una salida: importe negativo.
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
-  la cuota pagada deja de estar pendiente y no suma en lo que se debe. Las del mes en
-  curso se siguen viendo, marcadas ✅, como en el Excel desde octubre de 2026.
+  la cuota pagada guarda el día en que se pagó, deja de estar pendiente y no suma en lo
+  que se debe. Las pagadas en el mes en curso se siguen viendo, marcadas ✅, como en el
+  Excel desde octubre de 2026. Marcarla pagada no registra el gasto: es aparte.
 - **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
   cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
   mes, en dólares, cubre lo planeado.
@@ -179,7 +180,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes; los Bs, la fecha, la tasa y el ✅, del cobro (`R8`, `R18`) |
 | Distribución del PRESUPUESTO | El plan del mes; los Bs y el ✅, calculados (`R10`, `R18`) |
 | Restante en las cuentas | Calculado |
-| Deudas y deudores | La lista vigente (`D9`): lo no pagado del último libro y las cuotas con fecha del anterior que siguen en ⏳. Una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra. Y las ✅ del libro del mes en curso (el último que no es solo planificación), como pagadas |
+| Deudas y deudores | La lista vigente (`D9`): lo no pagado del último libro y las cuotas con fecha del anterior que siguen en ⏳. Una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra. Y las ✅ del libro del mes en curso (el último que no es solo planificación), como pagadas el día de su fecha límite, o el último del mes si vence después o no tiene |
 | El libro de un mes que aún no empieza | Su presupuesto y sus deudas. Sus saldos no se comparan con los de la app hasta que empieza |
 | Zona libre (borradores) | No se importa |
 

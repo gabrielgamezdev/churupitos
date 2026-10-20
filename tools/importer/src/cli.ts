@@ -26,7 +26,7 @@ import type { LoadOutcome } from "./load.ts";
 import { readWorkbook } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
 import { compareWithExcel } from "./oracle.ts";
-import { appOperationsLabel, buildReport } from "./report.ts";
+import { appDataLabel, buildReport } from "./report.ts";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const EXCELS_DIR = join(ROOT, "privado/excels");
@@ -150,11 +150,11 @@ async function load(dryRun: boolean, cloud: boolean, discardAppData: boolean): P
       : `y quedaron escritas en ${where.label}`;
     const differences = outcome.oracle?.differences.length ?? 0;
     console.log(`\nLa base aceptó las ${outcome.counts.operations} operaciones, ${written}.`);
-    if (outcome.appOperations > 0) {
+    if (appDataLabel(outcome.appData)) {
       console.log(
         outcome.dryRun
-          ? `Cargarla de verdad borraría ${appOperationsLabel(outcome.appOperations)}: hay que pedirlo con --discard-app-data.`
-          : `Borró ${appOperationsLabel(outcome.appOperations)}: el Excel ya lo tiene.`,
+          ? `Cargarla de verdad borraría ${appDataLabel(outcome.appData)}: hay que pedirlo con --discard-app-data.`
+          : `Borró ${appDataLabel(outcome.appData)}: el Excel ya lo tiene.`,
       );
     }
     console.log(

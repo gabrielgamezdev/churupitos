@@ -101,9 +101,9 @@ probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
 5. [x] **Corregir y borrar** (2026-10-20), y quién registró cada operación.
 6. [x] **La recarga que borra lo de la app** (2026-10-20), para registrar en paralelo:
    `--discard-app-data`. Sin pedirlo, el candado del corte no deja recargar.
-7. [ ] **Escribir deudas en la base**: el día en que se pagó y quién la agregó; las
-   funciones de guardar (también en lote), marcar pagada y borrar, con sus pruebas; el
-   candado del corte con las deudas; el importador; en local y en la nube.
+7. [x] **Escribir deudas en la base** (2026-10-20, también en la nube): el día en que se
+   pagó y quién la agregó; las funciones de guardar (también en lote), marcar pagada y
+   borrar, con sus pruebas; el candado del corte con las deudas; el importador.
 8. [ ] **Agregar y corregir deudas**, con las cuotas en lote.
 9. [ ] **Marcar pagada y borrar**, con «Registrar el pago».
 10. [ ] **En los teléfonos**: lo usan unos días.

@@ -38,8 +38,8 @@ select is_empty(
 -- Lo mismo con las funciones: `security definer` corre como su dueño. Las de
 -- disparador no cuentan, porque nadie puede llamarlas: solo las lanza la base. En la
 -- nube, Supabase tiene una así para activar el RLS en cada tabla nueva. Además de la que
--- dice si eres del hogar, solo las dos con las que escribe la app (ADR 0008), que
--- comprueban ellas mismas quién llama.
+-- dice si eres del hogar, solo las que escribe la app (ADR 0008), que comprueban ellas
+-- mismas quién llama.
 select results_eq(
   $$
     select p.proname::text collate "default"
@@ -49,8 +49,9 @@ select results_eq(
       and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
     order by 1
   $$,
-  $$ values ('delete_operation'), ('is_household_member'), ('save_operation') $$,
-  'solo saltan el RLS la función que dice si eres del hogar y las dos con las que escribe la app'
+  $$ values ('delete_debt'), ('delete_operation'), ('is_household_member'), ('save_debts'),
+            ('save_operation'), ('set_debt_paid') $$,
+  'solo saltan el RLS la función que dice si eres del hogar y las que escribe la app'
 );
 
 -- La base local trae las cuentas de seed.sql: se vacía para que la prueba no

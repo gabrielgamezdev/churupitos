@@ -11,7 +11,9 @@
 // dejó de pagar a propósito: queda en el Excel como recuerdo, y no se importa.
 //
 // Las pagadas (✅) son las del libro del mes en curso: el último que no es solo
-// planificación. Las de meses anteriores no se guardan.
+// planificación. Las de meses anteriores no se guardan. El Excel no dice qué día se
+// pagó cada una: se toma su fecha límite, o el último día del mes si vence después o no
+// tiene, para que se vea entre las pagadas de ese mes.
 
 import type { DebtRow } from "./budget-sheet.ts";
 import { Issues } from "./issues.ts";
@@ -25,7 +27,8 @@ export type DebtDraft = {
   amountCents: number;
   currency: Currency;
   dueOn: string | null;
-  paid: boolean;
+  // El día en que se pagó; `null` si no está pagada.
+  paidOn: string | null;
   position: number;
 };
 
@@ -97,9 +100,17 @@ export function currentDebts(months: MonthDebts[]): { debts: DebtDraft[]; issues
       amountCents: debt.amountCents,
       currency,
       dueOn: debt.dueOn,
-      paid: debt.paid === true,
+      paidOn: debt.paid === true ? paidDay(debt.dueOn, month) : null,
       position: debts.length + 1,
     });
   }
   return { debts, issues };
+}
+
+// El día de pago de una ✅ del libro de `month` (`AAAA-MM`): su fecha límite, sin pasar
+// del último día de ese mes.
+function paidDay(dueOn: string | null, month: string): string {
+  const [year, monthNumber] = month.split("-").map(Number) as [number, number];
+  const lastDay = `${month}-${String(new Date(Date.UTC(year, monthNumber, 0)).getUTCDate()).padStart(2, "0")}`;
+  return dueOn !== null && dueOn < lastDay ? dueOn : lastDay;
 }

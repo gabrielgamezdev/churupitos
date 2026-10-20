@@ -278,13 +278,13 @@ const sampleDebt = (
   amountCents,
   currency: "USD",
   dueOn,
-  isPaid: false,
+  paidOn: null,
   position: 0,
   ...extra,
 });
 
 export const SAMPLE_DEBTS: Debt[] = [
-  sampleDebt("tienda-oct", "Cuota de la tienda", 2000, "2026-10-04", { isPaid: true }),
+  sampleDebt("tienda-oct", "Cuota de la tienda", 2000, "2026-10-04", { paidOn: "2026-10-04" }),
   sampleDebt("telefono", "Cuota del teléfono", 1500, "2026-10-12"),
   sampleDebt("tienda-nov", "Cuota de la tienda", 2000, "2026-11-04"),
   sampleDebt("tarjeta", "Tarjeta", 500000, "2026-11-20", { currency: "VES" }),

@@ -1,7 +1,7 @@
 import type { Currency } from "@/lib/money";
 import { monthLabel, monthOf } from "@/lib/months";
 
-import type { Debt } from "./queries";
+import type { Debt, DebtDirection } from "./queries";
 
 export type DebtGroup = {
   // El mes de vencimiento, o `null` para las que no tienen fecha.
@@ -12,18 +12,25 @@ export type DebtGroup = {
   debts: Debt[];
 };
 
-// Lo que deben, como se enseña: lo pendiente agrupado por mes de vencimiento, del más
-// cercano al más lejano y las que no tienen fecha al final; y aparte, las pagadas del
-// mes. Llegan ya ordenadas por fecha.
-export function summarizePayable(debts: Debt[]): { groups: DebtGroup[]; paid: Debt[] } {
-  const payable = debts.filter((debt) => debt.direction === "payable");
+// Lo que deben o lo que les deben, como se enseña: lo pendiente, también agrupado por mes
+// de vencimiento (del más cercano al más lejano, y las que no tienen fecha al final); y
+// aparte, las pagadas en `month`, el mes en curso. Las de meses anteriores ya no se
+// enseñan. Llegan ya ordenadas por fecha.
+export function summarizeDebts(
+  debts: Debt[],
+  direction: DebtDirection,
+  month: string,
+): { pending: Debt[]; groups: DebtGroup[]; paid: Debt[] } {
+  const own = debts.filter((debt) => debt.direction === direction);
+  const pending = own.filter((debt) => debt.paidOn === null);
   const groups = new Map<string | null, DebtGroup>();
-  for (const debt of payable.filter((d) => !d.isPaid)) {
-    const month = debt.dueOn ? monthOf(debt.dueOn) : null;
-    let group = groups.get(month);
+  for (const debt of pending) {
+    const dueMonth = debt.dueOn ? monthOf(debt.dueOn) : null;
+    let group = groups.get(dueMonth);
     if (!group) {
-      group = { month, label: month ? monthLabel(month) : "Sin fecha", totals: {}, debts: [] };
-      groups.set(month, group);
+      const label = dueMonth ? monthLabel(dueMonth) : "Sin fecha";
+      group = { month: dueMonth, label, totals: {}, debts: [] };
+      groups.set(dueMonth, group);
     }
     group.debts.push(debt);
     group.totals[debt.currency] = (group.totals[debt.currency] ?? 0) + debt.amountCents;
@@ -31,7 +38,8 @@ export function summarizePayable(debts: Debt[]): { groups: DebtGroup[]; paid: De
   const sorted = [...groups.values()].sort((a, b) =>
     a.month === null ? 1 : b.month === null ? -1 : a.month.localeCompare(b.month),
   );
-  return { groups: sorted, paid: payable.filter((debt) => debt.isPaid) };
+  const paid = own.filter((debt) => debt.paidOn !== null && monthOf(debt.paidOn) === month);
+  return { pending, groups: sorted, paid };
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;

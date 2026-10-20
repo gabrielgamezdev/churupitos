@@ -17,8 +17,8 @@ export type Debt = {
   amountCents: number;
   currency: Currency;
   dueOn: string | null;
-  // Pagada este mes (✅): se ve, pero ya no se debe (D9).
-  isPaid: boolean;
+  // El día en que se pagó (✅): se ve ese mes, pero ya no se debe (D9). `null`, pendiente.
+  paidOn: string | null;
   position: number;
 };
 
@@ -28,7 +28,7 @@ export const debtsQuery = queryOptions({
   queryFn: async (): Promise<Debt[]> => {
     const { data, error } = await supabase
       .from("debts")
-      .select("id, direction, description, amount_cents, currency, due_on, is_paid, position")
+      .select("id, direction, description, amount_cents, currency, due_on, paid_on, position")
       .order("due_on", { nullsFirst: false })
       .order("position");
     if (error) throw error;
@@ -39,7 +39,7 @@ export const debtsQuery = queryOptions({
       amountCents: row.amount_cents,
       currency: row.currency as Currency,
       dueOn: row.due_on,
-      isPaid: row.is_paid,
+      paidOn: row.paid_on,
       position: row.position,
     }));
   },

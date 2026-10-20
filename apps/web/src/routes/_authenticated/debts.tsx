@@ -9,9 +9,9 @@ import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
-import { summarizePayable } from "@/features/debts/debt-view";
+import { summarizeDebts } from "@/features/debts/debt-view";
 import { debtsQuery, debtTotalsQuery } from "@/features/debts/queries";
-import { today } from "@/lib/months";
+import { monthOf, today } from "@/lib/months";
 
 export const Route = createFileRoute("/_authenticated/debts")({
   component: DebtsPage,
@@ -43,8 +43,9 @@ function DebtsPage() {
     );
   }
 
-  const { groups, paid } = summarizePayable(debts.data);
-  const receivable = debts.data.filter((debt) => debt.direction === "receivable");
+  const currentMonth = monthOf(todayDay);
+  const { groups, paid } = summarizeDebts(debts.data, "payable", currentMonth);
+  const receivable = summarizeDebts(debts.data, "receivable", currentMonth);
   return (
     <Screen>
       <ScreenHeader title="Deudas" />
@@ -96,11 +97,11 @@ function DebtsPage() {
         <h2 id="receivable-title" className="text-heading">
           Lo que les deben
         </h2>
-        {receivable.length === 0 ? (
+        {receivable.pending.length === 0 ? (
           <EmptyState className="rounded-lg bg-surface-raised">No les deben nada.</EmptyState>
         ) : (
           <List>
-            {receivable.map((debt) => (
+            {receivable.pending.map((debt) => (
               <DebtRow key={debt.id} debt={debt} today={todayDay} />
             ))}
           </List>

@@ -42,7 +42,7 @@ describe("D9: la lista vigente de deudas", () => {
         ],
       },
     ]);
-    expect(result.debts.filter((d) => !d.paid).map((d) => d.description)).toEqual([
+    expect(result.debts.filter((d) => !d.paidOn).map((d) => d.description)).toEqual([
       "Cuota del teléfono",
       "Tarjeta",
       "Cuota de la tienda",
@@ -59,17 +59,17 @@ describe("D9: la lista vigente de deudas", () => {
       debts: [debt("Tarjeta", "2026-11-05", false), debt("Cuota del libro", "2026-11-10", true)],
     };
     const planned = currentDebts([october, { ...november, planning: true }]);
-    expect(planned.debts.map((d) => [d.description, d.paid])).toEqual([
-      ["Tarjeta", false],
-      ["Cuota de la tienda", true],
+    expect(planned.debts.map((d) => [d.description, d.paidOn])).toEqual([
+      ["Tarjeta", null],
+      ["Cuota de la tienda", "2026-10-04"],
     ]);
     expect(planned.debts.map((d) => d.position)).toEqual([1, 2]);
 
     // Ya en noviembre, las de octubre dejan de verse.
     const started = currentDebts([october, november]);
-    expect(started.debts.map((d) => [d.description, d.paid])).toEqual([
-      ["Tarjeta", false],
-      ["Cuota del libro", true],
+    expect(started.debts.map((d) => [d.description, d.paidOn])).toEqual([
+      ["Tarjeta", null],
+      ["Cuota del libro", "2026-11-10"],
     ]);
   });
 
@@ -88,5 +88,18 @@ describe("D9: la lista vigente de deudas", () => {
       { month: "2026-09", debts: [debt("Cuota de la tienda", "2026-09-04", null)] },
     ]);
     expect(descriptions(result)).toEqual(["Cuota de la tienda"]);
+  });
+
+  it("una pagada que vence después, o sin fecha, se da por pagada el último día del mes", () => {
+    const result = currentDebts([
+      {
+        month: "2026-10",
+        debts: [debt("Adelantada", "2026-11-05", true), debt("Sin fecha", null, true)],
+      },
+    ]);
+    expect(result.debts.map((d) => [d.description, d.paidOn])).toEqual([
+      ["Adelantada", "2026-10-31"],
+      ["Sin fecha", "2026-10-31"],
+    ]);
   });
 });

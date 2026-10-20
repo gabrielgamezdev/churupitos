@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(5);
+select plan(7);
 
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-00000000000a', 'miembro.a@ejemplo.test');
@@ -32,12 +32,26 @@ insert into public.operations (kind, occurred_on, description, created_by) value
 select throws_ok(
   'select public.reset_imported_data()',
   'P0001',
-  'Hay operaciones registradas desde la app: recargar desde los Excels las borraría',
+  'Hay operaciones o deudas registradas desde la app: recargar desde los Excels las borraría',
   'el candado: con operaciones de la app, la recarga se niega'
 );
 select lives_ok(
   'select public.reset_imported_data(include_app_data => true)',
   'pidiéndolo expresamente, sí se recarga'
+);
+
+insert into public.debts (direction, description, amount_cents, currency, created_by) values
+  ('payable', 'Agregada en la app', 1000, 'USD', '00000000-0000-4000-8000-00000000000a');
+
+select throws_ok(
+  'select public.reset_imported_data()',
+  'P0001',
+  null,
+  'el candado: con deudas agregadas en la app, la recarga también se niega'
+);
+select lives_ok(
+  'select public.reset_imported_data(include_app_data => true)',
+  'pidiéndolo expresamente, también se recarga'
 );
 
 set local role authenticated;

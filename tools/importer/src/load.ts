@@ -24,14 +24,16 @@ export type Rows = {
 
 export type Plan = { rows: Rows; operationById: Map<string, DraftOperation> };
 
+// Lo registrado en la app que la recarga borró (o habría borrado, en seco).
+export type AppData = { operations: number; debts: number };
+
 export type LoadOutcome =
   | { status: "not_run"; reason: string }
   | {
       status: "ok";
       dryRun: boolean;
       counts: Record<keyof Rows, number>;
-      // Lo registrado en la app que la recarga borró (o habría borrado, en seco).
-      appOperations: number;
+      appData: AppData;
       oracle: OracleResult | null;
     }
   | { status: "rejected"; message: string; operation: DraftOperation | null };
@@ -109,7 +111,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
         amount_cents: debt.amountCents,
         currency: debt.currency,
         due_on: debt.dueOn,
-        is_paid: debt.paid,
+        paid_on: debt.paidOn,
         position: debt.position,
       })),
     },
@@ -139,12 +141,14 @@ export async function writeRows(
   const tables = Object.keys(plan.rows) as (keyof Rows)[];
   let oracle: OracleResult | null = null;
   let written = !dryRun;
-  let appOperations = 0;
+  let appData: AppData = { operations: 0, debts: 0 };
   try {
     await sql.begin(async (tx) => {
-      const [registered] = await tx<{ count: number }[]>`
-        select count(*)::int as count from public.operations where created_by is not null`;
-      appOperations = registered?.count ?? 0;
+      const [registered] = await tx<AppData[]>`
+        select
+          (select count(*)::int from public.operations where created_by is not null) as operations,
+          (select count(*)::int from public.debts where created_by is not null) as debts`;
+      appData = registered ?? appData;
       // La base se vacía con su propia función, que lleva el candado del corte.
       await tx`select public.reset_imported_data(include_app_data => ${dryRun || discardAppData})`;
       for (const table of tables) {
@@ -174,7 +178,7 @@ export async function writeRows(
     dryRun: !written,
     counts: counts as Record<keyof Rows, number>,
     oracle,
-    appOperations,
+    appData,
   };
 }
 

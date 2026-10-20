@@ -36,7 +36,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
-import { summarizePayable } from "@/features/debts/debt-view";
+import { summarizeDebts } from "@/features/debts/debt-view";
 import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
@@ -403,11 +403,11 @@ function GalleryPage() {
           description="Lo pendiente por moneda y lo que deben por mes de vencimiento. Una vencida lo dice; una pagada va con ✅."
         >
           <DebtTotals totals={SAMPLE_DEBT_TOTALS} />
-          {summarizePayable(SAMPLE_DEBTS).groups.map((group) => (
+          {summarizeDebts(SAMPLE_DEBTS, "payable", "2026-10").groups.map((group) => (
             <DebtGroupList key={group.month ?? "sin-fecha"} group={group} today={SAMPLE_TODAY} />
           ))}
           <List>
-            {summarizePayable(SAMPLE_DEBTS).paid.map((debt) => (
+            {summarizeDebts(SAMPLE_DEBTS, "payable", "2026-10").paid.map((debt) => (
               <DebtRow key={debt.id} debt={debt} today={SAMPLE_TODAY} />
             ))}
           </List>

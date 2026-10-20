@@ -91,38 +91,52 @@ export type Database = {
         Row: {
           amount_cents: number;
           created_at: string;
+          created_by: string | null;
           currency: string;
           description: string;
           direction: string;
           due_on: string | null;
           id: string;
-          is_paid: boolean;
+          is_paid: boolean | null;
+          paid_on: string | null;
           position: number;
         };
         ComputedFields: never;
         Insert: {
           amount_cents: number;
           created_at?: string;
+          created_by?: string | null;
           currency: string;
           description: string;
           direction: string;
           due_on?: string | null;
           id?: string;
-          is_paid?: boolean;
+          is_paid?: never;
+          paid_on?: string | null;
           position?: number;
         };
         Update: {
           amount_cents?: number;
           created_at?: string;
+          created_by?: string | null;
           currency?: string;
           description?: string;
           direction?: string;
           due_on?: string | null;
           id?: string;
-          is_paid?: boolean;
+          is_paid?: never;
+          paid_on?: string | null;
           position?: number;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "debts_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       entries: {
         Row: {
@@ -548,6 +562,7 @@ export type Database = {
           total_cents: number;
         }[];
       };
+      delete_debt: { Args: { debt_id: string }; Returns: undefined };
       delete_operation: { Args: { op_id: string }; Returns: undefined };
       envelope_balances: {
         Args: { as_of?: string };
@@ -559,6 +574,7 @@ export type Database = {
       };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
+      save_debts: { Args: { debt_rows: Json }; Returns: undefined };
       save_operation: {
         Args: {
           op_date: string;
@@ -569,6 +585,7 @@ export type Database = {
         };
         Returns: string;
       };
+      set_debt_paid: { Args: { debt_id: string; paid: boolean }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

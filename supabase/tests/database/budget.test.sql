@@ -56,8 +56,8 @@ insert into public.debts (direction, description, amount_cents, currency, due_on
   ('receivable', 'Un amigo', 500000, 'VES', null, 1);
 
 -- Una cuota pagada del mes en curso: se sigue viendo, pero ya no se debe (D9).
-insert into public.debts (direction, description, amount_cents, currency, due_on, position, is_paid)
-values ('payable', 'Cuota de enero', 4000, 'USD', '2026-01-15', 3, true);
+insert into public.debts (direction, description, amount_cents, currency, due_on, position, paid_on)
+values ('payable', 'Cuota de enero', 4000, 'USD', '2026-01-15', 3, '2026-01-14');
 
 -- Como en ledger.test.sql, pero cada asiento admite un quinto elemento: su valor en
 -- dólares. Y la operación, el ingreso esperado que cobra.
