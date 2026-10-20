@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
+import { EnvelopeChip } from "@/components/envelope-chip";
 import { List } from "@/components/list";
 import { Money } from "@/components/money";
 import { Screen } from "@/components/screen";
@@ -9,14 +10,15 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EnvelopeSplit } from "@/features/accounts/envelope-split";
-import { LedgerList } from "@/features/accounts/ledger-list";
-import { envelopeRows } from "@/features/accounts/ledger-view";
-import { MonthPicker } from "@/features/accounts/month-picker";
-import { OperationDetail } from "@/features/accounts/operation-detail";
-import { accountCellsQuery, balancesAtQuery, ledgerQuery } from "@/features/accounts/queries";
+import { envelopeRows } from "@/features/accounts/envelope-rows";
+import { accountCellsQuery, balancesAtQuery } from "@/features/accounts/queries";
 import { AccountRowSkeleton } from "@/features/balances/account-row";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery } from "@/features/envelopes/queries";
+import { LedgerList } from "@/features/ledger/ledger-list";
+import { MonthPicker } from "@/features/ledger/month-picker";
+import { OperationDetail } from "@/features/ledger/operation-detail";
+import { accountLedgerQuery } from "@/features/ledger/queries";
 import { CURRENCY_NAMES, currencySlug, formatMoney } from "@/lib/money";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
 
@@ -77,7 +79,7 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
   const accountsQuery = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
   const cells = useQuery(accountCellsQuery(account.accountId));
-  const ledger = useQuery(ledgerQuery(account.accountId, month));
+  const ledger = useQuery(accountLedgerQuery(account.accountId, month));
   // R7: un mes abre con el cierre del anterior. El cierre del mes en curso es el
   // saldo de hoy, que ya está en `account`.
   const opening = useQuery(balancesAtQuery(lastDay(addMonths(month, -1))));
@@ -122,7 +124,11 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
           Sobres de esta cuenta
         </h2>
         {cells.data && envelopes.data ? (
-          <EnvelopeSplit currency={currency} rows={envelopeRows(cells.data, envelopes.data)} />
+          <EnvelopeSplit
+            currency={currency}
+            rows={envelopeRows(cells.data, envelopes.data)}
+            linked
+          />
         ) : (
           <MissingData
             queries={[cells, envelopes]}
@@ -136,9 +142,13 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
         <MonthPicker
           month={month}
           isCurrent={isCurrent}
-          currency={currency}
-          openingCents={opening.data?.[account.accountId]}
-          closingCents={isCurrent ? account.balanceCents : closing.data?.[account.accountId]}
+          bounds={[
+            {
+              currency,
+              openingCents: opening.data?.[account.accountId],
+              closingCents: isCurrent ? account.balanceCents : closing.data?.[account.accountId],
+            },
+          ]}
           onChange={changeMonth}
         />
         {ledger.data && envelopes.data ? (
@@ -148,10 +158,19 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
             </EmptyState>
           ) : (
             <LedgerList
-              currency={currency}
               entries={ledger.data}
-              envelopeById={envelopeById}
               today={todayDay}
+              renderContext={(entry) => {
+                const envelope = envelopeById[entry.envelopeId];
+                return envelope ? (
+                  <EnvelopeChip
+                    name={envelope.name}
+                    emoji={envelope.emoji}
+                    isThirdParty={envelope.isThirdParty}
+                    className="text-caption"
+                  />
+                ) : null;
+              }}
               renderDetail={(entry) => (
                 <OperationDetail
                   operationId={entry.operationId}

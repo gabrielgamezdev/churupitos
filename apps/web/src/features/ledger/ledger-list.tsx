@@ -1,37 +1,30 @@
 import { ChevronDown } from "lucide-react";
 
-import { EnvelopeChip } from "@/components/envelope-chip";
 import { List } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import type { Envelope } from "@/features/envelopes/queries";
-import type { Currency } from "@/lib/money";
 import { dayLabel } from "@/lib/months";
 
-import { groupByDay } from "./ledger-view";
+import { groupByDay } from "./group-by-day";
 import type { LedgerEntry } from "./queries";
 
 interface LedgerListProps {
-  currency: Currency;
   // Lo más nuevo arriba, como llega de la base.
   entries: LedgerEntry[];
-  envelopeById: Record<string, Envelope>;
   today: string;
+  // La línea de debajo del concepto: el sobre, en el libro de una cuenta; la cuenta,
+  // en el de un sobre.
+  renderContext: (entry: LedgerEntry) => React.ReactNode;
   // Lo que se despliega al tocar una fila: su operación entera. Solo se monta
   // abierta, así que la consulta del detalle no sale hasta que se toca.
   renderDetail: (entry: LedgerEntry) => React.ReactNode;
 }
 
 // El libro del mes, como la hoja de la cuenta en el Excel pero con lo más nuevo
-// arriba: por días, cada movimiento con su sobre, su importe y el restante que dejó.
-export function LedgerList({
-  currency,
-  entries,
-  envelopeById,
-  today,
-  renderDetail,
-}: LedgerListProps) {
+// arriba: por días, cada movimiento con su importe y el restante que dejó, cada uno en
+// su moneda.
+export function LedgerList({ entries, today, renderContext, renderDetail }: LedgerListProps) {
   return (
     <div className="flex flex-col gap-4">
       {groupByDay(entries).map(({ day, entries: dayEntries }) => (
@@ -42,8 +35,7 @@ export function LedgerList({
               <LedgerRow
                 key={entry.entryId}
                 entry={entry}
-                envelope={envelopeById[entry.envelopeId]}
-                currency={currency}
+                context={renderContext(entry)}
                 detail={renderDetail(entry)}
               />
             ))}
@@ -56,12 +48,11 @@ export function LedgerList({
 
 interface LedgerRowProps {
   entry: LedgerEntry;
-  envelope: Envelope | undefined;
-  currency: Currency;
+  context: React.ReactNode;
   detail: React.ReactNode;
 }
 
-function LedgerRow({ entry, envelope, currency, detail }: LedgerRowProps) {
+function LedgerRow({ entry, context, detail }: LedgerRowProps) {
   return (
     <Collapsible asChild>
       <li>
@@ -69,14 +60,7 @@ function LedgerRow({ entry, envelope, currency, detail }: LedgerRowProps) {
           <span className="flex min-w-0 flex-col gap-0.5">
             <span className="truncate text-body">{entry.description || "Sin concepto"}</span>
             <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              {envelope && (
-                <EnvelopeChip
-                  name={envelope.name}
-                  emoji={envelope.emoji}
-                  isThirdParty={envelope.isThirdParty}
-                  className="text-caption"
-                />
-              )}
+              {context}
               {entry.isFee && <Badge>Comisión</Badge>}
               {entry.dateApproximate && <Badge>≈ fecha</Badge>}
             </span>
@@ -85,12 +69,12 @@ function LedgerRow({ entry, envelope, currency, detail }: LedgerRowProps) {
             <span className="flex flex-col items-end gap-0.5">
               <Money
                 cents={entry.amountCents}
-                currency={currency}
+                currency={entry.currency}
                 kind="movement"
                 className="text-amount"
               />
               <span className="text-amount-small text-ink-muted">
-                Restante <Money cents={entry.runningBalanceCents} currency={currency} />
+                Restante <Money cents={entry.runningBalanceCents} currency={entry.currency} />
               </span>
             </span>
             <ChevronDown

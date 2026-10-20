@@ -124,10 +124,11 @@ Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeCh
 estirar y recargar), `ScreenHeader` y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
-`Skeleton`, `Input` y `Label`. Los de cada pantalla viven con ella en `features/`
-(`CurrencyCard` y `AccountRow` en `features/balances/`; `EnvelopeSplit`, `MonthPicker`,
-`LedgerList` y `OperationDetail` en `features/accounts/`) y entran en la galería al
-construirse, con datos inventados.
+`Skeleton`, `Collapsible`, `Input` y `Label`. Los de cada pantalla viven con ella en
+`features/` (`CurrencyCard` y `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`,
+`EnvelopeRow` en `envelopes/`) y los del libro, que comparten cuentas y sobres, en
+`features/ledger/` (`LedgerList`, `MonthPicker` y `OperationDetail`). Todos entran en la
+galería al construirse, con datos inventados.
 
 La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
 se entró directo por la dirección, va a la pantalla de arriba.
@@ -139,8 +140,9 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **AccountRow** | Una cuenta en la lista de su moneda, con su parte de «Otro» si la tiene. Las cuentas en cero siguen, en `ink-muted` |
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
-| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, sobre, importe y restante. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera |
-| **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar |
+| **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
+| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera |
+| **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda |
 | **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. La primera pantalla de una sección va sin flecha |
 | **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Inicio · Ajustes (M3), con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
 | **States** | Cargando, vacío, error y sin conexión (abajo) |

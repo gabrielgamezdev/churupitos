@@ -4,7 +4,7 @@ import type { Currency } from "@/lib/money";
 import { supabase } from "@/lib/supabase";
 
 // Los sobres y lo que tiene cada uno. Toda suma la hace la base (R2): aquí solo se
-// lee y se le da forma.
+// lee y se le da forma. Su libro está en features/ledger.
 
 export type Envelope = {
   id: string;
@@ -47,6 +47,24 @@ export function envelopeBalancesQuery(day?: string) {
       if (error) throw error;
       return data.map((row) => ({
         envelopeId: row.envelope_id,
+        currency: row.currency as Currency,
+        balanceCents: row.balance_cents,
+      }));
+    },
+  });
+}
+
+export type EnvelopeCell = { accountId: string; currency: Currency; balanceCents: number };
+
+// En qué cuentas está hoy el dinero de un sobre: sus celdas (D2).
+export function envelopeCellsQuery(envelopeId: string) {
+  return queryOptions({
+    queryKey: ["cell-balances", "envelope", envelopeId],
+    queryFn: async (): Promise<EnvelopeCell[]> => {
+      const { data, error } = await supabase.rpc("cell_balances").eq("envelope_id", envelopeId);
+      if (error) throw error;
+      return data.map((row) => ({
+        accountId: row.account_id,
         currency: row.currency as Currency,
         balanceCents: row.balance_cents,
       }));

@@ -17,6 +17,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
 import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
+import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/envelopes.$envelopeId'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -60,6 +61,12 @@ const AuthenticatedEnvelopesIndexRoute =
     path: '/envelopes/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedEnvelopesEnvelopeIdRoute =
+  AuthenticatedEnvelopesEnvelopeIdRouteImport.update({
+    id: '/envelopes/$envelopeId',
+    path: '/envelopes/$envelopeId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +85,7 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRoutesById {
@@ -88,6 +97,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/_authenticated/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/_authenticated/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/envelopes/$envelopeId'
     | '/envelopes/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/envelopes/$envelopeId'
     | '/envelopes'
   id:
     | '__root__'
@@ -118,6 +130,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/accounts/$accountId'
     | '/_authenticated/currencies/$currency'
+    | '/_authenticated/envelopes/$envelopeId'
     | '/_authenticated/envelopes/'
   fileRoutesById: FileRoutesById
 }
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEnvelopesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/envelopes/$envelopeId': {
+      id: '/_authenticated/envelopes/$envelopeId'
+      path: '/envelopes/$envelopeId'
+      fullPath: '/envelopes/$envelopeId'
+      preLoaderRoute: typeof AuthenticatedEnvelopesEnvelopeIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -193,6 +213,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAccountsAccountIdRoute: typeof AuthenticatedAccountsAccountIdRoute
   AuthenticatedCurrenciesCurrencyRoute: typeof AuthenticatedCurrenciesCurrencyRoute
+  AuthenticatedEnvelopesEnvelopeIdRoute: typeof AuthenticatedEnvelopesEnvelopeIdRoute
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
 }
 
@@ -202,6 +223,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAccountsAccountIdRoute: AuthenticatedAccountsAccountIdRoute,
   AuthenticatedCurrenciesCurrencyRoute: AuthenticatedCurrenciesCurrencyRoute,
+  AuthenticatedEnvelopesEnvelopeIdRoute: AuthenticatedEnvelopesEnvelopeIdRoute,
   AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
 }
 

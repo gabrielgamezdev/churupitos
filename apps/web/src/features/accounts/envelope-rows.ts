@@ -1,6 +1,6 @@
 import type { Envelope } from "@/features/envelopes/queries";
 
-import type { Cell, LedgerEntry } from "./queries";
+import type { Cell } from "./queries";
 
 export type EnvelopeRow = { envelope: Envelope; balanceCents: number };
 
@@ -19,17 +19,4 @@ export function envelopeRows(cells: Cell[], envelopes: Envelope[]): EnvelopeRow[
         Number(a.envelope.isThirdParty) - Number(b.envelope.isThirdParty) ||
         a.envelope.position - b.envelope.position,
     );
-}
-
-export type LedgerDay = { day: string; entries: LedgerEntry[] };
-
-// El libro por días, sin cambiar el orden en que llega (lo más nuevo arriba).
-export function groupByDay(entries: LedgerEntry[]): LedgerDay[] {
-  const days: LedgerDay[] = [];
-  for (const entry of entries) {
-    const last = days.at(-1);
-    if (last?.day === entry.day) last.entries.push(entry);
-    else days.push({ day: entry.day, entries: [entry] });
-  }
-  return days;
 }

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
@@ -57,7 +57,7 @@ function EnvelopesPage() {
       ) : (
         <List>
           {withMoney.map((summary) => (
-            <EnvelopeRow key={summary.envelope.id} {...summary} />
+            <EnvelopeRow key={summary.envelope.id} {...summary} linked />
           ))}
         </List>
       )}
@@ -75,13 +75,16 @@ function EnvelopesPage() {
           <CollapsibleContent>
             <List>
               {empty.map((envelope) => (
-                <ListRow key={envelope.id} className="text-ink-muted">
-                  <EnvelopeChip
-                    name={envelope.name}
-                    emoji={envelope.emoji}
-                    isThirdParty={envelope.isThirdParty}
-                    className="text-body"
-                  />
+                <ListRow key={envelope.id} asChild className="text-ink-muted">
+                  <Link to="/envelopes/$envelopeId" params={{ envelopeId: envelope.id }}>
+                    <EnvelopeChip
+                      name={envelope.name}
+                      emoji={envelope.emoji}
+                      isThirdParty={envelope.isThirdParty}
+                      className="text-body"
+                    />
+                    <ChevronRight aria-hidden="true" className="size-5" />
+                  </Link>
                 </ListRow>
               ))}
             </List>

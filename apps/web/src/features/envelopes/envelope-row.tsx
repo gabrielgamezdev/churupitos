@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
@@ -13,10 +16,14 @@ const CURRENCIES: Currency[] = ["VES", "USD"];
 // Un sobre en la lista de sobres: su emoji y su nombre, y lo que tiene en cada moneda,
 // una debajo de la otra y nunca sumadas (R1). Un sobre por debajo de cero en alguna
 // moneda está en descubierto (R6), que no es un error.
-export function EnvelopeRow({ envelope, balances }: EnvelopeSummary) {
+export function EnvelopeRow({
+  envelope,
+  balances,
+  linked = false,
+}: EnvelopeSummary & { linked?: boolean }) {
   const overdrawn = CURRENCIES.some((currency) => (balances[currency] ?? 0) < 0);
-  return (
-    <ListRow>
+  const content = (
+    <>
       <span className="flex min-w-0 items-center gap-2">
         <EnvelopeChip
           name={envelope.name}
@@ -26,23 +33,34 @@ export function EnvelopeRow({ envelope, balances }: EnvelopeSummary) {
         />
         {overdrawn && <Badge variant="overdrawn">Descubierto</Badge>}
       </span>
-      <span className="flex shrink-0 flex-col items-end">
-        {CURRENCIES.map((currency) => {
-          const cents = balances[currency];
-          if (cents === undefined) return null;
-          return (
-            <Money
-              key={currency}
-              cents={cents}
-              currency={currency}
-              className={cn(
-                "text-amount",
-                envelope.isThirdParty && cents > 0 && "text-third-party",
-              )}
-            />
-          );
-        })}
+      <span className="flex shrink-0 items-center gap-1">
+        <span className="flex flex-col items-end">
+          {CURRENCIES.map((currency) => {
+            const cents = balances[currency];
+            if (cents === undefined) return null;
+            return (
+              <Money
+                key={currency}
+                cents={cents}
+                currency={currency}
+                className={cn(
+                  "text-amount",
+                  envelope.isThirdParty && cents > 0 && "text-third-party",
+                )}
+              />
+            );
+          })}
+        </span>
+        {linked && <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />}
       </span>
+    </>
+  );
+  if (!linked) return <ListRow>{content}</ListRow>;
+  return (
+    <ListRow asChild>
+      <Link to="/envelopes/$envelopeId" params={{ envelopeId: envelope.id }}>
+        {content}
+      </Link>
     </ListRow>
   );
 }

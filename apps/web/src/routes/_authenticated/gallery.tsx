@@ -18,13 +18,13 @@ import {
   SAMPLE_LEDGER,
   SAMPLE_OPERATIONS,
   SAMPLE_TODAY,
-} from "@/features/accounts/gallery-samples";
-import { LedgerList } from "@/features/accounts/ledger-list";
-import { MonthPicker } from "@/features/accounts/month-picker";
-import { OperationEntries } from "@/features/accounts/operation-detail";
+} from "@/features/gallery/samples";
 import { AccountRow } from "@/features/balances/account-row";
-import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
+import { EnvelopeRow } from "@/features/envelopes/envelope-row";
+import { LedgerList } from "@/features/ledger/ledger-list";
+import { MonthPicker } from "@/features/ledger/month-picker";
+import { OperationEntries } from "@/features/ledger/operation-detail";
 
 export const Route = createFileRoute("/_authenticated/gallery")({
   component: GalleryPage,
@@ -279,13 +279,17 @@ function GalleryPage() {
           <EnvelopeSplit currency="VES" rows={SAMPLE_ENVELOPE_ROWS} />
         </Section>
 
-        <Section title="Selector de mes" description="Con lo que había al empezar y al cerrar.">
+        <Section
+          title="Selector de mes"
+          description="Con lo que había al empezar y al cerrar, en cada moneda."
+        >
           <MonthPicker
             month={month}
             isCurrent={month === "2026-10"}
-            currency="VES"
-            openingCents={300000}
-            closingCents={620000}
+            bounds={[
+              { currency: "VES", openingCents: 300000, closingCents: 620000 },
+              { currency: "USD", openingCents: 2000, closingCents: 1000 },
+            ]}
             onChange={setMonth}
           />
         </Section>
@@ -295,10 +299,19 @@ function GalleryPage() {
           description="Lo más nuevo arriba. Al tocar un movimiento se despliega su operación entera."
         >
           <LedgerList
-            currency="VES"
             entries={SAMPLE_LEDGER}
-            envelopeById={SAMPLE_ENVELOPE_BY_ID}
             today={SAMPLE_TODAY}
+            renderContext={(entry) => {
+              const envelope = SAMPLE_ENVELOPE_BY_ID[entry.envelopeId];
+              return envelope ? (
+                <EnvelopeChip
+                  name={envelope.name}
+                  emoji={envelope.emoji}
+                  isThirdParty={envelope.isThirdParty}
+                  className="text-caption"
+                />
+              ) : null;
+            }}
             renderDetail={(entry) => {
               const operation = SAMPLE_OPERATIONS[entry.operationId];
               return operation ? (

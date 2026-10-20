@@ -52,8 +52,9 @@ Todas con los estados de M2: cargando, vacío, error, sin conexión y estirar pa
 3. [x] **El libro del sobre en la base** (2026-10-19, también en la nube): la vista `envelope_ledger`, con el restante del
    sobre en cada moneda después de cada asiento (R2, R14), sus permisos y sus pruebas.
 4. [x] **Sobres**: la lista (2026-10-19).
-5. [ ] **Un sobre**: lo que tiene, en qué cuentas, el mes y el libro; los enlaces entre
-   cuentas y sobres.
+5. [x] **Un sobre** (2026-10-19): lo que tiene, en qué cuentas, el mes y el libro
+   (`/envelopes/<id>?month=2026-09`); los enlaces entre cuentas y sobres. El libro de
+   las cuentas y el de los sobres comparten piezas en `features/ledger/`.
 6. [ ] **En los teléfonos**: lo comparan con el Excel.
 
 Cada paso termina con su commit; los pasos 2, 5 y 6 terminan además con un push.
