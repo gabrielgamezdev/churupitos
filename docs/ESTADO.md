@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M3 · Sobres (por planificar)
+## Ahora: M3 · Sobres (en planificación)
 
-Cuánto tiene cada sobre y en qué cuenta: la vista «cuánto tengo en dónde» del Excel.
-Trae la barra de secciones, que M2 dejó para cuando hubiera más de una. Antes de
-empezar se acuerdan sus pantallas y se escribe su plan en `docs/modulos/`.
+Cuánto tiene cada sobre, en qué cuentas y en qué se ha ido mes a mes. Trae la barra de
+secciones, como la de la v2, y Ajustes. El plan, en borrador, está en
+`docs/modulos/M3-sobres.md`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`) y M2 · Inicio y cuentas el
