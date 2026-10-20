@@ -4,7 +4,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(25);
 
 -- Ver docs/TRAMPAS.md: sin esto, las comprobaciones diferidas no corren.
 set constraints all immediate;
@@ -54,6 +54,10 @@ insert into public.debts (direction, description, amount_cents, currency, due_on
   ('payable', 'Cuota de la tienda', 2000, 'USD', '2026-02-15', 1),
   ('payable', 'Tarjeta', 3000, 'USD', null, 2),
   ('receivable', 'Un amigo', 500000, 'VES', null, 1);
+
+-- Una cuota pagada del mes en curso: se sigue viendo, pero ya no se debe (D9).
+insert into public.debts (direction, description, amount_cents, currency, due_on, position, is_paid)
+values ('payable', 'Cuota de enero', 4000, 'USD', '2026-01-15', 3, true);
 
 -- Como en ledger.test.sql, pero cada asiento admite un quinto elemento: su valor en
 -- dólares. Y la operación, el ingreso esperado que cobra.
@@ -246,7 +250,13 @@ select results_eq(
   $$ values
        ('payable', 'USD', 5000::bigint),
        ('receivable', 'VES', 500000::bigint) $$,
-  'R17: el total de las deudas y de los deudores, por moneda'
+  'R17: lo pendiente de las deudas y de los deudores, por moneda, sin las pagadas'
+);
+
+select results_eq(
+  $$ select description from public.debts where is_paid $$,
+  $$ values ('Cuota de enero') $$,
+  'D9: una cuota pagada del mes se sigue viendo'
 );
 
 select throws_ok(

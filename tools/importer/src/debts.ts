@@ -1,4 +1,4 @@
-// D9: de Deudas y Deudores se importa solo la lista vigente.
+// D9: de Deudas y Deudores se importa la lista vigente y las pagadas del mes en curso.
 //
 // Cada Excel guarda la lista de su mes. Desde octubre de 2026, cada deuda lleva ✅ si
 // ya se pagó y ⏳ si no; antes, las pagadas se borraban. Y el libro del mes siguiente
@@ -9,6 +9,9 @@
 //   pasaron al siguiente.
 // Una deuda sin fecha que sigue en ⏳ en el libro anterior pero no pasó al último se
 // dejó de pagar a propósito: queda en el Excel como recuerdo, y no se importa.
+//
+// Las pagadas (✅) son las del libro del mes en curso: el último que no es solo
+// planificación. Las de meses anteriores no se guardan.
 
 import type { DebtRow } from "./budget-sheet.ts";
 import { Issues } from "./issues.ts";
@@ -22,10 +25,12 @@ export type DebtDraft = {
   amountCents: number;
   currency: Currency;
   dueOn: string | null;
+  paid: boolean;
   position: number;
 };
 
-export type MonthDebts = { month: string; debts: DebtRow[] };
+// `planning`: el libro de un mes que aún no empieza (DOMINIO §2).
+export type MonthDebts = { month: string; debts: DebtRow[]; planning?: boolean };
 
 // Por encima de esto, un deudor sin moneda está en bolívares: nadie le presta mil
 // dólares a un vecino, y mil bolívares son poca cosa.
@@ -65,6 +70,12 @@ export function currentDebts(months: MonthDebts[]): { debts: DebtDraft[]; issues
   if (last) {
     for (const debt of last.debts) if (debt.paid !== true) picked.push({ debt, month: last.month });
   }
+  const current = months.findLast((month) => !month.planning);
+  if (current) {
+    for (const debt of current.debts) {
+      if (debt.paid === true) picked.push({ debt, month: current.month });
+    }
+  }
 
   const debts: DebtDraft[] = [];
   for (const { debt, month } of picked) {
@@ -86,6 +97,7 @@ export function currentDebts(months: MonthDebts[]): { debts: DebtDraft[]; issues
       amountCents: debt.amountCents,
       currency,
       dueOn: debt.dueOn,
+      paid: debt.paid === true,
       position: debts.length + 1,
     });
   }

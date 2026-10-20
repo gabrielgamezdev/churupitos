@@ -165,17 +165,18 @@ export function buildReport(pkg: ImportPackage, months: MonthData[], outcome: Lo
   lines.push(
     "## 8. Las deudas",
     "",
-    "Decisión por defecto: solo la lista del último mes (D9).",
+    "Decisión por defecto: lo pendiente y las pagadas del mes en curso (D9).",
     "",
   );
   lines.push(
     table(
-      ["", "Concepto", "Importe", "Vence"],
+      ["", "Concepto", "Importe", "Vence", ""],
       pkg.debts.map((debt) => [
         debt.direction === "payable" ? "Debemos" : "Nos deben",
         debt.description,
         money(debt.amountCents, debt.currency),
         debt.dueOn ?? "",
+        debt.paid ? "✅" : "",
       ]),
     ),
     "",

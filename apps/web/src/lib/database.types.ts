@@ -96,6 +96,7 @@ export type Database = {
           direction: string;
           due_on: string | null;
           id: string;
+          is_paid: boolean;
           position: number;
         };
         ComputedFields: never;
@@ -107,6 +108,7 @@ export type Database = {
           direction: string;
           due_on?: string | null;
           id?: string;
+          is_paid?: boolean;
           position?: number;
         };
         Update: {
@@ -117,6 +119,7 @@ export type Database = {
           direction?: string;
           due_on?: string | null;
           id?: string;
+          is_paid?: boolean;
           position?: number;
         };
         Relationships: [];

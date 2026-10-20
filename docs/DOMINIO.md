@@ -150,7 +150,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 - **R16 — Las comisiones se registran a mano**, como asiento de comisión, que
   siempre es una salida: importe negativo.
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
-  la cuota pagada sale de la lista vigente (en el Excel se borra o se marca ✅).
+  la cuota pagada deja de estar pendiente y no suma en lo que se debe. Las del mes en
+  curso se siguen viendo, marcadas ✅, como en el Excel desde octubre de 2026.
 - **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
   cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
   mes, en dólares, cubre lo planeado.
@@ -178,7 +179,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes; los Bs, la fecha, la tasa y el ✅, del cobro (`R8`, `R18`) |
 | Distribución del PRESUPUESTO | El plan del mes; los Bs y el ✅, calculados (`R10`, `R18`) |
 | Restante en las cuentas | Calculado |
-| Deudas y deudores | La lista vigente (`D9`): lo no pagado del último libro y las cuotas con fecha del anterior que siguen en ⏳. Una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra |
+| Deudas y deudores | La lista vigente (`D9`): lo no pagado del último libro y las cuotas con fecha del anterior que siguen en ⏳. Una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra. Y las ✅ del libro del mes en curso (el último que no es solo planificación), como pagadas |
 | El libro de un mes que aún no empieza | Su presupuesto y sus deudas. Sus saldos no se comparan con los de la app hasta que empieza |
 | Zona libre (borradores) | No se importa |
 
@@ -199,7 +200,7 @@ con qué emoji pinta la app cada sobre y cada ingreso vive en `privado/import/ca
 | D6 | «Otro» es un solo sobre, como en el Excel | 2026-10-14 |
 | D7 | Los préstamos entre sobres son movimientos simples; los que se quieren recordar van a Deudas | 2026-10-14 |
 | D8 | El Pote es un sobre | 2026-10-14 |
-| D9 | De Deudas y Deudores se importa solo la lista vigente, con ✅/⏳ desde octubre de 2026 (§5) | 2026-10-14, revisada el 2026-10-19 |
+| D9 | De Deudas y Deudores se importa la lista vigente y las pagadas del mes en curso, con ✅/⏳ desde octubre de 2026 (§5) | 2026-10-14, revisada el 2026-10-19 y el 2026-10-20 |
 | D10 | El presupuesto se importa tal cual, con los Bs de cada sobre calculados del reparto | 2026-10-14 |
 | D11 | La zona libre del presupuesto no se importa | 2026-10-14 |
 | D12 | Las filas raras entran marcadas y ordenadas: fecha aproximada, concepto vacío, títulos como descripción | 2026-10-14 |

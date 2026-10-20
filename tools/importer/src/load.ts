@@ -107,6 +107,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
         amount_cents: debt.amountCents,
         currency: debt.currency,
         due_on: debt.dueOn,
+        is_paid: debt.paid,
         position: debt.position,
       })),
     },

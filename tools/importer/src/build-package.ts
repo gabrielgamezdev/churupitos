@@ -12,6 +12,7 @@ import { groupMonth } from "./group-month.ts";
 import { Issues } from "./issues.ts";
 import type { Issue } from "./issues.ts";
 import type { Currency } from "./money.ts";
+import { isPlanningOnly } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
 import { linkReceipts } from "./receipts.ts";
 import type { ExpectedIncomeDraft } from "./receipts.ts";
@@ -102,9 +103,13 @@ export function buildPackage(months: MonthData[], catalog: Catalog): ImportPacka
     );
   });
 
-  // D9: de las deudas, solo la lista vigente (src/debts.ts).
+  // D9: de las deudas, la lista vigente y las pagadas del mes en curso (src/debts.ts).
   const current = currentDebts(
-    sorted.map((data) => ({ month: data.month, debts: data.budget?.debts ?? [] })),
+    sorted.map((data) => ({
+      month: data.month,
+      debts: data.budget?.debts ?? [],
+      planning: isPlanningOnly(data),
+    })),
   );
   result.debts = current.debts;
   result.issues.push(...current.issues);

@@ -42,8 +42,35 @@ describe("D9: la lista vigente de deudas", () => {
         ],
       },
     ]);
-    expect(descriptions(result)).toEqual(["Cuota del teléfono", "Tarjeta", "Cuota de la tienda"]);
-    expect(result.debts.map((d) => d.position)).toEqual([1, 2, 3]);
+    expect(result.debts.filter((d) => !d.paid).map((d) => d.description)).toEqual([
+      "Cuota del teléfono",
+      "Tarjeta",
+      "Cuota de la tienda",
+    ]);
+  });
+
+  it("las pagadas son las del mes en curso: si el último libro es planificación, las del anterior", () => {
+    const october = {
+      month: "2026-10",
+      debts: [debt("Cuota de la tienda", "2026-10-04", true), debt("Tarjeta", "2026-11-05", false)],
+    };
+    const november = {
+      month: "2026-11",
+      debts: [debt("Tarjeta", "2026-11-05", false), debt("Cuota del libro", "2026-11-10", true)],
+    };
+    const planned = currentDebts([october, { ...november, planning: true }]);
+    expect(planned.debts.map((d) => [d.description, d.paid])).toEqual([
+      ["Tarjeta", false],
+      ["Cuota de la tienda", true],
+    ]);
+    expect(planned.debts.map((d) => d.position)).toEqual([1, 2]);
+
+    // Ya en noviembre, las de octubre dejan de verse.
+    const started = currentDebts([october, november]);
+    expect(started.debts.map((d) => [d.description, d.paid])).toEqual([
+      ["Tarjeta", false],
+      ["Cuota del libro", true],
+    ]);
   });
 
   it("una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra, con aviso", () => {

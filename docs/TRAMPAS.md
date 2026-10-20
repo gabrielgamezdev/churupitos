@@ -34,6 +34,12 @@ comillas invertidas se ejecuta como orden y desaparece del texto.
 **Usar cadenas *raw* (`r'''...'''`), o escribir el archivo con la herramienta de
 edición (o un script en un archivo) en vez de con un heredoc o un `-e`.**
 
+### Un script que edita SQL con `replace` convierte `$$` en `$`
+En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `$`,
+`$&` es lo encontrado. Una prueba de pgTAP editada así perdió la mitad de sus `$$` y
+dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
+`replace(a, () => b)`.**
+
 ## El importador
 
 ### Un mes preparado antes de tiempo rompe la carga
