@@ -1,0 +1,27 @@
+import { Money } from "@/components/money";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface BudgetTotalsProps {
+  // Sin definir mientras carga.
+  items: { label: string; cents: number | undefined }[];
+}
+
+// Las filas «Total» de un bloque del presupuesto, en dólares y una al lado de la otra.
+export function BudgetTotals({ items }: BudgetTotalsProps) {
+  return (
+    <dl className="grid grid-cols-3 gap-3 rounded-lg bg-surface-raised px-4 py-3">
+      {items.map(({ label, cents }) => (
+        <div key={label} className="flex min-w-0 flex-col gap-0.5">
+          <dt className="text-caption text-ink-muted">{label}</dt>
+          <dd className="text-amount">
+            {cents === undefined ? (
+              <Skeleton aria-label="Cargando" className="h-4 w-16" />
+            ) : (
+              <Money cents={cents} currency="USD" />
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}

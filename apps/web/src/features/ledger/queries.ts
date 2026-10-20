@@ -103,6 +103,8 @@ export type OperationDetail = {
     amountCents: number;
     isFee: boolean;
     description: string;
+    // En una línea del reparto de un cobro en bolívares, su valor en dólares (R9).
+    usdValueCents: number | null;
   }[];
 };
 
@@ -114,7 +116,7 @@ export function operationQuery(operationId: string) {
       const { data, error } = await supabase
         .from("operations")
         .select(
-          "kind, adjustment_reason, entries(id, account_id, envelope_id, amount_cents, is_fee, description, position)",
+          "kind, adjustment_reason, entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
         )
         .eq("id", operationId)
         .order("position", { referencedTable: "entries" })
@@ -130,6 +132,7 @@ export function operationQuery(operationId: string) {
           amountCents: entry.amount_cents,
           isFee: entry.is_fee,
           description: entry.description,
+          usdValueCents: entry.usd_value_cents,
         })),
       };
     },

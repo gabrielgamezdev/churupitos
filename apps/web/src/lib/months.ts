@@ -36,6 +36,7 @@ export function lastDay(month: string): string {
 const monthYear = new Intl.DateTimeFormat("es-VE", { month: "long", year: "numeric" });
 const monthOnly = new Intl.DateTimeFormat("es-VE", { month: "long" });
 const weekday = new Intl.DateTimeFormat("es-VE", { weekday: "long" });
+const dayMonth = new Intl.DateTimeFormat("es-VE", { day: "numeric", month: "long" });
 
 function toDate(day: string): Date {
   const [year, month, date] = day.split("-").map(Number) as [number, number, number];
@@ -52,6 +53,11 @@ export function monthLabel(month: string): string {
 // «septiembre», para dentro de una frase.
 export function monthName(month: string): string {
   return monthOnly.format(toDate(firstDay(month)));
+}
+
+// «10 de octubre», para un día que puede no ser del mes que se mira.
+export function dayMonthLabel(day: string): string {
+  return dayMonth.format(toDate(day));
 }
 
 // El encabezado de cada día del libro: «Hoy», «Ayer» o «Lunes 13».

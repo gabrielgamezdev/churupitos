@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { monthOf } from "@/lib/months";
+import type { Currency } from "@/lib/money";
+import { firstDay, monthOf } from "@/lib/months";
 import { required } from "@/lib/required";
 import { supabase } from "@/lib/supabase";
 
@@ -37,3 +38,54 @@ export const budgetChecksQuery = queryOptions({
     }));
   },
 });
+
+// Un ingreso esperado del mes y, si llegó, su cobro: cuándo, en qué cuenta, cuánto en
+// la moneda de la cuenta y cuánto en dólares (R8: la tasa sale de esos dos).
+export type ExpectedIncome = {
+  id: string;
+  name: string;
+  emoji: string | null;
+  expectedUsdCents: number;
+  receipt: {
+    operationId: string;
+    day: string;
+    accountId: string;
+    currency: Currency;
+    amountCents: number;
+    usdCents: number;
+  } | null;
+};
+
+// Los ingresos esperados de un mes, en el orden del Excel.
+export function expectedIncomesQuery(month: string) {
+  return queryOptions({
+    queryKey: ["expected-incomes", month],
+    queryFn: async (): Promise<ExpectedIncome[]> => {
+      const { data, error } = await supabase
+        .from("expected_income_summary")
+        .select(
+          "expected_income_id, name, emoji, expected_usd_cents, operation_id, received_on, account_id, currency, received_cents, received_usd_cents",
+        )
+        .eq("month_start", firstDay(month))
+        .order("position");
+      if (error) throw error;
+      return data.map((row) => ({
+        id: required(row.expected_income_id, "expected_income_id"),
+        name: required(row.name, "name"),
+        emoji: row.emoji,
+        expectedUsdCents: required(row.expected_usd_cents, "expected_usd_cents"),
+        receipt:
+          row.operation_id === null
+            ? null
+            : {
+                operationId: row.operation_id,
+                day: required(row.received_on, "received_on"),
+                accountId: required(row.account_id, "account_id"),
+                currency: required(row.currency, "currency") as Currency,
+                amountCents: required(row.received_cents, "received_cents"),
+                usdCents: required(row.received_usd_cents, "received_usd_cents"),
+              },
+      }));
+    },
+  });
+}

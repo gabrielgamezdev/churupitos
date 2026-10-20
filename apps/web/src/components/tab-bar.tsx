@@ -76,8 +76,10 @@ export function TabBar() {
           const Icon = ICONS[section.id];
           const active = current === section.id;
           const center = section.id === "home";
+          // Las cinco del mismo ancho, aunque «Presupuesto» no quepa en el suyo: así Inicio
+          // queda en el centro, y la etiqueta larga se sale un poco por los lados.
           return (
-            <li key={section.id} className="flex flex-1">
+            <li key={section.id} className="flex min-w-0 flex-1">
               <Link
                 to={section.path}
                 aria-current={active ? "page" : undefined}
@@ -86,7 +88,7 @@ export function TabBar() {
                   goTo(section);
                 }}
                 className={cn(
-                  "flex flex-1 flex-col items-center justify-center gap-0.5 text-label",
+                  "flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-label whitespace-nowrap",
                   active ? "text-brand" : "text-ink-muted",
                 )}
               >

@@ -92,12 +92,23 @@ export function OperationEntries({ operation, accountById, envelopeById }: Opera
                 {entry.isFee && <Badge>Comisión</Badge>}
               </span>
               {account && (
-                <Money
-                  cents={entry.amountCents}
-                  currency={account.currency}
-                  kind="movement"
-                  className="text-amount-small"
-                />
+                <span className="flex shrink-0 flex-col items-end">
+                  <Money
+                    cents={entry.amountCents}
+                    currency={account.currency}
+                    kind="movement"
+                    className="text-amount-small"
+                  />
+                  {/* Lo que se decidió en dólares, como el «$N de…» del Excel (R9). La
+                      caché de antes no lo trae: sin él, solo el importe. */}
+                  {entry.usdValueCents != null && (
+                    <Money
+                      cents={entry.usdValueCents}
+                      currency="USD"
+                      className="text-amount-small text-ink-muted"
+                    />
+                  )}
+                </span>
               )}
             </li>
           );

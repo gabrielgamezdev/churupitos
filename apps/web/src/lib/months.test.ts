@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   addMonths,
   dayLabel,
+  dayMonthLabel,
   isMonth,
   lastDay,
   monthLabel,
@@ -39,6 +40,10 @@ describe("los meses del libro", () => {
   it("nombra el mes como el Excel", () => {
     expect(monthLabel("2026-10")).toBe("Octubre 2026");
     expect(monthName("2026-09")).toBe("septiembre");
+  });
+
+  it("nombra un día con su mes, para cuando puede ser de otro", () => {
+    expect(dayMonthLabel("2026-09-30")).toBe("30 de septiembre");
   });
 
   it("nombra cada día del libro", () => {

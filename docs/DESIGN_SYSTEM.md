@@ -117,7 +117,7 @@ tabulares.
 
 ## Componentes
 
-Los de M2. Cada uno lee de la base; ninguno calcula un saldo (`R2`).
+Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
@@ -126,7 +126,7 @@ debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de sha
 adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
 `Skeleton`, `Collapsible`, `Input` y `Label`. Los de cada pantalla viven con ella en
 `features/` (`CurrencyCard` y `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`,
-`EnvelopeRow` en `envelopes/`) y los del libro, que comparten cuentas y sobres, en
+`EnvelopeRow` en `envelopes/`, `BudgetTotals` e `IncomeRow` en `budget/`) y los del libro, que comparten cuentas y sobres, en
 `features/ledger/` (`LedgerList`, `MonthPicker` y `OperationDetail`). Todos entran en la
 galería al construirse, con datos inventados.
 
@@ -141,10 +141,12 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
-| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera |
-| **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda |
+| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera, y en un cobro cada línea lleva también su valor en $ (`R9`) |
+| **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
+| **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
+| **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y ✅ cobrado o ⏳ pendiente. Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |
 | **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. La primera pantalla de una sección va sin flecha |
-| **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Inicio · Ajustes (M3), con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
+| **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Deudas · Inicio · Presupuesto · Ajustes, todas del mismo ancho y con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
 | **States** | Cargando, vacío, error y sin conexión (abajo) |
 
 ## Estados
@@ -164,14 +166,17 @@ se entró directo por la dirección, va a la pantalla de arriba.
 - Las palabras del Excel: cuenta, sobre, «Otro», cobro, descubierto, restante. Nunca
   «categoría», «billetera virtual» ni «balance».
 - Sin exclamaciones ni urgencia. Los errores dicen qué pasó y qué hacer, sin disculpas.
-- Los emoji son de los sobres y de los ingresos, como en el Excel. Nunca de adorno en
+- Los emoji son de los sobres y de los ingresos, como en el Excel, y ✅/⏳ dicen lo
+  cobrado o entregado y lo pendiente, también como en el Excel. Nunca de adorno en
   títulos, botones ni avisos.
 - «Otro» va entre comillas latinas dentro de una frase.
 
 ## Iconos
 
 Lucide (`lucide-react`), con trazo de 2 px, en 20 o 24 px y del color del texto que
-acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw`. El logotipo es el
+acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw`, `construction` en
+lo que está en construcción, y los de la barra (`mail`, `hand-coins`, `house`,
+`chart-pie` y `settings`). El logotipo es el
 icono de la app (`apps/web/public/favicon.svg`): un sobre sobre `brand` con la moneda en
 `coin`. Es provisional desde M0.
 

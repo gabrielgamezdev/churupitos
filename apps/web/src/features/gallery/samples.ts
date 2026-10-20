@@ -3,6 +3,7 @@
 // suman lo mismo.
 
 import type { EnvelopeRow } from "@/features/accounts/envelope-rows";
+import type { ExpectedIncome } from "@/features/budget/queries";
 import type { Envelope } from "@/features/envelopes/queries";
 import type { LedgerEntry, OperationDetail } from "@/features/ledger/queries";
 
@@ -77,7 +78,17 @@ export const SAMPLE_LEDGER: LedgerEntry[] = [
 const single = (id: string, envelopeId: string, amountCents: number, isFee = false) => ({
   kind: "expense",
   adjustmentReason: null,
-  entries: [{ id, accountId: "banco-a", envelopeId, amountCents, isFee, description: "" }],
+  entries: [
+    {
+      id,
+      accountId: "banco-a",
+      envelopeId,
+      amountCents,
+      isFee,
+      description: "",
+      usdValueCents: null,
+    },
+  ],
 });
 
 export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
@@ -95,6 +106,7 @@ export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
         amountCents: -10000,
         isFee: false,
         description: "",
+        usdValueCents: null,
       },
       {
         id: "cambio-entra",
@@ -103,7 +115,83 @@ export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
         amountCents: 400000,
         isFee: false,
         description: "",
+        usdValueCents: null,
+      },
+    ],
+  },
+  // Un cobro de $100 a Bs 400 en el Banco A, repartido en dólares entre dos sobres (R9).
+  cobro: {
+    kind: "income",
+    adjustmentReason: null,
+    entries: [
+      {
+        id: "cobro-ahorro",
+        accountId: "banco-a",
+        envelopeId: "ahorro",
+        amountCents: 2400000,
+        isFee: false,
+        description: "",
+        usdValueCents: 6000,
+      },
+      {
+        id: "cobro-comida",
+        accountId: "banco-a",
+        envelopeId: "comida",
+        amountCents: 1600000,
+        isFee: false,
+        description: "",
+        usdValueCents: 4000,
+      },
+    ],
+  },
+  // En una cuenta en dólares, el importe ya es su valor en dólares.
+  "cobro-quincena": {
+    kind: "income",
+    adjustmentReason: null,
+    entries: [
+      {
+        id: "quincena-transporte",
+        accountId: "billetera-b",
+        envelopeId: "transporte",
+        amountCents: 5000,
+        isFee: false,
+        description: "",
+        usdValueCents: null,
       },
     ],
   },
 };
+
+// Los ingresos de un mes: uno cobrado en bolívares (el de arriba), otro en dólares y
+// uno que todavía no llega.
+export const SAMPLE_INCOMES: ExpectedIncome[] = [
+  {
+    id: "bono",
+    name: "Bono",
+    emoji: "💰",
+    expectedUsdCents: 10000,
+    receipt: {
+      operationId: "cobro",
+      day: "2026-10-09",
+      accountId: "banco-a",
+      currency: "VES",
+      amountCents: 4000000,
+      usdCents: 10000,
+    },
+  },
+  {
+    id: "quincena",
+    name: "Quincena",
+    emoji: "💵",
+    expectedUsdCents: 5000,
+    receipt: {
+      operationId: "cobro-quincena",
+      day: "2026-09-30",
+      accountId: "billetera-b",
+      currency: "USD",
+      amountCents: 5000,
+      usdCents: 5000,
+    },
+  },
+  { id: "extra", name: "Extra", emoji: null, expectedUsdCents: 2000, receipt: null },
+];

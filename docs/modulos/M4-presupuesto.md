@@ -74,13 +74,15 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
 1. [x] **Plan aprobado** por el autor (2026-10-19).
 2. [x] **El emoji de los ingresos** (2026-10-20, también en la nube): la columna, el
    catálogo y la recarga, en local y en la nube.
-3. [ ] **Las secciones y el mes**: Deudas (en construcción) y Presupuesto en la barra;
-   `/budget?month=2026-09`, con el mes siguiente si ya tiene presupuesto.
-4. [ ] **Los ingresos del mes**: sus totales, cada ingreso y su cobro desplegable.
+3. [x] **Las secciones y el mes** (2026-10-20): Deudas (en construcción) y Presupuesto en
+   la barra; `/budget?month=2026-09`, con el mes siguiente si ya tiene presupuesto.
+4. [x] **Los ingresos del mes** (2026-10-20): sus totales, cada ingreso y su cobro
+   desplegable, con el valor en $ de cada línea del reparto.
 5. [ ] **El plan**: sus totales, cada sobre con su enlace, los de $0 plegados y el cuadre.
 6. [ ] **En los teléfonos**: lo comparan con el Excel.
 
-Cada paso termina con su commit; los pasos 3, 5 y 6 terminan además con un push.
+Cada paso termina con su commit; los pasos 5 y 6 terminan además con un push, para que
+la pantalla llegue entera a los teléfonos.
 
 ## Tope de complejidad
 

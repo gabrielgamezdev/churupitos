@@ -15,12 +15,15 @@ import {
   SAMPLE_ENVELOPE_BY_ID,
   SAMPLE_ENVELOPES,
   SAMPLE_ENVELOPE_ROWS,
+  SAMPLE_INCOMES,
   SAMPLE_LEDGER,
   SAMPLE_OPERATIONS,
   SAMPLE_TODAY,
 } from "@/features/gallery/samples";
 import { AccountRow } from "@/features/balances/account-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
+import { BudgetTotals } from "@/features/budget/budget-totals";
+import { IncomeRow } from "@/features/budget/income-row";
 import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
@@ -323,6 +326,46 @@ function GalleryPage() {
               ) : null;
             }}
           />
+        </Section>
+
+        <Section
+          title="Ingresos del mes"
+          description="Los totales, como las filas «Total» del Excel. Al tocar un ingreso cobrado se despliega su reparto."
+        >
+          <BudgetTotals
+            items={[
+              { label: "Se espera", cents: 17000 },
+              { label: "Cobrado", cents: 15000 },
+              { label: "Falta", cents: 2000 },
+            ]}
+          />
+          <List>
+            {SAMPLE_INCOMES.map((income) => {
+              const operation = income.receipt && SAMPLE_OPERATIONS[income.receipt.operationId];
+              return (
+                <IncomeRow
+                  key={income.id}
+                  income={income}
+                  accountName={
+                    income.receipt
+                      ? SAMPLE_ACCOUNT_BY_ID[
+                          income.receipt.accountId as keyof typeof SAMPLE_ACCOUNT_BY_ID
+                        ]?.name
+                      : undefined
+                  }
+                  detail={
+                    operation && (
+                      <OperationEntries
+                        operation={operation}
+                        accountById={SAMPLE_ACCOUNT_BY_ID}
+                        envelopeById={SAMPLE_ENVELOPE_BY_ID}
+                      />
+                    )
+                  }
+                />
+              );
+            })}
+          </List>
         </Section>
 
         <Section title="Estados">
