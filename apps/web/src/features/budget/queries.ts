@@ -89,3 +89,44 @@ export function expectedIncomesQuery(month: string) {
     },
   });
 }
+
+// Lo planeado para un sobre en un mes y lo que ya le llegó del reparto de los cobros
+// de ese mes: en dólares y, lo que cayó en bolívares, en Bs (R10). Entregado (✅)
+// cuando lo que llegó cubre lo planeado (R18).
+export type BudgetLine = {
+  id: string;
+  envelopeId: string;
+  plannedUsdCents: number;
+  allocatedUsdCents: number;
+  allocatedVesCents: number;
+  isDelivered: boolean;
+  // «Fuente de fondos» y «Acción», tal cual se escribieron.
+  fundingNote: string;
+  actionNote: string;
+};
+
+// El plan de un mes, sin orden: el del presupuesto es el de los sobres.
+export function budgetLinesQuery(month: string) {
+  return queryOptions({
+    queryKey: ["budget-lines", month],
+    queryFn: async (): Promise<BudgetLine[]> => {
+      const { data, error } = await supabase
+        .from("budget_summary")
+        .select(
+          "budget_line_id, envelope_id, planned_usd_cents, allocated_usd_cents, allocated_ves_cents, is_delivered, funding_note, action_note",
+        )
+        .eq("month_start", firstDay(month));
+      if (error) throw error;
+      return data.map((row) => ({
+        id: required(row.budget_line_id, "budget_line_id"),
+        envelopeId: required(row.envelope_id, "envelope_id"),
+        plannedUsdCents: required(row.planned_usd_cents, "planned_usd_cents"),
+        allocatedUsdCents: required(row.allocated_usd_cents, "allocated_usd_cents"),
+        allocatedVesCents: required(row.allocated_ves_cents, "allocated_ves_cents"),
+        isDelivered: required(row.is_delivered, "is_delivered"),
+        fundingNote: row.funding_note ?? "",
+        actionNote: row.action_note ?? "",
+      }));
+    },
+  });
+}

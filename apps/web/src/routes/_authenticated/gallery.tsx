@@ -12,18 +12,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EnvelopeSplit } from "@/features/accounts/envelope-split";
 import {
   SAMPLE_ACCOUNT_BY_ID,
+  SAMPLE_CHECKS,
   SAMPLE_ENVELOPE_BY_ID,
   SAMPLE_ENVELOPES,
   SAMPLE_ENVELOPE_ROWS,
   SAMPLE_INCOMES,
   SAMPLE_LEDGER,
   SAMPLE_OPERATIONS,
+  SAMPLE_PLAN,
   SAMPLE_TODAY,
 } from "@/features/gallery/samples";
 import { AccountRow } from "@/features/balances/account-row";
 import { CurrencyCard } from "@/features/balances/currency-card";
+import { BudgetCheckList } from "@/features/budget/budget-check-list";
 import { BudgetTotals } from "@/features/budget/budget-totals";
 import { IncomeRow } from "@/features/budget/income-row";
+import { PlanRow } from "@/features/budget/plan-row";
 import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
@@ -366,6 +370,23 @@ function GalleryPage() {
               );
             })}
           </List>
+        </Section>
+
+        <Section
+          title="El plan"
+          description="Lo planeado en $, lo que le llegó en Bs y ✅/⏳. Cada sobre lleva a su pantalla."
+        >
+          <List>
+            {SAMPLE_PLAN.map((row) => (
+              <PlanRow key={row.line.id} {...row} />
+            ))}
+          </List>
+        </Section>
+
+        <Section title="El cuadre" description="Un mes que cuadra y otro que no: avisa, no impide.">
+          {SAMPLE_CHECKS.map((checks) => (
+            <BudgetCheckList key={checks.month} checks={checks} />
+          ))}
         </Section>
 
         <Section title="Estados">

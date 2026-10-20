@@ -78,7 +78,8 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
    la barra; `/budget?month=2026-09`, con el mes siguiente si ya tiene presupuesto.
 4. [x] **Los ingresos del mes** (2026-10-20): sus totales, cada ingreso y su cobro
    desplegable, con el valor en $ de cada línea del reparto.
-5. [ ] **El plan**: sus totales, cada sobre con su enlace, los de $0 plegados y el cuadre.
+5. [x] **El plan** (2026-10-20): sus totales, cada sobre con su enlace, los de $0
+   plegados y el cuadre.
 6. [ ] **En los teléfonos**: lo comparan con el Excel.
 
 Cada paso termina con su commit; los pasos 5 y 6 terminan además con un push, para que

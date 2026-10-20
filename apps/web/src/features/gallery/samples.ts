@@ -3,7 +3,8 @@
 // suman lo mismo.
 
 import type { EnvelopeRow } from "@/features/accounts/envelope-rows";
-import type { ExpectedIncome } from "@/features/budget/queries";
+import type { PlanRow } from "@/features/budget/budget-view";
+import type { BudgetChecks, ExpectedIncome } from "@/features/budget/queries";
 import type { Envelope } from "@/features/envelopes/queries";
 import type { LedgerEntry, OperationDetail } from "@/features/ledger/queries";
 
@@ -194,4 +195,51 @@ export const SAMPLE_INCOMES: ExpectedIncome[] = [
     },
   },
   { id: "extra", name: "Extra", emoji: null, expectedUsdCents: 2000, receipt: null },
+];
+
+const planLine = (
+  envelopeIndex: number,
+  plannedUsdCents: number,
+  allocatedUsdCents: number,
+  notes: [string, string],
+) => {
+  const envelope = SAMPLE_ENVELOPES[envelopeIndex]!;
+  return {
+    envelope,
+    line: {
+      id: envelope.id,
+      envelopeId: envelope.id,
+      plannedUsdCents,
+      allocatedUsdCents,
+      allocatedVesCents: allocatedUsdCents * 400,
+      isDelivered: allocatedUsdCents >= plannedUsdCents,
+      fundingNote: notes[0],
+      actionNote: notes[1],
+    },
+  };
+};
+
+// El plan del cobro de arriba: Ahorro recibió todo, Comida una parte y Transporte nada.
+export const SAMPLE_PLAN: PlanRow[] = [
+  planLine(0, 6000, 6000, ["💰 Bono", "Cambiar a USDT"]),
+  planLine(1, 6000, 4000, ["💰 Bono, 💵 Quincena", "Mantener en bolívares"]),
+  planLine(2, 2000, 0, ["Extra", ""]),
+];
+
+// Un mes que cuadra y otro con $20 esperados sin plan y Bs 100 cobrados sin repartir.
+export const SAMPLE_CHECKS: BudgetChecks[] = [
+  {
+    month: "2026-10",
+    expectedUsdCents: 17000,
+    plannedUsdCents: 17000,
+    receivedVesCents: 4000000,
+    allocatedVesCents: 4000000,
+  },
+  {
+    month: "2026-09",
+    expectedUsdCents: 17000,
+    plannedUsdCents: 15000,
+    receivedVesCents: 4010000,
+    allocatedVesCents: 4000000,
+  },
 ];

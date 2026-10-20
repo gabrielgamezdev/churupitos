@@ -1,20 +1,27 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 
-import { List } from "@/components/list";
+import { EnvelopeChip } from "@/components/envelope-chip";
+import { List, ListRow } from "@/components/list";
 import { Screen } from "@/components/screen";
 import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
+import { BudgetCheckList } from "@/features/budget/budget-check-list";
 import { BudgetTotals } from "@/features/budget/budget-totals";
-import { incomeTotals } from "@/features/budget/budget-view";
+import { incomeTotals, summarizePlan } from "@/features/budget/budget-view";
 import { IncomeRow, IncomeRowSkeleton } from "@/features/budget/income-row";
 import { budgetMonth, budgetMonthRange } from "@/features/budget/months";
+import { PlanRow, PlanRowSkeleton } from "@/features/budget/plan-row";
 import {
   budgetChecksQuery,
+  budgetLinesQuery,
   expectedIncomesQuery,
+  type BudgetLine,
   type ExpectedIncome,
 } from "@/features/budget/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
@@ -49,6 +56,7 @@ function BudgetPage() {
   // Se piden a la vez que el cuadre, sin esperar a saber si el mes tiene presupuesto:
   // casi siempre lo tiene, y si no, llegan vacías.
   const incomes = useQuery(expectedIncomesQuery(month));
+  const lines = useQuery(budgetLinesQuery(month));
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
 
@@ -71,7 +79,7 @@ function BudgetPage() {
   return (
     <Screen>
       <ScreenHeader title="Presupuesto" />
-      <StaleDataBanner queries={[checks, incomes, accounts, envelopes]} />
+      <StaleDataBanner queries={[checks, incomes, lines, accounts, envelopes]} />
 
       <section aria-labelledby="month-title" className="flex flex-col gap-2">
         <MonthPicker
@@ -90,13 +98,22 @@ function BudgetPage() {
 
       {checks.data ? (
         monthChecks ? (
-          <IncomesSection
-            month={month}
-            incomes={incomes}
-            accounts={accounts}
-            accountById={accountById}
-            envelopeById={envelopeById}
-          />
+          <>
+            <IncomesSection
+              month={month}
+              incomes={incomes}
+              accounts={accounts}
+              accountById={accountById}
+              envelopeById={envelopeById}
+            />
+            <PlanSection month={month} lines={lines} envelopes={envelopes} />
+            <section aria-labelledby="checks-title" className="flex flex-col gap-3">
+              <h2 id="checks-title" className="text-heading">
+                El cuadre
+              </h2>
+              <BudgetCheckList checks={monthChecks} />
+            </section>
+          </>
         ) : (
           <EmptyState className="rounded-lg bg-surface-raised">
             Sin presupuesto en {monthName(month)}
@@ -178,6 +195,87 @@ function IncomesSection({
               <IncomeRowSkeleton />
               <IncomeRowSkeleton />
               <IncomeRowSkeleton />
+            </List>
+          }
+        />
+      )}
+    </section>
+  );
+}
+
+interface PlanSectionProps {
+  month: string;
+  lines: UseQueryResult<BudgetLine[]>;
+  envelopes: UseQueryResult<Envelope[]>;
+}
+
+// «Distribución de los ingresos» del Excel: sus totales y cada sobre con lo planeado y
+// lo que le llegó. Los de $0, plegados al final.
+function PlanSection({ month, lines, envelopes }: PlanSectionProps) {
+  const plan = lines.data && envelopes.data ? summarizePlan(lines.data, envelopes.data) : undefined;
+  return (
+    <section aria-labelledby="plan-title" className="flex flex-col gap-3">
+      <h2 id="plan-title" className="text-heading">
+        El plan
+      </h2>
+      <BudgetTotals
+        items={[
+          { label: "Planeado", cents: plan?.totals.plannedUsdCents },
+          { label: "Entregado", cents: plan?.totals.deliveredUsdCents },
+          { label: "Falta", cents: plan?.totals.pendingUsdCents },
+        ]}
+      />
+      {plan ? (
+        <>
+          {plan.planned.length === 0 ? (
+            <EmptyState className="rounded-lg bg-surface-raised">
+              Ningún sobre tiene plan en {monthName(month)}
+            </EmptyState>
+          ) : (
+            <List>
+              {plan.planned.map((row) => (
+                <PlanRow key={row.line.id} {...row} />
+              ))}
+            </List>
+          )}
+          {plan.unplanned.length > 0 && (
+            <Collapsible className="flex flex-col gap-2">
+              <CollapsibleTrigger className="group flex min-h-tap w-full items-center justify-between gap-3 rounded-lg bg-surface-raised px-4 text-body text-ink-muted active:bg-surface-sunken">
+                <span>Sin plan este mes · {plan.unplanned.length}</span>
+                <ChevronDown
+                  aria-hidden="true"
+                  className="size-4 transition-transform group-data-[state=open]:rotate-180"
+                />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <List>
+                  {plan.unplanned.map(({ envelope }) => (
+                    <ListRow key={envelope.id} asChild className="text-ink-muted">
+                      <Link to="/envelopes/$envelopeId" params={{ envelopeId: envelope.id }}>
+                        <EnvelopeChip
+                          name={envelope.name}
+                          emoji={envelope.emoji}
+                          isThirdParty={envelope.isThirdParty}
+                          className="text-body"
+                        />
+                        <ChevronRight aria-hidden="true" className="size-5" />
+                      </Link>
+                    </ListRow>
+                  ))}
+                </List>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
+        </>
+      ) : (
+        <MissingData
+          queries={[lines, envelopes]}
+          errorMessage="No se pudo cargar el plan."
+          skeleton={
+            <List aria-hidden="true">
+              <PlanRowSkeleton />
+              <PlanRowSkeleton />
+              <PlanRowSkeleton />
             </List>
           }
         />
