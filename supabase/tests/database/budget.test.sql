@@ -4,7 +4,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(22);
+select plan(24);
 
 -- Ver docs/TRAMPAS.md: sin esto, las comprobaciones diferidas no corren.
 set constraints all immediate;
@@ -28,11 +28,17 @@ insert into public.envelopes (name, position) values
   ('Transporte', 3);
 
 -- En céntimos: 100000 son mil dólares.
-insert into public.expected_incomes (month_start, name, expected_usd_cents, position) values
-  ('2026-01-01', 'Bono', 100000, 1),
-  ('2026-01-01', 'Quincena', 10000, 2),
-  ('2026-01-01', 'Extra', 5000, 3),
-  ('2026-02-01', 'Bono', 50000, 1);
+insert into public.expected_incomes (month_start, name, emoji, expected_usd_cents, position) values
+  ('2026-01-01', 'Bono', '💰', 100000, 1),
+  ('2026-01-01', 'Quincena', null, 10000, 2),
+  ('2026-01-01', 'Extra', null, 5000, 3),
+  ('2026-02-01', 'Bono', '💰', 50000, 1);
+
+select throws_ok(
+  $$ update public.expected_incomes set emoji = ' ' where name = 'Quincena' $$,
+  '23514', null,
+  'el emoji de un ingreso no puede venir en blanco'
+);
 
 insert into public.budget_lines (month_start, envelope_id, planned_usd_cents, funding_note)
 select b.month_start::date, v.id, b.planned, b.note
@@ -190,6 +196,13 @@ select results_eq(
      where month_start = '2026-01-01' and name = 'Bono' $$,
   $$ values (400::bigint) $$,
   'R8: la tasa sale de los dos importes del cobro'
+);
+
+select results_eq(
+  $$ select name, emoji from public.expected_income_summary
+     where month_start = '2026-01-01' order by position $$,
+  $$ values ('Bono', '💰'), ('Quincena', null), ('Extra', null) $$,
+  'cada ingreso lleva su emoji, como en el Excel'
 );
 
 select results_eq(

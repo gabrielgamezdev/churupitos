@@ -15,14 +15,14 @@ const catalog = buildCatalog({
     { name: "Comida", aliases: ["Comida"] },
     { name: "Otro", third_party: true, aliases: ["Otro"] },
   ],
-  incomes: [{ name: "Bono", aliases: ["Bono"] }],
+  incomes: [{ name: "Bono", emoji: "💰", aliases: ["💰 Bono"] }],
 });
 
 const budget: BudgetSheet = {
   incomes: [
     {
       row: 4,
-      sourceText: "Bono",
+      sourceText: "💰 Bono",
       source: "Bono",
       usdCents: 100,
       localCents: 40000,
@@ -104,6 +104,10 @@ describe("las filas que se escriben en la base", () => {
     });
     const lines = rows.entries.filter((entry) => entry.operation_id === receipt!.id);
     expect(lines.map((line) => line.usd_value_cents)).toEqual([60, 40]);
+  });
+
+  it("el ingreso esperado lleva el emoji del catálogo", () => {
+    expect(rows.expected_incomes[0]).toMatchObject({ name: "Bono", emoji: "💰" });
   });
 
   it("el arrastre del primer mes es un ajuste de apertura", () => {

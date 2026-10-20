@@ -164,7 +164,8 @@ se entró directo por la dirección, va a la pantalla de arriba.
 - Las palabras del Excel: cuenta, sobre, «Otro», cobro, descubierto, restante. Nunca
   «categoría», «billetera virtual» ni «balance».
 - Sin exclamaciones ni urgencia. Los errores dicen qué pasó y qué hacer, sin disculpas.
-- Los emoji son de los sobres. Nunca de adorno en títulos, botones ni avisos.
+- Los emoji son de los sobres y de los ingresos, como en el Excel. Nunca de adorno en
+  títulos, botones ni avisos.
 - «Otro» va entre comillas latinas dentro de una frase.
 
 ## Iconos

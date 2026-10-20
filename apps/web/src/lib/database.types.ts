@@ -218,6 +218,7 @@ export type Database = {
       expected_incomes: {
         Row: {
           created_at: string;
+          emoji: string | null;
           expected_usd_cents: number;
           id: string;
           month_start: string;
@@ -227,6 +228,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           created_at?: string;
+          emoji?: string | null;
           expected_usd_cents: number;
           id?: string;
           month_start: string;
@@ -235,6 +237,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          emoji?: string | null;
           expected_usd_cents?: number;
           id?: string;
           month_start?: string;
@@ -486,6 +489,7 @@ export type Database = {
         Row: {
           account_id: string | null;
           currency: string | null;
+          emoji: string | null;
           expected_income_id: string | null;
           expected_usd_cents: number | null;
           is_received: boolean | null;

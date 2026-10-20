@@ -183,7 +183,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Zona libre (borradores) | No se importa |
 
 El catálogo que dice qué hoja es qué cuenta, cómo se llama cada sobre en cada mes y
-con qué emoji lo pinta la app vive en `privado/import/catalogo.yml`, porque lleva los nombres reales.
+con qué emoji pinta la app cada sobre y cada ingreso vive en `privado/import/catalogo.yml`, porque lleva los nombres reales.
 
 ---
 

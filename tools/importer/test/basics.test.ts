@@ -64,15 +64,16 @@ describe("el catálogo", () => {
       { name: "Ahorro", emoji: "🏦", aliases: ["🏦 Ahorro"] },
       { name: "Otro", third_party: true, aliases: ["Otro"] },
     ],
-    incomes: [{ name: "Bono", aliases: ["💰 Bono"] }],
+    incomes: [{ name: "Bono", emoji: "💰", aliases: ["💰 Bono"] }],
   };
 
-  it("lleva el emoji con el que la app pinta cada sobre", () => {
+  it("lleva el emoji con el que la app pinta cada sobre y cada ingreso", () => {
     const catalog = buildCatalog(base);
     expect(catalog.envelopes.map((e) => [e.name, e.emoji])).toEqual([
       ["Ahorro", "🏦"],
       ["Otro", null],
     ]);
+    expect(catalog.incomes.map((i) => [i.name, i.emoji])).toEqual([["Bono", "💰"]]);
   });
 
   it("acepta un emoji compuesto y rechaza lo que no es un emoji", () => {

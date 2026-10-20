@@ -72,8 +72,8 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-10-19).
-2. [ ] **El emoji de los ingresos**: la columna, el catálogo y la recarga, en local y en
-   la nube.
+2. [x] **El emoji de los ingresos** (2026-10-20, también en la nube): la columna, el
+   catálogo y la recarga, en local y en la nube.
 3. [ ] **Las secciones y el mes**: Deudas (en construcción) y Presupuesto en la barra;
    `/budget?month=2026-09`, con el mes siguiente si ya tiene presupuesto.
 4. [ ] **Los ingresos del mes**: sus totales, cada ingreso y su cobro desplegable.

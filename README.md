@@ -69,7 +69,7 @@ npm run costs:check  # comprueba que Cloudflare solo sirve estáticos (nada que 
 
 **El importador** lee los Excels de `privado/excels/` con el catálogo de
 `privado/import/catalogo.yml`, que dice qué hoja es cada cuenta, a qué sobre
-corresponde cada texto y con qué emoji se pinta cada sobre. Lo que imprime lleva datos reales: solo se corre en local.
+corresponde cada texto y con qué emoji se pinta cada sobre y cada ingreso. Lo que imprime lleva datos reales: solo se corre en local.
 
 ```bash
 npm run import:read     # lee todos los meses y resume lo que encontró, con sus avisos

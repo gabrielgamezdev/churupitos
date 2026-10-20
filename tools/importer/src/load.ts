@@ -40,6 +40,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
   const accountIds = new Map(catalog.accounts.map((account) => [account.name, randomUUID()]));
   const envelopeIds = new Map(catalog.envelopes.map((envelope) => [envelope.name, randomUUID()]));
   const incomeIds = new Map(pkg.expectedIncomes.map((income) => [income.key, randomUUID()]));
+  const incomeEmoji = new Map(catalog.incomes.map((income) => [income.name, income.emoji]));
   const operationById = new Map<string, DraftOperation>();
 
   const operations = pkg.operations.map((operation) => {
@@ -68,6 +69,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
         id: incomeIds.get(income.key),
         month_start: `${income.month}-01`,
         name: income.name,
+        emoji: incomeEmoji.get(income.name) ?? null,
         expected_usd_cents: income.usdCents,
         position: income.position,
       })),
