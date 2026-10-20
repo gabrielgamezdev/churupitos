@@ -2,6 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 import type { Currency } from "@/lib/money";
 import { firstDay, lastDay } from "@/lib/months";
+import { required } from "@/lib/required";
 import { supabase } from "@/lib/supabase";
 
 // El libro de una cuenta o de un sobre, y el detalle de cada operación. Todo restante
@@ -41,13 +42,6 @@ type LedgerRow = {
   operation_description: string | null;
   running_balance_cents: number | null;
 };
-
-// Las columnas de una vista llegan como opcionales en los tipos generados, aunque
-// nunca vengan vacías: si alguna faltara, mejor un error que un cero inventado.
-function required<T>(value: T | null, column: string): T {
-  if (value === null) throw new Error(`El libro llegó sin ${column}`);
-  return value;
-}
 
 function toLedgerEntry(row: LedgerRow): LedgerEntry {
   return {

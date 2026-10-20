@@ -1,11 +1,17 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { House, Mail, Settings, type LucideIcon } from "lucide-react";
+import { ChartPie, HandCoins, House, Mail, Settings, type LucideIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import { SECTIONS, sectionOf, type Section, type SectionId } from "@/components/sections";
 import { cn } from "@/lib/utils";
 
-const ICONS: Record<SectionId, LucideIcon> = { envelopes: Mail, home: House, settings: Settings };
+const ICONS: Record<SectionId, LucideIcon> = {
+  envelopes: Mail,
+  debts: HandCoins,
+  home: House,
+  budget: ChartPie,
+  settings: Settings,
+};
 
 // La barra de secciones de la v2, con Inicio en el centro y su botón propio.
 //

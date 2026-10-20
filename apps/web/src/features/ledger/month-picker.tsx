@@ -16,16 +16,29 @@ export type MonthBounds = {
 
 interface MonthPickerProps {
   month: string;
-  // El mes en curso: no hay siguiente, y su cierre es el saldo de hoy.
+  // El mes en curso: su cierre es el saldo de hoy y, en un libro, no hay siguiente.
   isCurrent: boolean;
-  // Una línea por moneda: una cuenta tiene una; un sobre, las que use.
-  bounds: MonthBounds[];
+  // Hasta dónde se puede ir. El presupuesto llega al mes siguiente si ya se planificó,
+  // y no va más atrás del primero que tiene.
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+  // Una línea por moneda: una cuenta tiene una; un sobre, las que use; el presupuesto,
+  // ninguna.
+  bounds?: MonthBounds[];
   onChange: (month: string) => void;
 }
 
 // El mes del libro, con lo que había al empezar y al cerrar, o hoy si es el mes en curso.
-export function MonthPicker({ month, isCurrent, bounds, onChange }: MonthPickerProps) {
+export function MonthPicker({
+  month,
+  isCurrent,
+  hasPrevious = true,
+  hasNext = !isCurrent,
+  bounds = [],
+  onChange,
+}: MonthPickerProps) {
   const previous = addMonths(month, -1);
+  const next = addMonths(month, 1);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2 rounded-md bg-surface-raised">
@@ -33,6 +46,7 @@ export function MonthPicker({ month, isCurrent, bounds, onChange }: MonthPickerP
           variant="ghost"
           size="icon"
           aria-label={`Mes anterior: ${monthLabel(previous)}`}
+          disabled={!hasPrevious}
           onClick={() => onChange(previous)}
         >
           <ChevronLeft aria-hidden="true" />
@@ -43,9 +57,9 @@ export function MonthPicker({ month, isCurrent, bounds, onChange }: MonthPickerP
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Mes siguiente"
-          disabled={isCurrent}
-          onClick={() => onChange(addMonths(month, 1))}
+          aria-label={`Mes siguiente: ${monthLabel(next)}`}
+          disabled={!hasNext}
+          onClick={() => onChange(next)}
         >
           <ChevronRight aria-hidden="true" />
         </Button>
