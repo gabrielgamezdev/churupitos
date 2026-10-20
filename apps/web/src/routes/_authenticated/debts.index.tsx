@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ChevronDown, Plus } from "lucide-react";
+
+import { floatingActionClass } from "@/components/floating-action";
 
 import { List, ListRow } from "@/components/list";
 import { Screen } from "@/components/screen";
@@ -10,10 +12,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Skeleton } from "@/components/ui/skeleton";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
 import { summarizeDebts } from "@/features/debts/debt-view";
-import { debtsQuery, debtTotalsQuery } from "@/features/debts/queries";
+import { debtsQuery, debtTotalsQuery, type Debt } from "@/features/debts/queries";
 import { monthOf, today } from "@/lib/months";
 
-export const Route = createFileRoute("/_authenticated/debts")({
+export const Route = createFileRoute("/_authenticated/debts/")({
   component: DebtsPage,
 });
 
@@ -72,25 +74,7 @@ function DebtsPage() {
             <DebtGroupList key={group.month ?? "sin-fecha"} group={group} today={todayDay} />
           ))
         )}
-        {paid.length > 0 && (
-          // Las pagadas del mes, como las ✅ del Excel: se ven, pero ya no se deben.
-          <Collapsible className="flex flex-col gap-2">
-            <CollapsibleTrigger className="group flex min-h-tap w-full items-center justify-between gap-3 rounded-lg bg-surface-raised px-4 text-body text-ink-muted active:bg-surface-sunken">
-              <span>Pagadas este mes · {paid.length}</span>
-              <ChevronDown
-                aria-hidden="true"
-                className="size-4 transition-transform group-data-[state=open]:rotate-180"
-              />
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <List>
-                {paid.map((debt) => (
-                  <DebtRow key={debt.id} debt={debt} today={todayDay} />
-                ))}
-              </List>
-            </CollapsibleContent>
-          </Collapsible>
-        )}
+        <PaidDebts debts={paid} today={todayDay} />
       </section>
 
       <section aria-labelledby="receivable-title" className="flex flex-col gap-3">
@@ -106,7 +90,14 @@ function DebtsPage() {
             ))}
           </List>
         )}
+        <PaidDebts debts={receivable.paid} today={todayDay} />
       </section>
+
+      <div aria-hidden="true" className="h-tap" />
+      <Link to="/debts/new" className={floatingActionClass}>
+        <Plus aria-hidden="true" />
+        Agregar
+      </Link>
     </Screen>
   );
 }
@@ -118,5 +109,28 @@ function DebtRowSkeleton() {
       <Skeleton className="h-4 w-1/2" />
       <Skeleton className="h-4 w-1/5" />
     </ListRow>
+  );
+}
+
+// Las pagadas del mes, como las ✅ del Excel: se ven, plegadas, pero ya no se deben.
+function PaidDebts({ debts, today }: { debts: Debt[]; today: string }) {
+  if (debts.length === 0) return null;
+  return (
+    <Collapsible className="flex flex-col gap-2">
+      <CollapsibleTrigger className="group flex min-h-tap w-full items-center justify-between gap-3 rounded-lg bg-surface-raised px-4 text-body text-ink-muted active:bg-surface-sunken">
+        <span>Pagadas este mes · {debts.length}</span>
+        <ChevronDown
+          aria-hidden="true"
+          className="size-4 transition-transform group-data-[state=open]:rotate-180"
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <List>
+          {debts.map((debt) => (
+            <DebtRow key={debt.id} debt={debt} today={today} />
+          ))}
+        </List>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

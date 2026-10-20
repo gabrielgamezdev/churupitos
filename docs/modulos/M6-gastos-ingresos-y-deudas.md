@@ -104,7 +104,7 @@ probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
 7. [x] **Escribir deudas en la base** (2026-10-20, también en la nube): el día en que se
    pagó y quién la agregó; las funciones de guardar (también en lote), marcar pagada y
    borrar, con sus pruebas; el candado del corte con las deudas; el importador.
-8. [ ] **Agregar y corregir deudas**, con las cuotas en lote.
+8. [x] **Agregar y corregir deudas** (2026-10-20), con las cuotas en lote.
 9. [ ] **Marcar pagada y borrar**, con «Registrar el pago».
 10. [ ] **En los teléfonos**: lo usan unos días.
 

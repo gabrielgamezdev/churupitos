@@ -2,7 +2,13 @@ import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { ChartPie, HandCoins, House, Mail, Settings, type LucideIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-import { SECTIONS, sectionOf, type Section, type SectionId } from "@/components/sections";
+import {
+  isFormScreen,
+  SECTIONS,
+  sectionOf,
+  type Section,
+  type SectionId,
+} from "@/components/sections";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<SectionId, LucideIcon> = {
@@ -66,8 +72,7 @@ export function TabBar() {
       .then(() => router.navigate({ to: section.path }));
   };
 
-  // Registrar ocupa la pantalla entera: se sale guardando o con la flecha.
-  if (location.pathname.startsWith("/operations/")) return null;
+  if (isFormScreen(location.pathname)) return null;
 
   return (
     <nav

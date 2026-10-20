@@ -109,6 +109,12 @@ arrancar. Un `validateSearch: z.object(...)` en el login metió zod entero ahí
 (+23 KB comprimidos). **En esas opciones, funciones simples; zod, dentro del
 componente o de los formularios.**
 
+### `debts.tsx` y `debts.new.tsx` hacen de la segunda una hija que no se ve
+Con rutas en archivos planos, `debts.new.tsx` cuelga de `debts.tsx`, que es su layout:
+sin un `<Outlet />` en ella, `/debts/new` cambia la dirección pero sigue pintando la
+lista. **Si una sección tiene pantallas debajo, su primera pantalla va en
+`debts.index.tsx` (ruta `"/_authenticated/debts/"`), como `envelopes.index.tsx`.**
+
 ### Una ruta nueva no compila hasta que Vite regenera el árbol de rutas
 `src/routeTree.gen.ts` lo escribe el plugin de TanStack Router al arrancar Vite. Con
 una ruta nueva, `npm run build` falla en `tsc -b` («no es asignable a

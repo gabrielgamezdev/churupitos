@@ -3,20 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
+import { AmountInput } from "@/components/amount-field";
 import { EnvelopeChip } from "@/components/envelope-chip";
+import { Field } from "@/components/field";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
+import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
 import { useOnline } from "@/lib/use-online";
-import { cn } from "@/lib/utils";
 
 import { parseAmountInput } from "./amount-input";
 import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
@@ -34,8 +35,6 @@ const KINDS: { value: OperationKind; label: string }[] = [
 ];
 
 const CURRENCIES: Currency[] = ["VES", "USD"];
-
-const SYMBOLS: Record<Currency, string> = { VES: "Bs", USD: "$" };
 
 interface OperationFormProps {
   // Lo pone quien abre el formulario, una sola vez: guardar dos veces lo mismo corrige
@@ -121,30 +120,12 @@ export function OperationForm({
   const addLine = () => lines.append({ envelopeId: "", amount: "" });
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-5">
-      <div
-        role="radiogroup"
-        aria-label="Tipo"
-        className="grid grid-cols-2 gap-1 rounded-md bg-surface-sunken p-1"
-      >
-        {KINDS.map((kind) => {
-          const checked = values.kind === kind.value;
-          return (
-            <button
-              key={kind.value}
-              type="button"
-              role="radio"
-              aria-checked={checked}
-              onClick={() => setValue("kind", kind.value)}
-              className={cn(
-                "min-h-10 rounded-sm text-body",
-                checked ? "bg-surface-raised font-medium text-ink shadow-card" : "text-ink-muted",
-              )}
-            >
-              {kind.label}
-            </button>
-          );
-        })}
-      </div>
+      <Segmented
+        label="Tipo"
+        options={KINDS}
+        value={values.kind}
+        onChange={(kind) => setValue("kind", kind)}
+      />
 
       {!split && (
         <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
@@ -366,58 +347,6 @@ export function OperationForm({
         )}
       </div>
     </form>
-  );
-}
-
-function Field({
-  label,
-  htmlFor,
-  error,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-      {error && (
-        <p id={`${htmlFor}-error`} className="text-body text-destructive">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-// Un monto, con el símbolo de la moneda de la cuenta delante. Teclado numérico con coma.
-export function AmountInput({
-  currency,
-  invalid,
-  ...props
-}: React.ComponentProps<"input"> & { currency: Currency | undefined; invalid: boolean }) {
-  return (
-    <span className="relative flex">
-      {currency && (
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-muted"
-        >
-          {SYMBOLS[currency]}
-        </span>
-      )}
-      <Input
-        inputMode="decimal"
-        autoComplete="off"
-        placeholder="0,00"
-        aria-invalid={invalid ? true : undefined}
-        className={cn("tabular-nums", currency && "pl-10")}
-        {...props}
-      />
-    </span>
   );
 }
 

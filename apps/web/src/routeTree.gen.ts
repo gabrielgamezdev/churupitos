@@ -13,14 +13,16 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedBudgetRouteImport } from './routes/_authenticated/budget'
-import { Route as AuthenticatedDebtsRouteImport } from './routes/_authenticated/debts'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
+import { Route as AuthenticatedDebtsIndexRouteImport } from './routes/_authenticated/debts.index'
+import { Route as AuthenticatedDebtsNewRouteImport } from './routes/_authenticated/debts.new'
 import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
 import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/envelopes.$envelopeId'
 import { Route as AuthenticatedOperationsNewRouteImport } from './routes/_authenticated/operations.new'
+import { Route as AuthenticatedDebtsDebtIdEditRouteImport } from './routes/_authenticated/debts.$debtId.edit'
 import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -40,11 +42,6 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
 const AuthenticatedBudgetRoute = AuthenticatedBudgetRouteImport.update({
   id: '/budget',
   path: '/budget',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedDebtsRoute = AuthenticatedDebtsRouteImport.update({
-  id: '/debts',
-  path: '/debts',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
@@ -69,6 +66,16 @@ const AuthenticatedCurrenciesCurrencyRoute =
     path: '/currencies/$currency',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDebtsIndexRoute = AuthenticatedDebtsIndexRouteImport.update({
+  id: '/debts/',
+  path: '/debts/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDebtsNewRoute = AuthenticatedDebtsNewRouteImport.update({
+  id: '/debts/new',
+  path: '/debts/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedEnvelopesIndexRoute =
   AuthenticatedEnvelopesIndexRouteImport.update({
     id: '/envelopes/',
@@ -87,6 +94,12 @@ const AuthenticatedOperationsNewRoute =
     path: '/operations/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDebtsDebtIdEditRoute =
+  AuthenticatedDebtsDebtIdEditRouteImport.update({
+    id: '/debts/$debtId/edit',
+    path: '/debts/$debtId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOperationsOperationIdEditRoute =
   AuthenticatedOperationsOperationIdEditRouteImport.update({
     id: '/operations/$operationId/edit',
@@ -98,28 +111,32 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/budget': typeof AuthenticatedBudgetRoute
-  '/debts': typeof AuthenticatedDebtsRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/debts/': typeof AuthenticatedDebtsIndexRoute
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/budget': typeof AuthenticatedBudgetRoute
-  '/debts': typeof AuthenticatedDebtsRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/debts': typeof AuthenticatedDebtsIndexRoute
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
+  '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRoutesById {
@@ -127,15 +144,17 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/budget': typeof AuthenticatedBudgetRoute
-  '/_authenticated/debts': typeof AuthenticatedDebtsRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/_authenticated/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/_authenticated/debts/new': typeof AuthenticatedDebtsNewRoute
   '/_authenticated/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/_authenticated/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/_authenticated/debts/': typeof AuthenticatedDebtsIndexRoute
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/_authenticated/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRouteTypes {
@@ -144,43 +163,49 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/budget'
-    | '/debts'
     | '/gallery'
     | '/settings'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/debts/'
     | '/envelopes/'
+    | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/budget'
-    | '/debts'
     | '/gallery'
     | '/settings'
     | '/'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/debts'
     | '/envelopes'
+    | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/budget'
-    | '/_authenticated/debts'
     | '/_authenticated/gallery'
     | '/_authenticated/settings'
     | '/_authenticated/'
     | '/_authenticated/accounts/$accountId'
     | '/_authenticated/currencies/$currency'
+    | '/_authenticated/debts/new'
     | '/_authenticated/envelopes/$envelopeId'
     | '/_authenticated/operations/new'
+    | '/_authenticated/debts/'
     | '/_authenticated/envelopes/'
+    | '/_authenticated/debts/$debtId/edit'
     | '/_authenticated/operations/$operationId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -219,13 +244,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBudgetRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/debts': {
-      id: '/_authenticated/debts'
-      path: '/debts'
-      fullPath: '/debts'
-      preLoaderRoute: typeof AuthenticatedDebtsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/gallery': {
       id: '/_authenticated/gallery'
       path: '/gallery'
@@ -254,6 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCurrenciesCurrencyRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/debts/': {
+      id: '/_authenticated/debts/'
+      path: '/debts'
+      fullPath: '/debts/'
+      preLoaderRoute: typeof AuthenticatedDebtsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/debts/new': {
+      id: '/_authenticated/debts/new'
+      path: '/debts/new'
+      fullPath: '/debts/new'
+      preLoaderRoute: typeof AuthenticatedDebtsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/envelopes/': {
       id: '/_authenticated/envelopes/'
       path: '/envelopes'
@@ -275,6 +307,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/debts/$debtId/edit': {
+      id: '/_authenticated/debts/$debtId/edit'
+      path: '/debts/$debtId/edit'
+      fullPath: '/debts/$debtId/edit'
+      preLoaderRoute: typeof AuthenticatedDebtsDebtIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/operations/$operationId/edit': {
       id: '/_authenticated/operations/$operationId/edit'
       path: '/operations/$operationId/edit'
@@ -287,29 +326,33 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedBudgetRoute: typeof AuthenticatedBudgetRoute
-  AuthenticatedDebtsRoute: typeof AuthenticatedDebtsRoute
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAccountsAccountIdRoute: typeof AuthenticatedAccountsAccountIdRoute
   AuthenticatedCurrenciesCurrencyRoute: typeof AuthenticatedCurrenciesCurrencyRoute
+  AuthenticatedDebtsNewRoute: typeof AuthenticatedDebtsNewRoute
   AuthenticatedEnvelopesEnvelopeIdRoute: typeof AuthenticatedEnvelopesEnvelopeIdRoute
   AuthenticatedOperationsNewRoute: typeof AuthenticatedOperationsNewRoute
+  AuthenticatedDebtsIndexRoute: typeof AuthenticatedDebtsIndexRoute
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
+  AuthenticatedDebtsDebtIdEditRoute: typeof AuthenticatedDebtsDebtIdEditRoute
   AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedBudgetRoute: AuthenticatedBudgetRoute,
-  AuthenticatedDebtsRoute: AuthenticatedDebtsRoute,
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAccountsAccountIdRoute: AuthenticatedAccountsAccountIdRoute,
   AuthenticatedCurrenciesCurrencyRoute: AuthenticatedCurrenciesCurrencyRoute,
+  AuthenticatedDebtsNewRoute: AuthenticatedDebtsNewRoute,
   AuthenticatedEnvelopesEnvelopeIdRoute: AuthenticatedEnvelopesEnvelopeIdRoute,
   AuthenticatedOperationsNewRoute: AuthenticatedOperationsNewRoute,
+  AuthenticatedDebtsIndexRoute: AuthenticatedDebtsIndexRoute,
   AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
+  AuthenticatedDebtsDebtIdEditRoute: AuthenticatedDebtsDebtIdEditRoute,
   AuthenticatedOperationsOperationIdEditRoute:
     AuthenticatedOperationsOperationIdEditRoute,
 }

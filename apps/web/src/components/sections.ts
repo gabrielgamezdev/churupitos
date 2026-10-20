@@ -22,10 +22,19 @@ export const SECTIONS: readonly Section[] = [
 // y la galería, de Ajustes.
 export function sectionOf(pathname: string): SectionId {
   if (pathname === "/envelopes" || pathname.startsWith("/envelopes/")) return "envelopes";
-  if (pathname === "/debts") return "debts";
+  if (pathname === "/debts" || pathname.startsWith("/debts/")) return "debts";
   if (pathname === "/budget") return "budget";
   if (pathname === "/settings" || pathname === "/gallery") return "settings";
   return "home";
+}
+
+// Los formularios ocupan la pantalla entera, sin barra: se sale guardando o con la flecha.
+export function isFormScreen(pathname: string): boolean {
+  return (
+    pathname.startsWith("/operations/") ||
+    pathname === "/debts/new" ||
+    (pathname.startsWith("/debts/") && pathname.endsWith("/edit"))
+  );
 }
 
 // Si es la primera pantalla de su sección: desde ella, el atrás vuelve a Inicio.
