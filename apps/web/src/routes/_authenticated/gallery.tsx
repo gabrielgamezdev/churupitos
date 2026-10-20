@@ -106,9 +106,9 @@ function GalleryPage() {
 
   return (
     <div data-theme={theme} className="min-h-dvh bg-surface text-ink">
-      <main className="mx-auto flex max-w-md flex-col gap-10 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <main className="mx-auto flex max-w-md flex-col gap-10 px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[calc(var(--tab-bar-height)_+_env(safe-area-inset-bottom,0px)_+_1.5rem)]">
         <div className="flex flex-col gap-4">
-          <ScreenHeader title="Galería" back={{ to: "/" }} backLabel="Volver al inicio" />
+          <ScreenHeader title="Galería" back={{ to: "/settings" }} backLabel="Volver a Ajustes" />
           <p className="text-body text-ink-muted">
             Los colores, los tipos y los componentes de la app, con datos inventados.
           </p>

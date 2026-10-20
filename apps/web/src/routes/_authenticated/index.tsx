@@ -2,14 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Screen } from "@/components/screen";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CurrencyCard, CurrencyCardSkeleton } from "@/features/balances/currency-card";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import { useCurrencyTotals } from "@/features/balances/use-currency-totals";
 import { useCurrentMember } from "@/features/household/use-current-member";
 import { currencySlug } from "@/lib/money";
-import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: HomePage,
@@ -22,16 +20,6 @@ function HomePage() {
     <Screen className="pt-[max(1.5rem,env(safe-area-inset-top))]">
       <Greeting />
       <TodayByCurrency />
-      <footer className="mt-auto flex flex-col items-center gap-2 pt-6">
-        {/* Al cerrar sesión, main.tsx vacía la caché y la ruta protegida manda al login. */}
-        <Button variant="ghost" onClick={() => void supabase.auth.signOut()}>
-          Cerrar sesión
-        </Button>
-        <Link to="/gallery" className={buttonVariants({ variant: "link" })}>
-          Galería de componentes
-        </Link>
-        <p className="text-caption text-ink-muted">Versión {__APP_VERSION__}</p>
-      </footer>
     </Screen>
   );
 }

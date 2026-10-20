@@ -13,8 +13,10 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
+import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -35,6 +37,11 @@ const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAccountsAccountIdRoute =
   AuthenticatedAccountsAccountIdRouteImport.update({
     id: '/accounts/$accountId',
@@ -47,29 +54,41 @@ const AuthenticatedCurrenciesCurrencyRoute =
     path: '/currencies/$currency',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedEnvelopesIndexRoute =
+  AuthenticatedEnvelopesIndexRouteImport.update({
+    id: '/envelopes/',
+    path: '/envelopes/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/_authenticated/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
+  '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -77,23 +96,29 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/gallery'
+    | '/settings'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/envelopes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/gallery'
+    | '/settings'
     | '/'
     | '/accounts/$accountId'
     | '/currencies/$currency'
+    | '/envelopes'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/gallery'
+    | '/_authenticated/settings'
     | '/_authenticated/'
     | '/_authenticated/accounts/$accountId'
     | '/_authenticated/currencies/$currency'
+    | '/_authenticated/envelopes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -131,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGalleryRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/accounts/$accountId': {
       id: '/_authenticated/accounts/$accountId'
       path: '/accounts/$accountId'
@@ -145,21 +177,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCurrenciesCurrencyRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/envelopes/': {
+      id: '/_authenticated/envelopes/'
+      path: '/envelopes'
+      fullPath: '/envelopes/'
+      preLoaderRoute: typeof AuthenticatedEnvelopesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAccountsAccountIdRoute: typeof AuthenticatedAccountsAccountIdRoute
   AuthenticatedCurrenciesCurrencyRoute: typeof AuthenticatedCurrenciesCurrencyRoute
+  AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAccountsAccountIdRoute: AuthenticatedAccountsAccountIdRoute,
   AuthenticatedCurrenciesCurrencyRoute: AuthenticatedCurrenciesCurrencyRoute,
+  AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

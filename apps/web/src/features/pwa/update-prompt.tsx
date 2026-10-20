@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
 
 // Aviso de versión nueva. La versión nueva espera a que la persona acepte
-// (`registerType: "prompt"`), para no recargar la app a mitad de un registro.
+// (`registerType: "prompt"`), para no recargar la app a mitad de un registro. Flota
+// por encima de la barra de secciones.
 export function UpdatePrompt() {
   const {
     needRefresh: [needRefresh, setNeedRefresh],
@@ -24,7 +25,7 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-sm items-center gap-2 rounded-lg border bg-surface-raised p-3 shadow-lg"
+      className="fixed inset-x-4 bottom-[calc(var(--tab-bar-height)_+_env(safe-area-inset-bottom,0px)_+_1rem)] z-50 mx-auto flex max-w-sm items-center gap-2 rounded-lg border bg-surface-raised p-3 shadow-lg"
     >
       <p className="flex-1 text-body">Hay una versión nueva de la app.</p>
       <Button variant="ghost" onClick={() => setNeedRefresh(false)}>

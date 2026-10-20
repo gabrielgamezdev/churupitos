@@ -141,7 +141,8 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, sobre, importe y restante. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar |
-| **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. El inicio no la lleva |
+| **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. La primera pantalla de una sección va sin flecha |
+| **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Inicio · Ajustes (M3), con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
 | **States** | Cargando, vacío, error y sin conexión (abajo) |
 
 ## Estados

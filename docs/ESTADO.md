@@ -1,9 +1,9 @@
 # Estado
 
-## Ahora: M3 · Sobres (en planificación)
+## Ahora: M3 · Sobres (en curso)
 
 Cuánto tiene cada sobre, en qué cuentas y en qué se ha ido mes a mes. Trae la barra de
-secciones, como la de la v2, y Ajustes. El plan, en borrador, está en
+secciones, como la de la v2, y Ajustes. El plan, aprobado, está en
 `docs/modulos/M3-sobres.md`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·

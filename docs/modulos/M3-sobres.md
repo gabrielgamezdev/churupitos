@@ -1,7 +1,6 @@
 # M3 · Sobres
 
-- **Estado:** en planificación (desde 2026-10-19). Nada de código hasta que el autor
-  apruebe este plan.
+- **Estado:** en curso (desde 2026-10-19). El plan está aprobado.
 - **Objetivo:** ver en el teléfono cuánto tiene cada sobre, en qué cuentas está ese
   dinero y en qué se ha ido mes a mes, y poder compararlo con el Excel. Y moverse por
   la app con una barra de secciones, como en la v2.
@@ -17,9 +16,6 @@
 - **Un sobre enseña su libro mes a mes**: sus movimientos de todas las cuentas, como
   en la v2. Primero lo que tiene en cada moneda y en qué cuentas está, y después el
   libro.
-
-## Propuesto, por confirmar
-
 - **La lista de sobres** va en el orden del presupuesto, con lo que tiene cada uno en
   Bs y en $ por separado; «Otro» al final. Los sobres en cero (los de meses pasados que
   ya no se usan) van al final, juntos y plegados, para que no estorben.
@@ -49,8 +45,8 @@ Todas con los estados de M2: cargando, vacío, error, sin conexión y estirar pa
 
 ## Pasos
 
-1. [ ] **Plan aprobado** por el autor.
-2. [ ] **La barra de secciones y Ajustes**: Inicio al centro; tocar la sección en la que
+1. [x] **Plan aprobado** por el autor (2026-10-19).
+2. [x] **La barra de secciones y Ajustes** (2026-10-19): Inicio al centro; tocar la sección en la que
    se está vuelve a su primera pantalla; el atrás de Android vuelve a Inicio desde la
    primera pantalla de cualquier sección.
 3. [ ] **El libro del sobre en la base**: la vista `envelope_ledger`, con el restante del

@@ -10,6 +10,8 @@
    Por eso los componentes no usan la variante `dark:`. */
 :root {
   color-scheme: light dark;
+  /* El alto de la barra de secciones, sin el hueco de la barra del sistema. */
+  --tab-bar-height: 4.5rem;
 }
 [data-theme="light"] {
   color-scheme: light;
