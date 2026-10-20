@@ -84,3 +84,42 @@ export function formDraft(values: OperationFormValues): OperationDraft {
         : null,
   };
 }
+
+// Una operación guardada, como la vuelve a enseñar el formulario para corregirla: los
+// montos, sin signo y escritos como se teclean («150,00»).
+export function operationFormValues(operation: {
+  kind: string;
+  day: string;
+  description: string;
+  entries: {
+    accountId: string;
+    envelopeId: string;
+    amountCents: number;
+    isFee: boolean;
+    description: string;
+  }[];
+}): OperationFormValues {
+  const lines = operation.entries.filter((entry) => !entry.isFee);
+  const fee = operation.entries.find((entry) => entry.isFee);
+  return {
+    kind: operation.kind === "income" ? "income" : "expense",
+    accountId: operation.entries[0]?.accountId ?? "",
+    day: operation.day,
+    description: operation.description,
+    lines: lines.map((entry) => ({
+      envelopeId: entry.envelopeId,
+      amount: amountText(entry.amountCents),
+    })),
+    hasFee: fee !== undefined,
+    fee: {
+      envelopeId: fee?.envelopeId ?? "",
+      amount: fee ? amountText(fee.amountCents) : "",
+      description: fee?.description || FEE_DESCRIPTION,
+    },
+  };
+}
+
+function amountText(cents: number): string {
+  const absolute = Math.abs(cents);
+  return `${Math.floor(absolute / 100)},${String(absolute % 100).padStart(2, "0")}`;
+}

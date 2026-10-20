@@ -26,7 +26,7 @@ import {
   operationFormSchema,
   type OperationFormValues,
 } from "./operation-form-schema";
-import { saveErrorMessage, useSaveOperation } from "./save";
+import { useSaveOperation, writeErrorMessage } from "./save";
 
 const KINDS: { value: OperationKind; label: string }[] = [
   { value: "expense", label: "Gasto" },
@@ -353,7 +353,7 @@ export function OperationForm({
       <div className="flex flex-col gap-2">
         {save.error && (
           <p role="alert" className="text-body text-destructive">
-            No se guardó. {saveErrorMessage(save.error)}
+            No se guardó. {writeErrorMessage(save.error)}
           </p>
         )}
         <Button type="submit" disabled={!online || isSubmitting}>

@@ -21,6 +21,7 @@ import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_a
 import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
 import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/envelopes.$envelopeId'
 import { Route as AuthenticatedOperationsNewRouteImport } from './routes/_authenticated/operations.new'
+import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -86,6 +87,12 @@ const AuthenticatedOperationsNewRoute =
     path: '/operations/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOperationsOperationIdEditRoute =
+  AuthenticatedOperationsOperationIdEditRouteImport.update({
+    id: '/operations/$operationId/edit',
+    path: '/operations/$operationId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -112,6 +120,7 @@ export interface FileRoutesByTo {
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
+  '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -127,6 +136,7 @@ export interface FileRoutesById {
   '/_authenticated/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/_authenticated/operations/new': typeof AuthenticatedOperationsNewRoute
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/envelopes/$envelopeId'
     | '/operations/new'
     | '/envelopes/'
+    | '/operations/$operationId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/envelopes/$envelopeId'
     | '/operations/new'
     | '/envelopes'
+    | '/operations/$operationId/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/_authenticated/envelopes/$envelopeId'
     | '/_authenticated/operations/new'
     | '/_authenticated/envelopes/'
+    | '/_authenticated/operations/$operationId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -262,6 +275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/operations/$operationId/edit': {
+      id: '/_authenticated/operations/$operationId/edit'
+      path: '/operations/$operationId/edit'
+      fullPath: '/operations/$operationId/edit'
+      preLoaderRoute: typeof AuthenticatedOperationsOperationIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -276,6 +296,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedEnvelopesEnvelopeIdRoute: typeof AuthenticatedEnvelopesEnvelopeIdRoute
   AuthenticatedOperationsNewRoute: typeof AuthenticatedOperationsNewRoute
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
+  AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -289,6 +310,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedEnvelopesEnvelopeIdRoute: AuthenticatedEnvelopesEnvelopeIdRoute,
   AuthenticatedOperationsNewRoute: AuthenticatedOperationsNewRoute,
   AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
+  AuthenticatedOperationsOperationIdEditRoute:
+    AuthenticatedOperationsOperationIdEditRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

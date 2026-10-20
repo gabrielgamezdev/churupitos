@@ -15,6 +15,8 @@ const buttonVariants = cva(
           "border-line-strong bg-surface-raised text-ink hover:bg-surface-sunken aria-expanded:bg-surface-sunken",
         ghost: "text-ink hover:bg-surface-sunken aria-expanded:bg-surface-sunken",
         link: "text-brand underline-offset-4 hover:underline",
+        // Para lo que no se deshace, como borrar.
+        destructive: "bg-destructive text-on-brand hover:bg-destructive/90",
       },
       size: {
         default: "h-tap px-4",

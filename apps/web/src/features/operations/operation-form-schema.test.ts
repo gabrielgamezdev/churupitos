@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { emptyOperationForm, formDraft, operationFormSchema } from "./operation-form-schema";
+import { draftEntries } from "./operation-draft";
+import {
+  emptyOperationForm,
+  formDraft,
+  operationFormSchema,
+  operationFormValues,
+} from "./operation-form-schema";
 
 const filled = {
   ...emptyOperationForm("2026-10-20", "Banco A", "Comida"),
@@ -60,6 +66,59 @@ describe("el formulario de Registrar", () => {
     });
     expect(formDraft({ ...filled, lines: [{ envelopeId: "Comida", amount: "" }] }).lines).toEqual(
       [],
+    );
+  });
+});
+
+describe("corregir una operación guardada", () => {
+  const saved = {
+    kind: "expense",
+    day: "2026-10-18",
+    description: "Mercado",
+    entries: [
+      {
+        accountId: "Banco A",
+        envelopeId: "Comida",
+        amountCents: -12000,
+        isFee: false,
+        description: "",
+      },
+      {
+        accountId: "Banco A",
+        envelopeId: "Ahorro",
+        amountCents: -3005,
+        isFee: false,
+        description: "",
+      },
+      {
+        accountId: "Banco A",
+        envelopeId: "Comida",
+        amountCents: -100,
+        isFee: true,
+        description: "Comisión",
+      },
+    ],
+  };
+
+  it("vuelve a enseñarla como se tecleó, sin signos", () => {
+    expect(operationFormValues(saved)).toEqual({
+      kind: "expense",
+      accountId: "Banco A",
+      day: "2026-10-18",
+      description: "Mercado",
+      lines: [
+        { envelopeId: "Comida", amount: "120,00" },
+        { envelopeId: "Ahorro", amount: "30,05" },
+      ],
+      hasFee: true,
+      fee: { envelopeId: "Comida", amount: "1,00", description: "Comisión" },
+    });
+  });
+
+  it("guardarla sin tocar nada deja los mismos asientos", () => {
+    const entries = draftEntries(formDraft(operationFormValues(saved)));
+    expect(entries.map((entry) => [entry.envelope_id, entry.amount_cents, entry.is_fee])).toEqual(
+      saved.entries.map((entry) => [entry.envelopeId, entry.amountCents, entry.isFee]),
     );
   });
 });

@@ -31,11 +31,23 @@ export function useSaveOperation() {
   });
 }
 
-// Lo que se dice cuando no se guarda. Los errores de las reglas ya vienen en español
+// Por qué no se guardó o no se borró. Los errores de las reglas ya vienen en español
 // desde la base; los de red, no.
-export function saveErrorMessage(error: unknown): string {
+export function writeErrorMessage(error: unknown): string {
   const { code, message } = (error ?? {}) as { code?: string; message?: string };
   if (code === "23514" || code === "42501" || code === "P0001") return message ?? "";
   if (message?.includes("fetch")) return "No se pudo conectar. Inténtalo de nuevo.";
-  return "No se pudo guardar. Inténtalo de nuevo.";
+  return "Inténtalo de nuevo.";
+}
+
+// Borra una operación registrada en la app (ADR 0008). Lo importado, la base no deja.
+export function useDeleteOperation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.rpc("delete_operation", { op_id: id });
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
 }

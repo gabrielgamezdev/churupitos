@@ -77,9 +77,19 @@ export const SAMPLE_LEDGER: LedgerEntry[] = [
   }),
 ];
 
+// Lo de una operación que no son sus asientos. Lo importado del Excel no tiene autor.
+const imported = (day: string, description = "") => ({
+  adjustmentReason: null,
+  day,
+  description,
+  incomeId: null,
+  fromApp: false,
+  authorName: null,
+});
+
 const single = (id: string, envelopeId: string, amountCents: number, isFee = false) => ({
   kind: "expense",
-  adjustmentReason: null,
+  ...imported("2026-10-12"),
   entries: [
     {
       id,
@@ -94,12 +104,18 @@ const single = (id: string, envelopeId: string, amountCents: number, isFee = fal
 });
 
 export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
-  mercado: single("mercado", "comida", -72000),
+  // Registrado en la app: dice quién, y se puede corregir o borrar.
+  mercado: {
+    ...single("mercado", "comida", -72000),
+    description: "Mercado",
+    fromApp: true,
+    authorName: "Ana",
+  },
   comision: single("comision", "comida", -3000, true),
   pasaje: single("pasaje", "transporte", -5000),
   cambio: {
     kind: "exchange",
-    adjustmentReason: null,
+    ...imported("2026-10-11"),
     entries: [
       {
         id: "cambio-sale",
@@ -124,7 +140,8 @@ export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
   // Un cobro de $100 a Bs 400 en el Banco A, repartido en dólares entre dos sobres (R9).
   cobro: {
     kind: "income",
-    adjustmentReason: null,
+    ...imported("2026-10-09", "Bono"),
+    incomeId: "bono",
     entries: [
       {
         id: "cobro-ahorro",
@@ -149,7 +166,8 @@ export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
   // En una cuenta en dólares, el importe ya es su valor en dólares.
   "cobro-quincena": {
     kind: "income",
-    adjustmentReason: null,
+    ...imported("2026-09-30", "Quincena"),
+    incomeId: "quincena",
     entries: [
       {
         id: "quincena-transporte",

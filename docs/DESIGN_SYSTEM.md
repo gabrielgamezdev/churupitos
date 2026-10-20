@@ -124,15 +124,16 @@ Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeCh
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
 estirar y recargar), `ScreenHeader` y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
-adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
-`Skeleton`, `Collapsible`, `Input`, `Label` y `NativeSelect`, una lista del sistema con
-el aspecto de `Input`. Los de cada pantalla viven con ella en `features/` (`CurrencyCard`
-y `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
+adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
+`money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
+`Collapsible`, `Input`, `Label` y `NativeSelect`, una lista del sistema con el aspecto de
+`Input`. Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
+`AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
-`DebtTotals`, `DebtGroupList` y `DebtRow` en `debts/`, y `OperationForm`, `AmountInput`
-y `RegisterButton` en `operations/`) y los del libro, que comparten cuentas y sobres, en
-`features/ledger/` (`LedgerList`, `MonthPicker` y `OperationDetail`). Todos entran en la
-galería al construirse, con datos inventados.
+`DebtTotals`, `DebtGroupList` y `DebtRow` en `debts/`, y `OperationForm`, `AmountInput`,
+`RegisterButton` y `OperationActions` en `operations/`) y los del libro, que comparten
+cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker` y
+`OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
 
 La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
 se entró directo por la dirección, va a la pantalla de arriba.
@@ -145,7 +146,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
-| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera, y en un cobro cada línea lleva también su valor en $ (`R9`) |
+| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera, y en un cobro cada línea lleva también su valor en $ (`R9`). Una registrada en la app dice quién la registró y lleva «Corregir» y «Borrar»; borrar se confirma ahí mismo, con el botón `destructive` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
 | **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y ✅ cobrado o ⏳ pendiente. Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |

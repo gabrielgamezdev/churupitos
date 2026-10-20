@@ -71,7 +71,7 @@ usará, y el Excel se irá dejando poco a poco.
 3. [x] **Registrar** (2026-10-20): la pantalla con un sobre, la comisión y el aviso de
    descubierto; el botón en el inicio, en cada cuenta y en cada sobre.
 4. [x] **Repartir entre varios sobres** (2026-10-20).
-5. [ ] **Corregir y borrar**, y quién registró cada operación.
+5. [x] **Corregir y borrar** (2026-10-20), y quién registró cada operación.
 6. [ ] **La recarga que borra lo de la app**, para registrar en paralelo.
 7. [ ] **En los teléfonos**: lo usan unos días.
 

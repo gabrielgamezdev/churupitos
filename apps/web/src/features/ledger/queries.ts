@@ -96,6 +96,13 @@ export const envelopeLedgerQuery = (envelopeId: string, month: string) =>
 export type OperationDetail = {
   kind: string;
   adjustmentReason: string | null;
+  day: string;
+  description: string;
+  // El ingreso esperado que cobra, si es un cobro del presupuesto.
+  incomeId: string | null;
+  // Quién la registró en la app; lo importado del Excel no tiene autor.
+  fromApp: boolean;
+  authorName: string | null;
   entries: {
     id: string;
     accountId: string;
@@ -116,7 +123,7 @@ export function operationQuery(operationId: string) {
       const { data, error } = await supabase
         .from("operations")
         .select(
-          "kind, adjustment_reason, entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
+          "kind, adjustment_reason, occurred_on, description, income_id, created_by, author:household_members(display_name), entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
         )
         .eq("id", operationId)
         .order("position", { referencedTable: "entries" })
@@ -125,6 +132,11 @@ export function operationQuery(operationId: string) {
       return {
         kind: data.kind,
         adjustmentReason: data.adjustment_reason,
+        day: data.occurred_on,
+        description: data.description,
+        incomeId: data.income_id,
+        fromApp: data.created_by !== null,
+        authorName: data.author?.display_name ?? null,
         entries: data.entries.map((entry) => ({
           id: entry.id,
           accountId: entry.account_id,
