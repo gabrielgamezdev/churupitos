@@ -1,6 +1,12 @@
 # M4 · Presupuesto
 
-- **Estado:** en curso (desde 2026-10-19). El plan está aprobado.
+- **Estado:** cerrado el 2026-10-20 (empezó el 2026-10-19). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/TRAMPAS.md`, el código de `apps/web`
+  y las migraciones.
+- **Resultado:** los ingresos con su cobro, el plan de cada sobre y el cuadre de
+  octubre, de noviembre (planificación) y de meses pasados, comparados con el Excel en
+  los teléfonos: todo coincide, salvo las dos diferencias del histórico que ya se
+  conocían. La barra completa y el atrás de Android se probaron también.
 - **Objetivo:** ver en el teléfono el presupuesto de cada mes, como la hoja PRESUPUESTO
   del Excel: qué ingresos se esperan y cuáles ya se cobraron, cuánto le toca a cada sobre
   y si ya lo recibió, y si el mes cuadra. Y poder compararlo con el Excel.
@@ -80,7 +86,7 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
    desplegable, con el valor en $ de cada línea del reparto.
 5. [x] **El plan** (2026-10-20): sus totales, cada sobre con su enlace, los de $0
    plegados y el cuadre.
-6. [ ] **En los teléfonos**: lo comparan con el Excel.
+6. [x] **En los teléfonos** (2026-10-20): comparado con el Excel, todo coincide.
 
 Cada paso termina con su commit; los pasos 5 y 6 terminan además con un push, para que
 la pantalla llegue entera a los teléfonos.

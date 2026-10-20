@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M4 · Presupuesto (en curso)
+## Ahora: M5 · Deudas (por planificar)
 
-Los ingresos esperados y cobrados, el plan de cada sobre y el cuadre del mes, como la
-hoja PRESUPUESTO del Excel. Completa la barra: Deudas entra ya, en construcción. El
-plan, aprobado, está en `docs/modulos/M4-presupuesto.md`.
+Las cuotas por fecha y el total pendiente, lo que se debe y lo que les deben. Su
+sección ya está en la barra, en construcción. Antes de empezar se acuerdan sus
+pantallas y se escribe su plan en `docs/modulos/`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
@@ -12,8 +12,9 @@ la base: hasta entonces noviembre es solo de planificación y el oráculo no lo 
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuentas el
-2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`) y M3 · Sobres el 2026-10-19
-(`docs/modulos/M3-sobres.md`).
+2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`), M3 · Sobres el 2026-10-19
+(`docs/modulos/M3-sobres.md`) y M4 · Presupuesto el 2026-10-20
+(`docs/modulos/M4-presupuesto.md`).
 
 ## Cómo se publica
 
