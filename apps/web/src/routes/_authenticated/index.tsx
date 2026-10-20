@@ -7,6 +7,7 @@ import { CurrencyCard, CurrencyCardSkeleton } from "@/features/balances/currency
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import { useCurrencyTotals } from "@/features/balances/use-currency-totals";
 import { useCurrentMember } from "@/features/household/use-current-member";
+import { RegisterButton } from "@/features/operations/register-button";
 import { currencySlug } from "@/lib/money";
 
 export const Route = createFileRoute("/_authenticated/")({
@@ -20,6 +21,7 @@ function HomePage() {
     <Screen className="pt-[max(1.5rem,env(safe-area-inset-top))]">
       <Greeting />
       <TodayByCurrency />
+      <RegisterButton />
     </Screen>
   );
 }

@@ -1,0 +1,388 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { useForm, useWatch } from "react-hook-form";
+
+import { EnvelopeChip } from "@/components/envelope-chip";
+import { List, ListRow } from "@/components/list";
+import { Money } from "@/components/money";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { accountCellsQuery } from "@/features/accounts/queries";
+import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
+import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
+import { useOnline } from "@/lib/use-online";
+import { cn } from "@/lib/utils";
+
+import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
+import {
+  FEE_DESCRIPTION,
+  formDraft,
+  operationFormSchema,
+  type OperationFormValues,
+} from "./operation-form-schema";
+import { saveErrorMessage, useSaveOperation } from "./save";
+
+const KINDS: { value: OperationKind; label: string }[] = [
+  { value: "expense", label: "Gasto" },
+  { value: "income", label: "Ingreso" },
+];
+
+const CURRENCIES: Currency[] = ["VES", "USD"];
+
+const SYMBOLS: Record<Currency, string> = { VES: "Bs", USD: "$" };
+
+interface OperationFormProps {
+  // Lo pone quien abre el formulario, una sola vez: guardar dos veces lo mismo corrige
+  // en vez de duplicar (ADR 0008).
+  operationId: string;
+  initial: OperationFormValues;
+  // Al corregir, los asientos que la operación ya tenía: no cuentan en lo de antes.
+  previousEntries?: EntryInput[];
+  onSaved: () => void;
+}
+
+// Registrar un gasto o un ingreso: monto, cuenta, sobre, concepto, fecha y, si la
+// hubo, la comisión (R16). Antes de guardar enseña cómo queda cada sobre; un
+// descubierto se avisa y se guarda igual (R6).
+export function OperationForm({
+  operationId,
+  initial,
+  previousEntries = [],
+  onSaved,
+}: OperationFormProps) {
+  const online = useOnline();
+  const accounts = useAccountBalances();
+  const envelopes = useQuery(envelopesQuery);
+  const save = useSaveOperation();
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<OperationFormValues>({
+    resolver: zodResolver(operationFormSchema),
+    defaultValues: initial,
+  });
+
+  const values = useWatch({ control }) as OperationFormValues;
+  const account = accounts.data?.find((row) => row.accountId === values.accountId);
+  const cells = useQuery({
+    ...accountCellsQuery(values.accountId),
+    enabled: values.accountId !== "",
+  });
+  const cellByEnvelope = new Map(cells.data?.map((cell) => [cell.envelopeId, cell.balanceCents]));
+  const previous = previousEntries.filter((entry) => entry.account_id === values.accountId);
+  const changes = cells.data
+    ? projectCells(draftEntries(formDraft(values)), cells.data, previous)
+    : [];
+  const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
+  // En el orden del presupuesto, y «Otro» al final (R11).
+  const envelopeOptions = [...(envelopes.data ?? [])].sort(
+    (a, b) => Number(a.isThirdParty) - Number(b.isThirdParty) || a.position - b.position,
+  );
+
+  const submit = handleSubmit(async (submitted) => {
+    try {
+      await save.mutateAsync({
+        id: operationId,
+        kind: submitted.kind,
+        day: submitted.day,
+        description: submitted.description.trim(),
+        entries: draftEntries(formDraft(submitted)),
+      });
+      onSaved();
+    } catch {
+      // `save.error` lo dice debajo del botón.
+    }
+  });
+
+  const toggleFee = () => {
+    if (getValues("hasFee")) {
+      setValue("hasFee", false);
+      return;
+    }
+    // La comisión sale, si no se cambia, del mismo sobre que el gasto.
+    if (!getValues("fee.envelopeId")) setValue("fee.envelopeId", getValues("lines.0.envelopeId"));
+    setValue("hasFee", true);
+  };
+
+  const lineError = errors.lines?.[0];
+  return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+      <div
+        role="radiogroup"
+        aria-label="Tipo"
+        className="grid grid-cols-2 gap-1 rounded-md bg-surface-sunken p-1"
+      >
+        {KINDS.map((kind) => {
+          const checked = values.kind === kind.value;
+          return (
+            <button
+              key={kind.value}
+              type="button"
+              role="radio"
+              aria-checked={checked}
+              onClick={() => setValue("kind", kind.value)}
+              className={cn(
+                "min-h-10 rounded-sm text-body",
+                checked ? "bg-surface-raised font-medium text-ink shadow-card" : "text-ink-muted",
+              )}
+            >
+              {kind.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
+        <AmountInput
+          id="amount"
+          currency={account?.currency}
+          invalid={Boolean(lineError?.amount)}
+          {...register("lines.0.amount")}
+        />
+      </Field>
+
+      <Field label="Cuenta" htmlFor="account" error={errors.accountId?.message}>
+        <NativeSelect
+          id="account"
+          aria-invalid={errors.accountId ? true : undefined}
+          {...register("accountId")}
+        >
+          <option value="">Elige la cuenta</option>
+          {CURRENCIES.map((currency) => (
+            <optgroup key={currency} label={CURRENCY_NAMES[currency]}>
+              {(accounts.data ?? [])
+                .filter((row) => row.currency === currency)
+                .map((row) => (
+                  <option key={row.accountId} value={row.accountId}>
+                    {row.name}
+                  </option>
+                ))}
+            </optgroup>
+          ))}
+        </NativeSelect>
+      </Field>
+
+      <Field label="Sobre" htmlFor="envelope" error={lineError?.envelopeId?.message}>
+        <EnvelopeSelect
+          id="envelope"
+          envelopes={envelopeOptions}
+          account={account}
+          cellByEnvelope={cellByEnvelope}
+          invalid={Boolean(lineError?.envelopeId)}
+          {...register("lines.0.envelopeId")}
+        />
+      </Field>
+
+      <Field label="Concepto" htmlFor="description">
+        <Input id="description" autoComplete="off" {...register("description")} />
+      </Field>
+
+      <Field label="Fecha" htmlFor="day" error={errors.day?.message}>
+        <Input id="day" type="date" {...register("day")} />
+      </Field>
+
+      {values.hasFee ? (
+        <fieldset className="flex flex-col gap-4 rounded-lg bg-surface-raised p-4">
+          <legend className="sr-only">Comisión</legend>
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-heading">Comisión</span>
+            <Button type="button" variant="ghost" onClick={toggleFee}>
+              Quitar
+            </Button>
+          </div>
+          <Field
+            label="Monto de la comisión"
+            htmlFor="fee-amount"
+            error={errors.fee?.amount?.message}
+          >
+            <AmountInput
+              id="fee-amount"
+              currency={account?.currency}
+              invalid={Boolean(errors.fee?.amount)}
+              {...register("fee.amount")}
+            />
+          </Field>
+          <Field
+            label="Sale del sobre"
+            htmlFor="fee-envelope"
+            error={errors.fee?.envelopeId?.message}
+          >
+            <EnvelopeSelect
+              id="fee-envelope"
+              envelopes={envelopeOptions}
+              account={account}
+              cellByEnvelope={cellByEnvelope}
+              invalid={Boolean(errors.fee?.envelopeId)}
+              {...register("fee.envelopeId")}
+            />
+          </Field>
+          <Field label="Concepto de la comisión" htmlFor="fee-description">
+            <Input
+              id="fee-description"
+              autoComplete="off"
+              placeholder={FEE_DESCRIPTION}
+              {...register("fee.description")}
+            />
+          </Field>
+        </fieldset>
+      ) : (
+        <Button type="button" variant="outline" onClick={toggleFee}>
+          Agregar comisión
+        </Button>
+      )}
+
+      {account && changes.length > 0 && (
+        <section aria-labelledby="changes-title" className="flex flex-col gap-2">
+          <h2 id="changes-title" className="text-heading">
+            Cómo queda en {account.name}
+          </h2>
+          <List>
+            {changes.map((change) => {
+              const envelope = envelopeById.get(change.envelopeId);
+              return (
+                <ListRow key={change.envelopeId}>
+                  <span className="flex min-w-0 flex-col items-start gap-1">
+                    {envelope && (
+                      <EnvelopeChip
+                        name={envelope.name}
+                        emoji={envelope.emoji}
+                        isThirdParty={envelope.isThirdParty}
+                        className="text-body"
+                      />
+                    )}
+                    {change.afterCents < 0 && <Badge variant="overdrawn">Descubierto</Badge>}
+                  </span>
+                  <span className="flex shrink-0 flex-col items-end">
+                    <span className="text-caption text-ink-muted">
+                      Ahora <Money cents={change.beforeCents} currency={account.currency} />
+                    </span>
+                    <Money
+                      cents={change.afterCents}
+                      currency={account.currency}
+                      className="text-amount"
+                    />
+                  </span>
+                </ListRow>
+              );
+            })}
+          </List>
+          {changes.some((change) => change.afterCents < 0) && (
+            <p className="px-1 text-caption text-ink-muted">
+              Se puede guardar igual: el descubierto se cubre después.
+            </p>
+          )}
+        </section>
+      )}
+
+      <div className="flex flex-col gap-2">
+        {save.error && (
+          <p role="alert" className="text-body text-destructive">
+            No se guardó. {saveErrorMessage(save.error)}
+          </p>
+        )}
+        <Button type="submit" disabled={!online || isSubmitting}>
+          {isSubmitting ? "Guardando…" : "Guardar"}
+        </Button>
+        {!online && (
+          <p className="text-caption text-ink-muted">
+            Sin conexión no se puede registrar: guárdalo cuando haya red.
+          </p>
+        )}
+      </div>
+    </form>
+  );
+}
+
+function Field({
+  label,
+  htmlFor,
+  error,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      {children}
+      {error && (
+        <p id={`${htmlFor}-error`} className="text-body text-destructive">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// Un monto, con el símbolo de la moneda de la cuenta delante. Teclado numérico con coma.
+export function AmountInput({
+  currency,
+  invalid,
+  ...props
+}: React.ComponentProps<"input"> & { currency: Currency | undefined; invalid: boolean }) {
+  return (
+    <span className="relative flex">
+      {currency && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-muted"
+        >
+          {SYMBOLS[currency]}
+        </span>
+      )}
+      <Input
+        inputMode="decimal"
+        autoComplete="off"
+        placeholder="0,00"
+        aria-invalid={invalid ? true : undefined}
+        className={cn("tabular-nums", currency && "pl-10")}
+        {...props}
+      />
+    </span>
+  );
+}
+
+// Los sobres en el orden del presupuesto, cada uno con lo que tiene en la cuenta elegida.
+function EnvelopeSelect({
+  envelopes,
+  account,
+  cellByEnvelope,
+  invalid,
+  ...props
+}: React.ComponentProps<"select"> & {
+  envelopes: Envelope[];
+  account: AccountBalance | undefined;
+  cellByEnvelope: Map<string, number>;
+  invalid: boolean;
+}) {
+  return (
+    <NativeSelect aria-invalid={invalid ? true : undefined} {...props}>
+      <option value="">Elige el sobre</option>
+      {envelopes.map((envelope) => {
+        const cents = cellByEnvelope.get(envelope.id);
+        const name =
+          envelope.emoji && !envelope.isThirdParty
+            ? `${envelope.emoji} ${envelope.name}`
+            : envelope.name;
+        return (
+          <option key={envelope.id} value={envelope.id}>
+            {account && cents !== undefined
+              ? `${name} · ${formatMoney(cents, account.currency)}`
+              : name}
+          </option>
+        );
+      })}
+    </NativeSelect>
+  );
+}

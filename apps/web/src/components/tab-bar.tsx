@@ -66,6 +66,9 @@ export function TabBar() {
       .then(() => router.navigate({ to: section.path }));
   };
 
+  // Registrar ocupa la pantalla entera: se sale guardando o con la flecha.
+  if (location.pathname.startsWith("/operations/")) return null;
+
   return (
     <nav
       aria-label="Secciones"

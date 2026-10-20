@@ -4,6 +4,7 @@ import { useState } from "react";
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { formatMoney } from "@/lib/money";
 import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,10 @@ import { BudgetCheckList } from "@/features/budget/budget-check-list";
 import { BudgetTotals } from "@/features/budget/budget-totals";
 import { IncomeRow } from "@/features/budget/income-row";
 import { PlanRow } from "@/features/budget/plan-row";
+import { AmountInput } from "@/features/operations/operation-form";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
 import { summarizePayable } from "@/features/debts/debt-view";
 import { EnvelopeRow } from "@/features/envelopes/envelope-row";
@@ -406,6 +411,27 @@ function GalleryPage() {
               <DebtRow key={debt.id} debt={debt} today={SAMPLE_TODAY} />
             ))}
           </List>
+        </Section>
+
+        <Section
+          title="Campos"
+          description="Los de Registrar: el monto lleva delante el símbolo de la moneda; la lista abre la del sistema."
+        >
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gallery-amount">Monto</Label>
+            <AmountInput id="gallery-amount" currency="VES" invalid={false} defaultValue="1500" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gallery-envelope">Sobre</Label>
+            <NativeSelect id="gallery-envelope" defaultValue="comida">
+              <option value="ahorro">🏦 Ahorro · {formatMoney(400000, "VES")}</option>
+              <option value="comida">🍱 Comida · {formatMoney(125000, "VES")}</option>
+            </NativeSelect>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gallery-description">Concepto</Label>
+            <Input id="gallery-description" defaultValue="Mercado" />
+          </div>
         </Section>
 
         <Section title="Estados">

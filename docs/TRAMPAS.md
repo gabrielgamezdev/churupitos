@@ -109,6 +109,12 @@ arrancar. Un `validateSearch: z.object(...)` en el login metió zod entero ahí
 (+23 KB comprimidos). **En esas opciones, funciones simples; zod, dentro del
 componente o de los formularios.**
 
+### Una ruta nueva no compila hasta que Vite regenera el árbol de rutas
+`src/routeTree.gen.ts` lo escribe el plugin de TanStack Router al arrancar Vite. Con
+una ruta nueva, `npm run build` falla en `tsc -b` («no es asignable a
+`keyof FileRoutesByPath`»), que corre antes que Vite. **Regenerarlo primero con
+`npx vite build` (o `npm run dev`) en `apps/web`, y después el check.**
+
 ### Un contenedor con otro tema sigue pintando el del teléfono
 Con los colores en `light-dark()` declarados solo en `:root`, poner `color-scheme: dark`
 en un contenedor no cambia nada, aunque en `npm run dev` pueda parecer que sí. El build
