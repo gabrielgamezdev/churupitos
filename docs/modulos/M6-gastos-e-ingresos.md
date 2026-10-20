@@ -47,6 +47,29 @@ lo registrado en ella. Al recargar (por ejemplo, al empezar noviembre), lo de la
 borra a propósito y manda el Excel, que ya lo tiene. Cuanto más haga la app, más se
 usará, y el Excel se irá dejando poco a poco.
 
+## Ampliación propuesta: las deudas (2026-10-20, por confirmar)
+
+El autor pide registrar también las deudas antes de probar la app en el teléfono: hoy
+todas vienen del Excel, y probar unos días sin poder marcar una cuota pagada sería
+probar a medias. Se adelanta aquí lo que era M10.
+
+- **En Deudas, un botón «Agregar»**: lo que deben o lo que les deben, concepto, monto
+  con su moneda y fecha límite (opcional).
+- **En cuotas**: al agregar, cuántas y cada cuánto (cada 14 días o cada mes), como las
+  compras a cuotas del Excel, que van de tres en tres cada dos semanas. Cada cuota es
+  una deuda, con su fecha.
+- **Al tocar una deuda**: «Marcar pagada» (o «No está pagada», si se marcó por error),
+  «Corregir» y «Borrar».
+- **Una pagada guarda el día en que se marcó**, y se ve en «Pagadas este mes» durante
+  ese mes. Las importadas, con el día de su fecha límite.
+- **Marcar pagada no registra el gasto** (`R17`): ofrece «Registrar el pago», que abre
+  Registrar con el monto, el concepto y la fecha; la cuenta y el sobre se eligen.
+- **Lo importado sí se toca**: a diferencia de los movimientos, las deudas son una lista
+  que la recarga reemplaza entera con la del Excel, que también se marca en paralelo.
+- **La base**: tres funciones más (guardar, marcar pagada y borrar una deuda), como las
+  de los movimientos (ADR 0008), y el candado del corte cuenta también las deudas
+  agregadas en la app.
+
 ## Pantallas
 
 | Pantalla | Qué enseña | De dónde sale |
