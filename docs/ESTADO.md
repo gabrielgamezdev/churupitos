@@ -8,6 +8,10 @@ registra **en paralelo**: en el Excel y en la app. Al recargar desde los Excels,
 app se borra a propósito y manda el Excel. El plan, aprobado, está en
 `docs/modulos/M6-gastos-ingresos-y-deudas.md`.
 
+En paralelo, una investigación de diseño y experiencia, por lo que pidieron al usarla
+(un formulario más bonito, corregir y borrar sin buscar): sus notas, en
+`privado/investigacion/diseno/`, y lo que se decida, en `docs/DESIGN_SYSTEM.md`.
+
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base, borrando lo registrado en la app (`README.md`): hasta entonces noviembre es
 solo de planificación y el oráculo no lo compara (`docs/DOMINIO.md` §2).
@@ -47,6 +51,9 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 Las del dominio (cómo se traduce el Excel) están en `docs/DOMINIO.md` §6. Aquí, las
 del producto:
 
+- **Churupitos es esta versión** (2026-10-20): la oficial, la que sigue creciendo. La v1
+  y la v2 se borraron; de la v2 quedan su crítica de diseño y su investigación en
+  `privado/investigacion/v2/`.
 - **Mobile first, Android.** Los dos usan Android. La PC sigue con el Excel mientras
   la app madura.
 - **Sin conexión = solo lectura**: se ven los últimos datos guardados, se recarga al

@@ -6,9 +6,9 @@ App de finanzas del hogar para dos personas, en Venezuela: bolívares y dólares
 presupuesto por sobres y varias cuentas. Es una **PWA para Android** que sustituye
 unos Excels mensuales, que hasta el día del corte son la fuente de verdad.
 
-Es la tercera versión. Las dos anteriores se abandonaron por crecer antes de que
-nadie las usara: aquí se construye **por módulos pequeños, y cada uno se prueba en
-los teléfonos antes de empezar el siguiente**.
+Es la tercera versión y, desde el 2026-10-20, la oficial. Las anteriores se borraron por
+crecer antes de que nadie las usara: aquí se construye **por módulos pequeños, y cada
+uno se prueba en los teléfonos antes de empezar el siguiente**.
 
 ---
 

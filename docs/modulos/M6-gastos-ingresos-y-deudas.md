@@ -70,6 +70,14 @@ probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
   de los movimientos (ADR 0008), y el candado del corte cuenta también las deudas
   agregadas en la app.
 
+## Lo que dicen al usarla (2026-10-20)
+
+- **«Hacer el formulario más bonito.»** Entra en la investigación de diseño y experiencia
+  que se abre en paralelo (`docs/ESTADO.md`).
+- **«Poder borrar y editar alguna transacción.»** Lo registrado en la app ya se corrige y
+  se borra, pero desde su detalle en el libro de la cuenta: está escondido. Lo importado
+  no se toca hasta el corte. Hacerlo fácil de encontrar entra en la misma investigación.
+
 ## Pantallas
 
 | Pantalla | Qué enseña | De dónde sale |
