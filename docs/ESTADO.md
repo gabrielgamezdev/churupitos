@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M4 · Presupuesto (en planificación)
+## Ahora: M4 · Presupuesto (en curso)
 
 Los ingresos esperados y cobrados, el plan de cada sobre y el cuadre del mes, como la
-hoja PRESUPUESTO del Excel. Trae la sección Presupuesto a la barra. El plan, en
-borrador, está en `docs/modulos/M4-presupuesto.md`.
+hoja PRESUPUESTO del Excel. Completa la barra: Deudas entra ya, en construcción. El
+plan, aprobado, está en `docs/modulos/M4-presupuesto.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
@@ -62,7 +62,7 @@ del producto:
 
 ## Pendiente de decidir
 
-- Qué pantallas exactas tienen M4 y M5, y qué mostrar de las deudas (antes de cada uno).
+- Qué pantallas exactas tiene M5 y qué mostrar de las deudas (antes de empezarlo).
 - M5: desde octubre de 2026 el Excel marca las deudas pagadas (✅) en vez de borrarlas.
   Hoy solo se importa la lista vigente; falta decidir si la app enseña también las
   pagadas del mes.
