@@ -5,6 +5,7 @@
 import type { EnvelopeRow } from "@/features/accounts/envelope-rows";
 import type { PlanRow } from "@/features/budget/budget-view";
 import type { BudgetChecks, ExpectedIncome } from "@/features/budget/queries";
+import type { Debt, DebtTotal } from "@/features/debts/queries";
 import type { Envelope } from "@/features/envelopes/queries";
 import type { LedgerEntry, OperationDetail } from "@/features/ledger/queries";
 
@@ -242,4 +243,39 @@ export const SAMPLE_CHECKS: BudgetChecks[] = [
     receivedVesCents: 4010000,
     allocatedVesCents: 4000000,
   },
+];
+
+// Deudas inventadas, vistas desde SAMPLE_TODAY: una vencida, dos que vienen, una sin
+// fecha, una pagada este mes y un deudor.
+const sampleDebt = (
+  id: string,
+  description: string,
+  amountCents: number,
+  dueOn: string | null,
+  extra: Partial<Debt> = {},
+): Debt => ({
+  id,
+  direction: "payable",
+  description,
+  amountCents,
+  currency: "USD",
+  dueOn,
+  isPaid: false,
+  position: 0,
+  ...extra,
+});
+
+export const SAMPLE_DEBTS: Debt[] = [
+  sampleDebt("tienda-oct", "Cuota de la tienda", 2000, "2026-10-04", { isPaid: true }),
+  sampleDebt("telefono", "Cuota del teléfono", 1500, "2026-10-12"),
+  sampleDebt("tienda-nov", "Cuota de la tienda", 2000, "2026-11-04"),
+  sampleDebt("tarjeta", "Tarjeta", 500000, "2026-11-20", { currency: "VES" }),
+  sampleDebt("prestamo", "Comida le debe a Ahorro", 3000, null),
+  sampleDebt("amigo", "Un amigo", 1000, null, { direction: "receivable" }),
+];
+
+export const SAMPLE_DEBT_TOTALS: DebtTotal[] = [
+  { direction: "payable", currency: "VES", totalCents: 500000 },
+  { direction: "payable", currency: "USD", totalCents: 6500 },
+  { direction: "receivable", currency: "USD", totalCents: 1000 },
 ];

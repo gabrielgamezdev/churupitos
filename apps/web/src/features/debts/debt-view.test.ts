@@ -1,0 +1,64 @@
+import { describe, expect, it } from "vitest";
+
+import { daysBetween, dueLabel, summarizePayable } from "./debt-view";
+import type { Debt } from "./queries";
+
+let position = 0;
+const debt = (
+  description: string,
+  dueOn: string | null,
+  amountCents: number,
+  extra: Partial<Debt> = {},
+): Debt => ({
+  id: description,
+  direction: "payable",
+  description,
+  amountCents,
+  currency: "USD",
+  dueOn,
+  isPaid: false,
+  position: ++position,
+  ...extra,
+});
+
+describe("lo que deben", () => {
+  it("se agrupa por mes de vencimiento, con lo que suma cada uno y las sin fecha al final", () => {
+    const { groups } = summarizePayable([
+      debt("Cuota de la tienda", "2026-11-04", 2000),
+      debt("Tarjeta", "2026-11-20", 3000),
+      debt("Cuota del libro", "2026-12-05", 1000, { currency: "VES" }),
+      debt("Préstamo de Comida a Ahorro", null, 500),
+    ]);
+    expect(groups.map((g) => [g.label, g.totals, g.debts.length])).toEqual([
+      ["Noviembre 2026", { USD: 5000 }, 2],
+      ["Diciembre 2026", { VES: 1000 }, 1],
+      ["Sin fecha", { USD: 500 }, 1],
+    ]);
+  });
+
+  it("las pagadas van aparte y lo que les deben no entra", () => {
+    const { groups, paid } = summarizePayable([
+      debt("Cuota de octubre", "2026-10-04", 2000, { isPaid: true }),
+      debt("Tarjeta", "2026-11-20", 3000),
+      debt("Un amigo", null, 500, { direction: "receivable" }),
+    ]);
+    expect(groups.map((g) => g.label)).toEqual(["Noviembre 2026"]);
+    expect(paid.map((d) => d.description)).toEqual(["Cuota de octubre"]);
+  });
+});
+
+describe("cuándo vence una cuota", () => {
+  it("cuenta días de calendario, también entre meses", () => {
+    expect(daysBetween("2026-10-20", "2026-11-15")).toBe(26);
+    expect(daysBetween("2026-10-20", "2026-10-18")).toBe(-2);
+  });
+
+  it("lo dice desde hoy, y una vencida lo marca", () => {
+    const today = "2026-10-20";
+    expect(dueLabel("2026-10-20", today)).toEqual({ text: "vence hoy", overdue: false });
+    expect(dueLabel("2026-10-21", today)).toEqual({ text: "vence mañana", overdue: false });
+    expect(dueLabel("2026-11-15", today)).toEqual({ text: "en 26 días", overdue: false });
+    expect(dueLabel("2026-10-19", today)).toEqual({ text: "venció ayer", overdue: true });
+    expect(dueLabel("2026-10-18", today)).toEqual({ text: "venció hace 2 días", overdue: true });
+  });
+});

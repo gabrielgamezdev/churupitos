@@ -126,7 +126,8 @@ debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de sha
 adaptadas a este documento, en `components/ui/`: `Button`, `Badge` (las etiquetas),
 `Skeleton`, `Collapsible`, `Input` y `Label`. Los de cada pantalla viven con ella en
 `features/` (`CurrencyCard` y `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`,
-`EnvelopeRow` en `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`) y los del libro, que comparten cuentas y sobres, en
+`EnvelopeRow` en `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`, `DebtTotals`,
+`DebtGroupList` y `DebtRow` en `debts/`) y los del libro, que comparten cuentas y sobres, en
 `features/ledger/` (`LedgerList`, `MonthPicker` y `OperationDetail`). Todos entran en la
 galería al construirse, con datos inventados.
 
@@ -146,6 +147,9 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
 | **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y ✅ cobrado o ⏳ pendiente. Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |
 | **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y ✅ entregado, ⏳ con lo que le llegó o ⏳ pendiente (`R18`); debajo, la fuente de fondos y la acción. Lleva al sobre. Los de $0 van aparte, plegados |
+| **DebtTotals** | Lo pendiente: lo que deben y lo que les deben, cada moneda por su lado y sin las pagadas |
+| **DebtGroupList** | Lo que deben en un mes de vencimiento (o sin fecha): su nombre y lo que suma arriba, y sus cuotas |
+| **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted` |
 | **BudgetCheckList** | El cuadre del mes (`R12`): ✅ si cuadra o, en `overdrawn` con su icono, por cuánto no. Avisa; nunca impide |
 | **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. La primera pantalla de una sección va sin flecha |
 | **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Deudas · Inicio · Presupuesto · Ajustes, todas del mismo ancho y con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
@@ -176,11 +180,11 @@ se entró directo por la dirección, va a la pantalla de arriba.
 ## Iconos
 
 Lucide (`lucide-react`), con trazo de 2 px, en 20 o 24 px y del color del texto que
-acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw`, `construction` en
-lo que está en construcción, y los de la barra (`mail`, `hand-coins`, `house`,
-`chart-pie` y `settings`). Un aviso del cuadre lleva `triangle-alert` en `overdrawn`. El logotipo es el
-icono de la app (`apps/web/public/favicon.svg`): un sobre sobre `brand` con la moneda en
-`coin`. Es provisional desde M0.
+acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw` y los de la barra
+(`mail`, `hand-coins`, `house`, `chart-pie` y `settings`). Un aviso del cuadre lleva
+`triangle-alert` en `overdrawn`. El logotipo es el icono de la app
+(`apps/web/public/favicon.svg`): un sobre sobre `brand` con la moneda en `coin`. Es
+provisional desde M0.
 
 ## Accesibilidad
 

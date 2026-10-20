@@ -57,8 +57,8 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
 2. [x] **Las pagadas del mes en la base** (2026-10-20, también en la nube): una columna
    que diga si está pagada, `debt_totals` sin ellas, el importador (`D9` revisada) y la
    recarga, en local y en la nube.
-3. [ ] **Deudas**: lo pendiente, lo que deben por mes con sus vencimientos, las pagadas
-   plegadas y lo que les deben.
+3. [x] **Deudas** (2026-10-20): lo pendiente, lo que deben por mes con sus vencimientos,
+   las pagadas plegadas y lo que les deben.
 4. [ ] **En los teléfonos**: lo comparan con el Excel.
 
 Cada paso termina con su commit; los pasos 3 y 4 terminan además con un push.

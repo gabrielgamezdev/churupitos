@@ -13,6 +13,8 @@ import { EnvelopeSplit } from "@/features/accounts/envelope-split";
 import {
   SAMPLE_ACCOUNT_BY_ID,
   SAMPLE_CHECKS,
+  SAMPLE_DEBTS,
+  SAMPLE_DEBT_TOTALS,
   SAMPLE_ENVELOPE_BY_ID,
   SAMPLE_ENVELOPES,
   SAMPLE_ENVELOPE_ROWS,
@@ -28,6 +30,8 @@ import { BudgetCheckList } from "@/features/budget/budget-check-list";
 import { BudgetTotals } from "@/features/budget/budget-totals";
 import { IncomeRow } from "@/features/budget/income-row";
 import { PlanRow } from "@/features/budget/plan-row";
+import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
+import { summarizePayable } from "@/features/debts/debt-view";
 import { EnvelopeRow } from "@/features/envelopes/envelope-row";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
@@ -387,6 +391,21 @@ function GalleryPage() {
           {SAMPLE_CHECKS.map((checks) => (
             <BudgetCheckList key={checks.month} checks={checks} />
           ))}
+        </Section>
+
+        <Section
+          title="Deudas"
+          description="Lo pendiente por moneda y lo que deben por mes de vencimiento. Una vencida lo dice; una pagada va con ✅."
+        >
+          <DebtTotals totals={SAMPLE_DEBT_TOTALS} />
+          {summarizePayable(SAMPLE_DEBTS).groups.map((group) => (
+            <DebtGroupList key={group.month ?? "sin-fecha"} group={group} today={SAMPLE_TODAY} />
+          ))}
+          <List>
+            {summarizePayable(SAMPLE_DEBTS).paid.map((debt) => (
+              <DebtRow key={debt.id} debt={debt} today={SAMPLE_TODAY} />
+            ))}
+          </List>
         </Section>
 
         <Section title="Estados">

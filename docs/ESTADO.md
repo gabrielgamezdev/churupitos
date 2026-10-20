@@ -2,8 +2,8 @@
 
 ## Ahora: M5 · Deudas (en curso)
 
-Las cuotas por fecha y el total pendiente, lo que deben y lo que les deben. Su sección
-ya está en la barra, en construcción. El plan, aprobado, está en
+Las cuotas por fecha y el total pendiente, lo que deben y lo que les deben. Su pantalla
+sustituye a la de «en construcción» de la barra. El plan, aprobado, está en
 `docs/modulos/M5-deudas.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
