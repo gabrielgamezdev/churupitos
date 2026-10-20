@@ -1,7 +1,6 @@
 # M6 · Gastos e ingresos
 
-- **Estado:** en planificación (desde 2026-10-20). Nada de código hasta que el autor
-  apruebe este plan.
+- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
 - **Objetivo:** registrar desde el teléfono un gasto o un ingreso suelto, con su
   comisión si la tiene, y corregirlo o borrarlo, con las reglas del Excel: se puede
   quedar en descubierto (`R6`) y la comisión se apunta a mano (`R16`). Es el primer
@@ -19,7 +18,7 @@
   registró (lo importado va sin autor), y la forma de cada tipo la comprueba ella
   (`R5`). Hoy la app solo lee.
 
-## Propuesto, por confirmar
+## Decisiones (2026-10-20)
 
 - **Se registra desde un botón «Registrar»** en el inicio, en cada cuenta y en cada
   sobre: desde una cuenta abre con ella elegida, y desde un sobre, con él.
@@ -41,13 +40,12 @@
   comprueban todo y escriben la operación con sus asientos de una vez. La app sigue
   sin escribir directo en las tablas. Se explica en un ADR nuevo, el 0008.
 
-## Por decidir: cómo se usa hasta el corte
+## Hasta el corte: en paralelo
 
-- **En paralelo**: registran cada gasto en el Excel y en la app. La app enseña lo de la
-  última recarga más lo registrado en ella. Al recargar (por ejemplo, al empezar
-  noviembre), lo de la app se borra a propósito y manda el Excel, que ya lo tiene.
-- **Solo de prueba**: registran algunos movimientos para probar la pantalla y los
-  borran después. El Excel sigue siendo el único sitio donde se registra.
+Registran cada gasto en el Excel y en la app. La app enseña lo de la última recarga más
+lo registrado en ella. Al recargar (por ejemplo, al empezar noviembre), lo de la app se
+borra a propósito y manda el Excel, que ya lo tiene. Cuanto más haga la app, más se
+usará, y el Excel se irá dejando poco a poco.
 
 ## Pantallas
 
@@ -66,7 +64,7 @@
 
 ## Pasos
 
-1. [ ] **Plan aprobado** por el autor.
+1. [x] **Plan aprobado** por el autor (2026-10-20).
 2. [ ] **Escribir en la base**: el ADR 0008 y las funciones de guardar y borrar una
    operación, con sus permisos y sus pruebas (`R5`, `R6`, `R16`, solo lo de la app),
    en local y en la nube.
@@ -74,7 +72,7 @@
    botón en el inicio, en cada cuenta y en cada sobre.
 4. [ ] **Repartir entre varios sobres.**
 5. [ ] **Corregir y borrar**, y quién registró cada operación.
-6. [ ] **La recarga que borra lo de la app**, si se decide registrar en paralelo.
+6. [ ] **La recarga que borra lo de la app**, para registrar en paralelo.
 7. [ ] **En los teléfonos**: lo usan unos días.
 
 Cada paso termina con su commit; los pasos 3, 5 y 7 terminan además con un push.

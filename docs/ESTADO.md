@@ -1,11 +1,11 @@
 # Estado
 
-## Ahora: M6 · Gastos e ingresos (en planificación)
+## Ahora: M6 · Gastos e ingresos (en curso)
 
 El primer módulo que escribe: crear, editar y borrar gastos e ingresos, con la comisión
-a mano (`R16`). Hasta el corte, lo que se registre en la app es de prueba, y el candado
-del corte impide recargar desde los Excels sin borrarlo a propósito (`README.md`).
-El plan, en borrador, está en `docs/modulos/M6-gastos-e-ingresos.md`.
+a mano (`R16`). Hasta el corte se registra **en paralelo**: en el Excel y en la app. Al
+recargar desde los Excels, lo de la app se borra a propósito y manda el Excel. El plan,
+aprobado, está en `docs/modulos/M6-gastos-e-ingresos.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
