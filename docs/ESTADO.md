@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M4 · Presupuesto (por planificar)
+## Ahora: M4 · Presupuesto (en planificación)
 
-Los ingresos esperados y cobrados, el plan de cada sobre y las reglas de cuadre del mes.
-Trae la sección Presupuesto a la barra, en su sitio. Antes de empezar se acuerdan sus
-pantallas y se escribe su plan en `docs/modulos/`.
+Los ingresos esperados y cobrados, el plan de cada sobre y el cuadre del mes, como la
+hoja PRESUPUESTO del Excel. Trae la sección Presupuesto a la barra. El plan, en
+borrador, está en `docs/modulos/M4-presupuesto.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
