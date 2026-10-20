@@ -1,11 +1,12 @@
 # Estado
 
-## Ahora: M6 · Gastos e ingresos (en curso)
+## Ahora: M6 · Gastos, ingresos y deudas (en curso)
 
 El primer módulo que escribe: crear, editar y borrar gastos e ingresos, con la comisión
-a mano (`R16`). Hasta el corte se registra **en paralelo**: en el Excel y en la app. Al
-recargar desde los Excels, lo de la app se borra a propósito y manda el Excel. El plan,
-aprobado, está en `docs/modulos/M6-gastos-e-ingresos.md`.
+a mano (`R16`), y deudas, con sus cuotas pagadas (lo que era M10). Hasta el corte se
+registra **en paralelo**: en el Excel y en la app. Al recargar desde los Excels, lo de la
+app se borra a propósito y manda el Excel. El plan, aprobado, está en
+`docs/modulos/M6-gastos-ingresos-y-deudas.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base, borrando lo registrado en la app (`README.md`): hasta entonces noviembre es
@@ -35,11 +36,10 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M3 | Sobres | Cuánto tiene cada sobre y en qué cuenta | Ídem |
 | M4 | Presupuesto | Ingresos esperados y cobrados, plan por sobre, reglas de cuadre | Ídem |
 | M5 | Deudas | Cuotas por fecha y total pendiente | Ídem |
-| M6 | Gastos e ingresos | Crear, editar y borrar; la comisión, a mano | Lo usan a diario |
+| M6 | Gastos, ingresos y deudas | Crear, editar y borrar; la comisión, a mano; marcar las cuotas pagadas | Lo usan a diario |
 | M7 | Entre sobres y cuentas | Préstamos entre sobres, traspasos, cambio de divisa | Ídem |
 | M8 | Cobros y reparto | Ingreso esperado → cobro → reparto por sobre | Ídem |
 | M9 | El mes | Plan del mes y apertura del siguiente | Ídem |
-| M10 | Deudas | Crear, pagar una cuota, quitarla | Ídem |
 | — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | — |
 
 ## Decisiones ya tomadas — no volver a preguntarlas

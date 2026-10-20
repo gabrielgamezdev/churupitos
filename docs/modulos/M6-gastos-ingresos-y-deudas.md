@@ -1,10 +1,10 @@
-# M6 · Gastos e ingresos
+# M6 · Gastos, ingresos y deudas
 
 - **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
 - **Objetivo:** registrar desde el teléfono un gasto o un ingreso suelto, con su
   comisión si la tiene, y corregirlo o borrarlo, con las reglas del Excel: se puede
-  quedar en descubierto (`R6`) y la comisión se apunta a mano (`R16`). Es el primer
-  módulo que escribe.
+  quedar en descubierto (`R6`) y la comisión se apunta a mano (`R16`). Y agregar,
+  corregir y borrar deudas y marcar las cuotas pagadas. Es el primer módulo que escribe.
 
 ## Lo que hay en la v2 y en la base
 
@@ -47,11 +47,11 @@ lo registrado en ella. Al recargar (por ejemplo, al empezar noviembre), lo de la
 borra a propósito y manda el Excel, que ya lo tiene. Cuanto más haga la app, más se
 usará, y el Excel se irá dejando poco a poco.
 
-## Ampliación propuesta: las deudas (2026-10-20, por confirmar)
+## Ampliación: las deudas (2026-10-20)
 
 El autor pide registrar también las deudas antes de probar la app en el teléfono: hoy
 todas vienen del Excel, y probar unos días sin poder marcar una cuota pagada sería
-probar a medias. Se adelanta aquí lo que era M10.
+probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
 
 - **En Deudas, un botón «Agregar»**: lo que deben o lo que les deben, concepto, monto
   con su moneda y fecha límite (opcional).
@@ -77,12 +77,16 @@ probar a medias. Se adelanta aquí lo que era M10.
 | **Registrar** | Gasto o ingreso, monto, cuenta, sobres, concepto, fecha y comisión; lo que queda en cada sobre | `account_balances()`, `cell_balances()`, `envelopes` |
 | **El libro** (cuenta y sobre) | En el detalle de una operación de la app, quién la registró, «Corregir» y «Borrar» | `operations` |
 | **Inicio, una cuenta, un sobre** | El botón «Registrar» | — |
+| **Deudas** | El botón «Agregar»; al tocar una deuda, «Marcar pagada», «Corregir», «Borrar» y «Registrar el pago» | `debts` |
+| **Agregar una deuda** | Lo que deben o les deben, concepto, monto y moneda, fecha límite y, al agregar, las cuotas | — |
 
 ## Hecho cuando
 
 - Durante unos días registran en el teléfono sus gastos e ingresos de verdad, alguno
   con comisión y alguno en descubierto, corrigen y borran alguno, y los saldos cambian
   como en el Excel.
+- Agregan alguna deuda en cuotas y marcan pagadas las que pagan, y la lista coincide
+  con la del Excel.
 - `npm run check` en verde, en local y en la CI.
 
 ## Pasos
@@ -97,14 +101,20 @@ probar a medias. Se adelanta aquí lo que era M10.
 5. [x] **Corregir y borrar** (2026-10-20), y quién registró cada operación.
 6. [x] **La recarga que borra lo de la app** (2026-10-20), para registrar en paralelo:
    `--discard-app-data`. Sin pedirlo, el candado del corte no deja recargar.
-7. [ ] **En los teléfonos**: lo usan unos días.
+7. [ ] **Escribir deudas en la base**: el día en que se pagó y quién la agregó; las
+   funciones de guardar (también en lote), marcar pagada y borrar, con sus pruebas; el
+   candado del corte con las deudas; el importador; en local y en la nube.
+8. [ ] **Agregar y corregir deudas**, con las cuotas en lote.
+9. [ ] **Marcar pagada y borrar**, con «Registrar el pago».
+10. [ ] **En los teléfonos**: lo usan unos días.
 
-Cada paso termina con su commit; los pasos 3, 5 y 7 terminan además con un push.
+Cada paso termina con su commit; los pasos 9 y 10 terminan además con un push.
 
 ## Tope de complejidad
 
-- **Pantallas:** 1 nueva (Registrar), más corregir y borrar en el detalle del libro.
-- **Datos:** dos funciones; ninguna tabla nueva.
+- **Pantallas:** 2 nuevas (Registrar y Agregar una deuda), más las acciones en el
+  detalle del libro y en cada deuda.
+- **Datos:** cinco funciones y dos columnas; ninguna tabla nueva.
 
 ## Fuera de M6
 
