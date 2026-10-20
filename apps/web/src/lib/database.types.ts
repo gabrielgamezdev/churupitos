@@ -433,6 +433,55 @@ export type Database = {
           },
         ];
       };
+      envelope_ledger: {
+        Row: {
+          account_id: string | null;
+          amount_cents: number | null;
+          currency: string | null;
+          date_approximate: boolean | null;
+          description: string | null;
+          entry_id: string | null;
+          envelope_id: string | null;
+          is_fee: boolean | null;
+          kind: string | null;
+          occurred_on: string | null;
+          operation_description: string | null;
+          operation_id: string | null;
+          position: number | null;
+          running_balance_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "entries_account_id_fkey";
+            columns: ["account_id"];
+            isOneToOne: false;
+            referencedRelation: "accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_envelope_id_fkey";
+            columns: ["envelope_id"];
+            isOneToOne: false;
+            referencedRelation: "envelopes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
+            referencedRelation: "expected_income_summary";
+            referencedColumns: ["operation_id"];
+          },
+          {
+            foreignKeyName: "entries_operation_id_fkey";
+            columns: ["operation_id"];
+            isOneToOne: false;
+            referencedRelation: "operations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       expected_income_summary: {
         Row: {
           account_id: string | null;

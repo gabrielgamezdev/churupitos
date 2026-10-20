@@ -49,7 +49,7 @@ Todas con los estados de M2: cargando, vacío, error, sin conexión y estirar pa
 2. [x] **La barra de secciones y Ajustes** (2026-10-19): Inicio al centro; tocar la sección en la que
    se está vuelve a su primera pantalla; el atrás de Android vuelve a Inicio desde la
    primera pantalla de cualquier sección.
-3. [ ] **El libro del sobre en la base**: la vista `envelope_ledger`, con el restante del
+3. [x] **El libro del sobre en la base** (2026-10-19, también en la nube): la vista `envelope_ledger`, con el restante del
    sobre en cada moneda después de cada asiento (R2, R14), sus permisos y sus pruebas.
 4. [ ] **Sobres**: la lista.
 5. [ ] **Un sobre**: lo que tiene, en qué cuentas, el mes y el libro; los enlaces entre

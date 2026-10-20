@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(44);
+select plan(46);
 
 -- Las comprobaciones de forma son diferidas: se harían al confirmar, y esta prueba
 -- nunca confirma. Inmediatas, se hacen al final de cada sentencia.
@@ -394,6 +394,39 @@ select is_empty(
      ) final_row on true
      where coalesce(final_row.running_balance_cents, 0) <> b.balance_cents $$,
   'el último restante del libro de cada cuenta es su saldo'
+);
+
+-- El libro de un sobre: sus asientos de todas las cuentas, con su restante en cada
+-- moneda, que nunca se mezclan.
+select results_eq(
+  $$ select l.currency, l.occurred_on, a.name, l.amount_cents, l.running_balance_cents
+     from public.envelope_ledger l
+     join public.accounts a on a.id = l.account_id
+     join public.envelopes v on v.id = l.envelope_id
+     where v.name = 'Ahorro'
+     order by l.currency desc, l.occurred_on, l.position $$,
+  $$ values
+       ('VES', '2026-01-01'::date, 'Banco A', 100000::bigint, 100000::bigint),
+       ('VES', '2026-01-10'::date, 'Banco A', 40000::bigint, 140000::bigint),
+       ('VES', '2026-01-20'::date, 'Banco A', -10000::bigint, 130000::bigint),
+       ('VES', '2026-01-28'::date, 'Banco A', -40000::bigint, 90000::bigint),
+       ('USD', '2026-01-01'::date, 'Billetera B', 20000::bigint, 20000::bigint),
+       ('USD', '2026-01-28'::date, 'Billetera B', 1000::bigint, 21000::bigint) $$,
+  'R14: el libro de un sobre lleva su restante en cada moneda, de todas sus cuentas'
+);
+
+select is_empty(
+  $$ select b.envelope_id
+     from public.envelope_balances() b
+     left join lateral (
+       select l.running_balance_cents
+       from public.envelope_ledger l
+       where l.envelope_id = b.envelope_id and l.currency = b.currency
+       order by l.occurred_on desc, l.position desc, l.entry_id desc
+       limit 1
+     ) final_row on true
+     where coalesce(final_row.running_balance_cents, 0) <> b.balance_cents $$,
+  'el último restante del libro de cada sobre, en cada moneda, es su saldo'
 );
 
 select throws_ok(
