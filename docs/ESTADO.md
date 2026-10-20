@@ -1,10 +1,10 @@
 # Estado
 
-## Ahora: M5 · Deudas (por planificar)
+## Ahora: M5 · Deudas (en planificación)
 
-Las cuotas por fecha y el total pendiente, lo que se debe y lo que les deben. Su
-sección ya está en la barra, en construcción. Antes de empezar se acuerdan sus
-pantallas y se escribe su plan en `docs/modulos/`.
+Las cuotas por fecha y el total pendiente, lo que deben y lo que les deben. Su sección
+ya está en la barra, en construcción. El plan, en borrador, está en
+`docs/modulos/M5-deudas.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
