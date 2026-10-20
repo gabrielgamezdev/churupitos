@@ -1,6 +1,11 @@
 # M5 · Deudas
 
-- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
+- **Estado:** cerrado el 2026-10-20 (empezó el mismo día). Congelado: lo que siga
+  vigente vive en `docs/DOMINIO.md` (`D9`, `R17`), `docs/DESIGN_SYSTEM.md`, el código de
+  `apps/web` y las migraciones.
+- **Resultado:** las cuotas pendientes de noviembre, las pagadas de octubre y los
+  deudores, con sus importes, fechas y totales, comparados con el Excel en los
+  teléfonos: todo coincide.
 - **Objetivo:** ver en el teléfono lo que deben y lo que les deben, con las cuotas por
   fecha y el total pendiente, como los bloques 📉 Deudas y 🔫 Deudores del Excel. Y
   poder compararlo con el Excel.
@@ -59,7 +64,7 @@ Con los estados de M2: cargando, vacío, error, sin conexión y estirar para rec
    recarga, en local y en la nube.
 3. [x] **Deudas** (2026-10-20): lo pendiente, lo que deben por mes con sus vencimientos,
    las pagadas plegadas y lo que les deben.
-4. [ ] **En los teléfonos**: lo comparan con el Excel.
+4. [x] **En los teléfonos** (2026-10-20): comparado con el Excel, todo coincide.
 
 Cada paso termina con su commit; los pasos 3 y 4 terminan además con un push.
 

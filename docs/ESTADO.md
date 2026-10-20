@@ -1,10 +1,11 @@
 # Estado
 
-## Ahora: M5 · Deudas (en curso)
+## Ahora: M6 · Gastos e ingresos (por planificar)
 
-Las cuotas por fecha y el total pendiente, lo que deben y lo que les deben. Su pantalla
-sustituye a la de «en construcción» de la barra. El plan, aprobado, está en
-`docs/modulos/M5-deudas.md`.
+El primer módulo que escribe: crear, editar y borrar gastos e ingresos, con la comisión
+a mano (`R16`). Hasta el corte, lo que se registre en la app es de prueba, y el candado
+del corte impide recargar desde los Excels sin borrarlo a propósito (`README.md`).
+Antes de empezar se acuerdan sus pantallas y se escribe su plan en `docs/modulos/`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
 la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
@@ -13,8 +14,9 @@ la base: hasta entonces noviembre es solo de planificación y el oráculo no lo 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuentas el
 2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`), M3 · Sobres el 2026-10-19
-(`docs/modulos/M3-sobres.md`) y M4 · Presupuesto el 2026-10-20
-(`docs/modulos/M4-presupuesto.md`).
+(`docs/modulos/M3-sobres.md`), M4 · Presupuesto el 2026-10-20
+(`docs/modulos/M4-presupuesto.md`) y M5 · Deudas el 2026-10-20
+(`docs/modulos/M5-deudas.md`).
 
 ## Cómo se publica
 
