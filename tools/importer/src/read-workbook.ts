@@ -26,6 +26,13 @@ const MONTHS =
   );
 
 // «Finanzas Octubre 2026.xlsx» → «2026-10».
+// Un libro que aún no empieza: se prepara antes para planificar el mes, y sus hojas de
+// cuenta solo traen la plantilla, un «Lo que tenía antes» a cero. Su presupuesto y sus
+// deudas valen; sus saldos todavía no dicen nada.
+export function isPlanningOnly(data: MonthData): boolean {
+  return data.ledger.every((row) => row.isCarry && row.amountCents === 0);
+}
+
 export function monthFromFileName(file: string): string | null {
   const match = new RegExp(`(${MONTHS.join("|")})\\s*(\\d{4})`).exec(normalizeLabel(file));
   if (!match) return null;

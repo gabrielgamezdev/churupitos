@@ -77,6 +77,18 @@ export function findCell(
   return null;
 }
 
+// Todas las celdas cuya etiqueta cumple, de arriba abajo y de izquierda a derecha.
+export function findCells(sheet: Sheet, matches: (label: string) => boolean): Position[] {
+  const found: Position[] = [];
+  for (let row = 1; row <= sheet.lastRow; row++) {
+    for (let col = 0; col <= sheet.lastCol; col++) {
+      const label = labelAt(sheet, row, col);
+      if (label && matches(label)) found.push({ row, col });
+    }
+  }
+  return found;
+}
+
 // Las columnas de una fila de cabecera, por su etiqueta normalizada. Las
 // etiquetas que no se conocen se ignoran.
 export function headerColumns<Field extends string>(

@@ -5,6 +5,8 @@
 
 import type { Catalog } from "./catalog.ts";
 import { CellBalances, carryAdjustments } from "./continuity.ts";
+import { currentDebts } from "./debts.ts";
+import type { DebtDraft } from "./debts.ts";
 import type { DraftOperation } from "./draft.ts";
 import { groupMonth } from "./group-month.ts";
 import { Issues } from "./issues.ts";
@@ -22,15 +24,6 @@ export type BudgetLineDraft = {
   actionNote: string;
 };
 
-export type DebtDraft = {
-  direction: "payable" | "receivable";
-  description: string;
-  amountCents: number;
-  currency: Currency;
-  dueOn: string | null;
-  position: number;
-};
-
 export type ImportPackage = {
   months: string[];
   currencies: Record<string, Currency>;
@@ -40,10 +33,6 @@ export type ImportPackage = {
   debts: DebtDraft[];
   issues: Issue[];
 };
-
-// Por encima de esto, un deudor sin moneda está en bolívares: nadie le presta mil
-// dólares a un vecino, y mil bolívares son poca cosa.
-const VES_GUESS_FROM_CENTS = 100_000;
 
 export function buildPackage(months: MonthData[], catalog: Catalog): ImportPackage {
   const currencies = new Map(catalog.accounts.map((account) => [account.name, account.currency]));
@@ -113,30 +102,11 @@ export function buildPackage(months: MonthData[], catalog: Catalog): ImportPacka
     );
   });
 
-  // D9: de las deudas, solo la lista vigente, que es la del último mes.
-  const last = sorted.at(-1);
-  const debtIssues = new Issues();
-  const debts = last?.budget?.debts ?? [];
-  debts.forEach((debt, i) => {
-    if (debt.amountCents === null) return;
-    let currency = debt.currency;
-    if (!currency) {
-      currency = debt.amountCents >= VES_GUESS_FROM_CENTS ? "VES" : "USD";
-      debtIssues.warning(
-        "DEBT_CURRENCY_GUESSED",
-        `«${debt.description}» no dice su moneda: se toma ${currency}`,
-        `PRESUPUESTO!${debt.row}`,
-      );
-    }
-    result.debts.push({
-      direction: debt.direction,
-      description: debt.description,
-      amountCents: debt.amountCents,
-      currency,
-      dueOn: debt.dueOn,
-      position: i + 1,
-    });
-  });
-  result.issues.push(...debtIssues.list.map((issue) => ({ ...issue, month: last?.month })));
+  // D9: de las deudas, solo la lista vigente (src/debts.ts).
+  const current = currentDebts(
+    sorted.map((data) => ({ month: data.month, debts: data.budget?.debts ?? [] })),
+  );
+  result.debts = current.debts;
+  result.issues.push(...current.issues);
   return result;
 }

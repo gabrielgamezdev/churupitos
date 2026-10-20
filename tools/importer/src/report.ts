@@ -246,6 +246,12 @@ function oracleSection(outcome: LoadOutcome): string[] {
   const oracle = outcome.status === "ok" ? outcome.oracle : null;
   if (!oracle) return [];
   const lines = ["## 2. Contra el Excel", ""];
+  if (oracle.planningMonths.length > 0) {
+    lines.push(
+      `Sin comparar, porque su libro solo trae la plantilla (es la planificación de un mes que aún no empieza): ${oracle.planningMonths.join(", ")}.`,
+      "",
+    );
+  }
   if (oracle.differences.length === 0) {
     lines.push(
       "Todos los saldos coinciden al céntimo: cada cuenta, cada sobre en cada moneda y los",

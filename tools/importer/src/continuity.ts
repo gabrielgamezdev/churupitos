@@ -11,7 +11,9 @@
 //   dinero, y queda anotado para revisarlo.
 //
 // Una cuenta que declara alguna fila de arrastre declara su retrato completo: la
-// celda que no aparece vale cero. Una que no declara ninguna no dice nada.
+// celda que no aparece vale cero. Una que no declara ninguna no dice nada. Una fila
+// en cero no declara nada: es la plantilla del libro de un mes que aún no empieza
+// (se prepara antes, para planificarlo), con un solo «Lo que tenía antes» a cero.
 
 import type { DraftOperation } from "./draft.ts";
 import type { Issues } from "./issues.ts";
@@ -56,7 +58,10 @@ export function carryAdjustments(
   issues: Issues,
 ): DraftOperation[] {
   const declaredByAccount = new Map<string, Map<string, number>>();
-  for (const row of ledger.filter((candidate) => candidate.isCarry && candidate.envelope)) {
+  const declarations = ledger.filter(
+    (candidate) => candidate.isCarry && candidate.envelope && candidate.amountCents !== 0,
+  );
+  for (const row of declarations) {
     const declared = declaredByAccount.get(row.account) ?? new Map<string, number>();
     declared.set(row.envelope!, (declared.get(row.envelope!) ?? 0) + row.amountCents);
     declaredByAccount.set(row.account, declared);

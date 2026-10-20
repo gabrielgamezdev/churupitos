@@ -78,10 +78,17 @@ mantener en bolívares…) y si ya se entregó (✅/⏳).
 
 **Deudas y deudores.** Lo que el hogar debe (cuotas, tarjetas) y lo que le deben, con
 fecha límite opcional, concepto, monto y moneda. Es una lista aparte del libro: pagar
-una cuota es un gasto normal (`R17`).
+una cuota es un gasto normal (`R17`). Cada mes lleva la lista de las cuotas de ese mes;
+desde octubre de 2026, cada una con ✅ si ya se pagó o ⏳ si no, en vez de borrar las
+pagadas.
 
 **Mes y arrastre.** El mes de una operación lo da su fecha. Cada celda abre el mes con
 lo que cerró el anterior, sin teclear nada (`R7`).
+
+**El libro del mes siguiente, antes de tiempo.** Se prepara antes de que empiece el mes,
+para planificarlo: trae su presupuesto y sus deudas, y en cada cuenta solo la plantilla,
+un «Lo que tenía antes» a cero que no dice nada. El arrastre de verdad se escribe al
+empezar el mes.
 
 ---
 
@@ -143,7 +150,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 - **R16 — Las comisiones se registran a mano**, como asiento de comisión, que
   siempre es una salida: importe negativo.
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
-  la cuota pagada se quita de la lista, como en el Excel.
+  la cuota pagada sale de la lista vigente (en el Excel se borra o se marca ✅).
 - **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
   cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
   mes, en dólares, cubre lo planeado.
@@ -159,7 +166,7 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Una fila con importe | Un asiento |
 | Filas que van juntas | Una operación |
 | Una fila de importe 0 que hace de título | La descripción de su operación (`R4`) |
-| «Lo que tenía antes» | Nada: es el arrastre (`R7`); en el primer mes de cada cuenta, un ajuste `opening` el día 1 |
+| «Lo que tenía antes» | Nada: es el arrastre (`R7`); en el primer mes de cada cuenta, un ajuste `opening` el día 1. A cero, es la plantilla de un mes que aún no empieza, y no declara nada |
 | Un cambio de sobre al copiar el arrastre | Un ajuste `carry_reassignment` el día 1 |
 | Unos céntimos de diferencia en el arrastre (hasta 5) | Un ajuste `correction` el último día del mes anterior, para que su cierre dé lo del Excel |
 | Una fila de comisión («Comisión pago móvil», «Mantenimiento de cuenta»…) | Un asiento de comisión en la operación del movimiento de justo antes, o un gasto si va sola |
@@ -171,7 +178,8 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 | Ingresos esperados del PRESUPUESTO | Ingresos esperados del mes; los Bs, la fecha, la tasa y el ✅, del cobro (`R8`, `R18`) |
 | Distribución del PRESUPUESTO | El plan del mes; los Bs y el ✅, calculados (`R10`, `R18`) |
 | Restante en las cuentas | Calculado |
-| Deudas y deudores | La lista vigente: la del último mes |
+| Deudas y deudores | La lista vigente (`D9`): lo no pagado del último libro y las cuotas con fecha del anterior que siguen en ⏳. Una deuda sin fecha que no pasó al último libro se dejó de pagar: no entra |
+| El libro de un mes que aún no empieza | Su presupuesto y sus deudas. Sus saldos no se comparan con los de la app hasta que empieza |
 | Zona libre (borradores) | No se importa |
 
 El catálogo que dice qué hoja es qué cuenta, cómo se llama cada sobre en cada mes y
@@ -191,7 +199,7 @@ con qué emoji lo pinta la app vive en `privado/import/catalogo.yml`, porque lle
 | D6 | «Otro» es un solo sobre, como en el Excel | 2026-10-14 |
 | D7 | Los préstamos entre sobres son movimientos simples; los que se quieren recordar van a Deudas | 2026-10-14 |
 | D8 | El Pote es un sobre | 2026-10-14 |
-| D9 | De Deudas y Deudores se importa solo la lista vigente | 2026-10-14 |
+| D9 | De Deudas y Deudores se importa solo la lista vigente, con ✅/⏳ desde octubre de 2026 (§5) | 2026-10-14, revisada el 2026-10-19 |
 | D10 | El presupuesto se importa tal cual, con los Bs de cada sobre calculados del reparto | 2026-10-14 |
 | D11 | La zona libre del presupuesto no se importa | 2026-10-14 |
 | D12 | Las filas raras entran marcadas y ordenadas: fecha aproximada, concepto vacío, títulos como descripción | 2026-10-14 |

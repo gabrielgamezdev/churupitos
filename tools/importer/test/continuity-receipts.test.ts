@@ -66,6 +66,12 @@ describe("el arrastre (R7)", () => {
     ).toEqual([]);
   });
 
+  it("la plantilla de un mes que no empieza (un arrastre en cero) no declara nada", () => {
+    const issues = new Issues();
+    expect(februaryWith([["Otro", 0]], issues)).toEqual([]);
+    expect(issues.list).toEqual([]);
+  });
+
   it("un cambio de sobre al copiar el arrastre es un ajuste con fecha del día 1", () => {
     // Comida no aparece: está declarada a cero, y su dinero pasó a Ahorro.
     const [adjustment] = februaryWith([["Ahorro", 130000]]);

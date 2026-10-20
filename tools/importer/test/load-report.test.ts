@@ -60,6 +60,7 @@ const budget: BudgetSheet = {
       currency: "USD",
       amountText: null,
       dueOn: "2026-02-15",
+      paid: null,
     },
   ],
 };
@@ -135,7 +136,7 @@ describe("el informe", () => {
     budget_lines: 1,
     debts: 1,
   };
-  const oracle = { checks: 5, differences: [], budgetNotes: [] };
+  const oracle = { checks: 5, differences: [], budgetNotes: [], planningMonths: [] };
   const report = buildReport(pkg, [month], { status: "ok", dryRun: true, counts, oracle });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
@@ -174,6 +175,7 @@ describe("el informe", () => {
         budgetNotes: [
           { month: "2026-01", message: "Plan de Ahorro: el Excel dice ✅ y la app, ⏳" },
         ],
+        planningMonths: ["2026-02"],
       },
     });
     expect(withDifferences).toContain("**1 de 5 saldos no coinciden** (sección 2).");
@@ -181,6 +183,7 @@ describe("el informe", () => {
       "| 2026-01 | Cuenta Banco A | Bs 400,00 | Bs 399,99 | -Bs 0,01 |",
     );
     expect(withDifferences).toContain("- 2026-01: Plan de Ahorro: el Excel dice ✅ y la app, ⏳");
+    expect(withDifferences).toContain("aún no empieza): 2026-02.");
   });
 
   it("si la base rechaza la carga, dice qué operación y de qué filas", () => {

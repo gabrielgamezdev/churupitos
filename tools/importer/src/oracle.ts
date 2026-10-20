@@ -7,6 +7,7 @@
 
 import type { TransactionSql } from "postgres";
 import type { Currency } from "./money.ts";
+import { isPlanningOnly } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
 
 export type Difference = {
@@ -23,6 +24,8 @@ export type OracleResult = {
   differences: Difference[];
   // Lo que la app calcula distinto del Excel en el presupuesto: se anota y se revisa.
   budgetNotes: { month: string; message: string }[];
+  // Los meses que solo son planificación: sin saldos que comparar todavía.
+  planningMonths: string[];
 };
 
 export async function compareWithExcel(
@@ -36,7 +39,12 @@ export async function compareWithExcel(
   await tx`select set_config('request.jwt.claims', ${JSON.stringify({ sub: member.user_id, role: "authenticated" })}, true)`;
   await tx`set local role authenticated`;
 
-  const result: OracleResult = { checks: 0, differences: [], budgetNotes: [] };
+  const result: OracleResult = {
+    checks: 0,
+    differences: [],
+    budgetNotes: [],
+    planningMonths: [],
+  };
   const compare = (
     month: string,
     what: string,
@@ -50,6 +58,10 @@ export async function compareWithExcel(
   };
 
   for (const data of months) {
+    if (isPlanningOnly(data)) {
+      result.planningMonths.push(data.month);
+      continue;
+    }
     const asOf = lastDay(data.month);
     const accounts =
       await tx`select name, currency, balance_cents from public.account_balances(${asOf})`;

@@ -28,9 +28,23 @@ generar archivos desde Python hay que escribir con `newline="\n"`.
 
 ### Generar código desde un heredoc de bash pierde las barras invertidas
 Una `\\` escrita en el comando llega al proceso como una sola `\`, y dentro de un
-literal de Python de triple comilla una `\` antes del salto de línea se lo come.
+literal de Python de triple comilla una `\` antes del salto de línea se lo come. Lo
+mismo con `node -e "…"`: un regex `\p{…}` pierde su barra, y una palabra entre
+comillas invertidas se ejecuta como orden y desaparece del texto.
 **Usar cadenas *raw* (`r'''...'''`), o escribir el archivo con la herramienta de
-edición en vez de con un heredoc.**
+edición (o un script en un archivo) en vez de con un heredoc o un `-e`.**
+
+## El importador
+
+### Un mes preparado antes de tiempo rompe la carga
+El libro del mes siguiente se prepara para planificarlo antes de que empiece. En
+noviembre de 2026 rompió tres cosas: su plantilla de arrastre (un «Lo que tenía antes»
+a cero) parecía decir que las cuentas abrían en cero, con solo un aviso, y habría
+vaciado los saldos de hoy; sus saldos, aún sin rellenar, no coincidían con la app (eso
+sí paró la carga); y otro bloque «Deudas» tapó la lista de verdad, sin avisar.
+**Un arrastre a cero no declara nada, un libro que solo trae la plantilla no se
+compara, y un título repetido se resuelve por la cabecera que más columnas reconoce**
+(DOMINIO.md §5). Con un libro nuevo: `import:read` y revisar los avisos nuevos.
 
 ## Privacidad
 

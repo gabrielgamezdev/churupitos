@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildCatalog } from "../src/catalog.ts";
 import type { CatalogInput } from "../src/catalog.ts";
-import { monthFromFileName, readWorkbook } from "../src/read-workbook.ts";
+import { isPlanningOnly, monthFromFileName, readWorkbook } from "../src/read-workbook.ts";
 import { bs, buildSheet, date, ledgerSheet, usd, writeWorkbook } from "./workbook-builder.ts";
 
 // Un mes inventado con las rarezas de los de verdad. Todo lo de aquí es ficticio.
@@ -40,8 +40,38 @@ const walletB = ledgerSheet("Billetera B", [
 ]);
 
 const budget = buildSheet({
-  2: ["🧾 Ingresos esperados"],
-  3: ["Fuente", "$", "Bs", "Fecha", "Tasa", "👁️"],
+  // Un bloque con el mismo título que el de las deudas, pero con otra cosa: se ignora.
+  2: [
+    "🧾 Ingresos esperados",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Deudas",
+  ],
+  3: [
+    "Fuente",
+    "$",
+    "Bs",
+    "Fecha",
+    "Tasa",
+    "👁️",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "Pintura",
+    usd(10),
+  ],
   4: ["💰 Bono", 100, 40000, date("2026-01-10"), 400, "✅"],
   5: ["💵 Quincena", 10, null, null, 0, "⏳"],
   6: ["Total recibido", 100],
@@ -73,9 +103,9 @@ const budget = buildSheet({
   13: ["Otro", "-", "-", 0, 100],
   14: ["Total pagado", 100],
   16: ["💹 Restante en las cuentas", null, null, "📉 Deudas"],
-  17: ["Nombre", "Restante", null, "Fecha límite", "Concepto", "Cantidad"],
-  18: ["BANCO A", 40115.34, null, date("2026-02-15"), "Cuota de la tienda", usd(20)],
-  19: ["BILLETERA B", 125.5, null, null, "Tarjeta", usd(30)],
+  17: ["Nombre", "Restante", null, "Fecha límite", "Concepto", "Cantidad", "👁️"],
+  18: ["BANCO A", 40115.34, null, date("2026-02-15"), "Cuota de la tienda", usd(20), "⏳"],
+  19: ["BILLETERA B", 125.5, null, null, "Tarjeta", usd(30), "✅"],
   20: ["Total Bs", 40115.34, null, null, "Total", usd(50)],
   21: ["Total Bs con 'Otro'", 40115.34],
   22: ["Total $", 25.5],
@@ -97,6 +127,14 @@ describe("un libro mensual", () => {
     expect(data.month).toBe("2026-01");
     expect(monthFromFileName("Finanzas Septiembre 2026.xlsx")).toBe("2026-09");
     expect(monthFromFileName("copia.xlsx")).toBeNull();
+  });
+
+  it("un libro con movimientos no es solo planificación; uno con la plantilla a cero, sí", () => {
+    expect(isPlanningOnly(data)).toBe(false);
+    const template = data.ledger
+      .slice(0, 1)
+      .map((row) => ({ ...row, isCarry: true, amountCents: 0 }));
+    expect(isPlanningOnly({ ...data, ledger: template })).toBe(true);
   });
 
   it("no encuentra errores", () => {
@@ -196,7 +234,7 @@ describe("un libro mensual", () => {
     });
   });
 
-  it("lee las deudas y los deudores, con la moneda del formato o del texto", () => {
+  it("lee las deudas y los deudores, con la moneda del formato o del texto y si ya se pagaron", () => {
     expect(
       data.budget?.debts.map((debt) => [
         debt.direction,
@@ -204,12 +242,13 @@ describe("un libro mensual", () => {
         debt.amountCents,
         debt.currency,
         debt.dueOn,
+        debt.paid,
       ]),
     ).toEqual([
-      ["payable", "Cuota de la tienda", 2000, "USD", "2026-02-15"],
-      ["payable", "Tarjeta", 3000, "USD", null],
-      ["receivable", "Un amigo", 2000, "USD", null],
-      ["receivable", "Una vecina", 500000, "VES", null],
+      ["payable", "Cuota de la tienda", 2000, "USD", "2026-02-15", false],
+      ["payable", "Tarjeta", 3000, "USD", null, true],
+      ["receivable", "Un amigo", 2000, "USD", null, null],
+      ["receivable", "Una vecina", 500000, "VES", null, null],
     ]);
   });
 });

@@ -58,6 +58,9 @@ del producto:
 ## Pendiente de decidir
 
 - Qué pantallas exactas tienen M3, M4 y M5, y qué mostrar de las deudas (antes de cada uno).
+- M5: desde octubre de 2026 el Excel marca las deudas pagadas (✅) en vez de borrarlas.
+  Hoy solo se importa la lista vigente; falta decidir si la app enseña también las
+  pagadas del mes.
 
 ## Más adelante
 

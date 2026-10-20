@@ -10,7 +10,7 @@ import type { Catalog } from "./catalog.ts";
 import type { Issues } from "./issues.ts";
 import { currencyFromText, parseAmountText, toCents } from "./money.ts";
 import type { Currency } from "./money.ts";
-import { cellAt, cellRef, dateAt, findCell, headerColumns, textAt } from "./sheet.ts";
+import { cellAt, cellRef, dateAt, findCells, headerColumns, textAt } from "./sheet.ts";
 import type { Position, Sheet } from "./sheet.ts";
 import { normalizeLabel } from "./text.ts";
 
@@ -63,6 +63,9 @@ export type DebtRow = {
   // Lo escrito, cuando el importe venía como texto («20 USDT»).
   amountText: string | null;
   dueOn: string | null;
+  // ✅ pagada, ⏳ pendiente; `null` si la lista no tiene esa columna (antes de octubre
+  // de 2026, las pagadas se borraban).
+  paid: boolean | null;
 };
 
 export type BudgetSheet = {
@@ -207,6 +210,7 @@ function readDebts(sheet: Sheet, issues: Issues): DebtRow[] {
         dueOn: (label) => label === "fecha limite",
         description: (label) => label === "concepto",
         amount: (label) => label === "cantidad",
+        status: isStatus,
       }),
     },
     {
@@ -249,6 +253,7 @@ function readDebts(sheet: Sheet, issues: Issues): DebtRow[] {
         amountText,
         dueOn:
           found.columns.dueOn === undefined ? null : dateAt(sheet, row, found.columns.dueOn).date,
+        paid: checkedAt(sheet, row, found.columns.status),
       });
     }
   }
@@ -262,15 +267,21 @@ function block(
   title: string,
   fields: Record<string, (label: string, raw: string) => boolean>,
 ): { title: Position; header: number; columns: Columns } | null {
-  const found = findCell(sheet, (label) => label === title);
-  if (!found) return null;
-  const header = found.row + 1;
   const width = Object.keys(fields).length + 2;
-  return {
-    title: found,
-    header,
-    columns: headerColumns(sheet, header, fields, { fromCol: found.col, toCol: found.col + width }),
-  };
+  // Un título puede repetirse: en un mes apareció otro bloque «Deudas» más arriba, con
+  // otra cosa. Vale el que reconoce más columnas en su cabecera; si empatan, el primero.
+  let best: { title: Position; header: number; columns: Columns } | null = null;
+  for (const found of findCells(sheet, (label) => label === title)) {
+    const header = found.row + 1;
+    const columns = headerColumns(sheet, header, fields, {
+      fromCol: found.col,
+      toCol: found.col + width,
+    });
+    if (!best || Object.keys(columns).length > Object.keys(best.columns).length) {
+      best = { title: found, header, columns };
+    }
+  }
+  return best;
 }
 
 // Las filas de un bloque, de la cabecera hacia abajo, hasta la primera vacía en
