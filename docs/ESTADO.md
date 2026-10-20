@@ -1,14 +1,19 @@
 # Estado
 
-## Ahora: M3 · Sobres (en curso)
+## Ahora: M4 · Presupuesto (por planificar)
 
-Cuánto tiene cada sobre, en qué cuentas y en qué se ha ido mes a mes. Trae la barra de
-secciones, como la de la v2, y Ajustes. El plan, aprobado, está en
-`docs/modulos/M3-sobres.md`.
+Los ingresos esperados y cobrados, el plan de cada sobre y las reglas de cuadre del mes.
+Trae la sección Presupuesto a la barra, en su sitio. Antes de empezar se acuerdan sus
+pantallas y se escribe su plan en `docs/modulos/`.
+
+Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
+la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
+(`docs/DOMINIO.md` §2).
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
-Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`) y M2 · Inicio y cuentas el
-2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`).
+Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuentas el
+2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`) y M3 · Sobres el 2026-10-19
+(`docs/modulos/M3-sobres.md`).
 
 ## Cómo se publica
 
@@ -57,7 +62,7 @@ del producto:
 
 ## Pendiente de decidir
 
-- Qué pantallas exactas tienen M3, M4 y M5, y qué mostrar de las deudas (antes de cada uno).
+- Qué pantallas exactas tienen M4 y M5, y qué mostrar de las deudas (antes de cada uno).
 - M5: desde octubre de 2026 el Excel marca las deudas pagadas (✅) en vez de borrarlas.
   Hoy solo se importa la lista vigente; falta decidir si la app enseña también las
   pagadas del mes.

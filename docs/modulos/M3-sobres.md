@@ -1,6 +1,12 @@
 # M3 · Sobres
 
-- **Estado:** en curso (desde 2026-10-19). El plan está aprobado.
+- **Estado:** cerrado el 2026-10-19 (empezó el mismo día). Congelado: lo que siga vigente
+  vive en `docs/DESIGN_SYSTEM.md`, `docs/TRAMPAS.md`, el código de `apps/web` y las
+  migraciones.
+- **Resultado:** la lista de sobres, cada sobre con sus cuentas y su libro mes a mes, y
+  los enlaces entre cuentas y sobres, comparados con el Excel en los teléfonos: todo
+  coincide. La barra y el atrás de Android se probaron además en Chrome, en diez
+  recorridos.
 - **Objetivo:** ver en el teléfono cuánto tiene cada sobre, en qué cuentas está ese
   dinero y en qué se ha ido mes a mes, y poder compararlo con el Excel. Y moverse por
   la app con una barra de secciones, como en la v2.
@@ -55,7 +61,7 @@ Todas con los estados de M2: cargando, vacío, error, sin conexión y estirar pa
 5. [x] **Un sobre** (2026-10-19): lo que tiene, en qué cuentas, el mes y el libro
    (`/envelopes/<id>?month=2026-09`); los enlaces entre cuentas y sobres. El libro de
    las cuentas y el de los sobres comparten piezas en `features/ledger/`.
-6. [ ] **En los teléfonos**: lo comparan con el Excel.
+6. [x] **En los teléfonos** (2026-10-19): comparado con el Excel, todo coincide.
 
 Cada paso termina con su commit; los pasos 2, 5 y 6 terminan además con un push.
 
