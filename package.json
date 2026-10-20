@@ -19,7 +19,7 @@
     "costs:check": "node ops/guardia-costos.mjs",
     "import:read": "npm run read -w tools/importer",
     "import:dry-run": "npm run dry-run -w tools/importer",
-    "import:load": "npm run load -w tools/importer",
+    "import:load": "npm run load -w tools/importer --",
     "import:dry-run:cloud": "npm run dry-run -w tools/importer -- --cloud",
     "import:load:cloud": "npm run load -w tools/importer -- --cloud",
     "db:start": "supabase start",

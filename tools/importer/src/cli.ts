@@ -9,6 +9,10 @@
 //
 // Con `--cloud`, dry-run y load van a la base de la nube. Allí la carga solo se
 // queda escrita si todos los saldos coinciden con el Excel.
+//
+// Con `--discard-app-data`, load borra lo registrado en la app. Hasta el corte se
+// registra en paralelo y el Excel ya lo tiene; sin pedirlo, el candado del corte no
+// deja recargar.
 
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -22,7 +26,7 @@ import type { LoadOutcome } from "./load.ts";
 import { readWorkbook } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
 import { compareWithExcel } from "./oracle.ts";
-import { buildReport } from "./report.ts";
+import { appOperationsLabel, buildReport } from "./report.ts";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const EXCELS_DIR = join(ROOT, "privado/excels");
@@ -103,7 +107,7 @@ function read(): boolean {
 }
 
 // En seco o de verdad, siempre en el Supabase local: la nube llega en el paso 8.
-async function load(dryRun: boolean, cloud: boolean): Promise<boolean> {
+async function load(dryRun: boolean, cloud: boolean, discardAppData: boolean): Promise<boolean> {
   const where = target(cloud);
   const catalog = loadCatalog(CATALOG_FILE);
   const months = readAllMonths(catalog);
@@ -123,6 +127,7 @@ async function load(dryRun: boolean, cloud: boolean): Promise<boolean> {
         dryRun,
         (tx) => compareWithExcel(tx, months),
         cloud,
+        discardAppData,
       );
     } catch (error) {
       outcome = {
@@ -145,6 +150,13 @@ async function load(dryRun: boolean, cloud: boolean): Promise<boolean> {
       : `y quedaron escritas en ${where.label}`;
     const differences = outcome.oracle?.differences.length ?? 0;
     console.log(`\nLa base aceptó las ${outcome.counts.operations} operaciones, ${written}.`);
+    if (outcome.appOperations > 0) {
+      console.log(
+        outcome.dryRun
+          ? `Cargarla de verdad borraría ${appOperationsLabel(outcome.appOperations)}: hay que pedirlo con --discard-app-data.`
+          : `Borró ${appOperationsLabel(outcome.appOperations)}: el Excel ya lo tiene.`,
+      );
+    }
     console.log(
       differences === 0
         ? `Contra el Excel: los ${outcome.oracle?.checks} saldos comparados coinciden al céntimo.`
@@ -157,12 +169,16 @@ async function load(dryRun: boolean, cloud: boolean): Promise<boolean> {
 
 const [command, ...flags] = process.argv.slice(2);
 const cloud = flags.includes("--cloud");
+const discardAppData = flags.includes("--discard-app-data");
 try {
   if (command === "read") process.exitCode = read() ? 0 : 1;
-  else if (command === "dry-run") process.exitCode = (await load(true, cloud)) ? 0 : 1;
-  else if (command === "load") process.exitCode = (await load(false, cloud)) ? 0 : 1;
+  else if (command === "dry-run") process.exitCode = (await load(true, cloud, false)) ? 0 : 1;
+  else if (command === "load")
+    process.exitCode = (await load(false, cloud, discardAppData)) ? 0 : 1;
   else {
-    console.error("uso: node src/cli.ts read | dry-run [--cloud] | load [--cloud]");
+    console.error(
+      "uso: node src/cli.ts read | dry-run [--cloud] | load [--cloud] [--discard-app-data]",
+    );
     process.exitCode = 2;
   }
 } catch (error) {

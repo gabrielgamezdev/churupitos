@@ -72,7 +72,8 @@ usará, y el Excel se irá dejando poco a poco.
    descubierto; el botón en el inicio, en cada cuenta y en cada sobre.
 4. [x] **Repartir entre varios sobres** (2026-10-20).
 5. [x] **Corregir y borrar** (2026-10-20), y quién registró cada operación.
-6. [ ] **La recarga que borra lo de la app**, para registrar en paralelo.
+6. [x] **La recarga que borra lo de la app** (2026-10-20), para registrar en paralelo:
+   `--discard-app-data`. Sin pedirlo, el candado del corte no deja recargar.
 7. [ ] **En los teléfonos**: lo usan unos días.
 
 Cada paso termina con su commit; los pasos 3, 5 y 7 terminan además con un push.

@@ -8,7 +8,7 @@ recargar desde los Excels, lo de la app se borra a propósito y manda el Excel. 
 aprobado, está en `docs/modulos/M6-gastos-e-ingresos.md`.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
-la base: hasta entonces noviembre es solo de planificación y el oráculo no lo compara
+la base, borrando lo registrado en la app (`README.md`): hasta entonces noviembre es solo de planificación y el oráculo no lo compara
 (`docs/DOMINIO.md` §2).
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·

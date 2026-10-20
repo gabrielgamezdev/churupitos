@@ -30,6 +30,8 @@ export type LoadOutcome =
       status: "ok";
       dryRun: boolean;
       counts: Record<keyof Rows, number>;
+      // Lo registrado en la app que la recarga borró (o habría borrado, en seco).
+      appOperations: number;
       oracle: OracleResult | null;
     }
   | { status: "rejected"; message: string; operation: DraftOperation | null };
@@ -122,20 +124,29 @@ class Rollback extends Error {}
 // `inspect` corre dentro de la misma transacción, con todo ya escrito y comprobado:
 // es donde se compara con el Excel, también en seco. Con `requireClean`, un solo saldo
 // que no coincida deshace la carga entera: así se escribe en la nube.
+//
+// Lo registrado en la app solo se borra con `discardAppData`: hasta el corte se
+// registra en paralelo, y el Excel ya lo tiene. En seco no hace falta pedirlo, porque
+// no queda nada escrito.
 export async function writeRows(
   sql: Sql,
   plan: Plan,
   dryRun: boolean,
   inspect?: (tx: TransactionSql) => Promise<OracleResult>,
   requireClean = false,
+  discardAppData = false,
 ): Promise<LoadOutcome> {
   const tables = Object.keys(plan.rows) as (keyof Rows)[];
   let oracle: OracleResult | null = null;
   let written = !dryRun;
+  let appOperations = 0;
   try {
     await sql.begin(async (tx) => {
+      const [registered] = await tx<{ count: number }[]>`
+        select count(*)::int as count from public.operations where created_by is not null`;
+      appOperations = registered?.count ?? 0;
       // La base se vacía con su propia función, que lleva el candado del corte.
-      await tx`select public.reset_imported_data()`;
+      await tx`select public.reset_imported_data(include_app_data => ${dryRun || discardAppData})`;
       for (const table of tables) {
         const rows = plan.rows[table];
         for (let i = 0; i < rows.length; i += CHUNK) {
@@ -158,7 +169,13 @@ export async function writeRows(
     if (!(error instanceof Rollback)) return rejected(error, plan);
   }
   const counts = Object.fromEntries(tables.map((table) => [table, plan.rows[table].length]));
-  return { status: "ok", dryRun: !written, counts: counts as Record<keyof Rows, number>, oracle };
+  return {
+    status: "ok",
+    dryRun: !written,
+    counts: counts as Record<keyof Rows, number>,
+    oracle,
+    appOperations,
+  };
 }
 
 // La base dice qué operación rechazó en el detalle del error (las funciones de forma

@@ -303,8 +303,18 @@ function describeOutcome(outcome: LoadOutcome): string {
   return (
     `aceptó las ${outcome.counts.operations} operaciones y sus ${outcome.counts.entries} asientos, ` +
     `con todas sus reglas comprobadas (${total} filas en total).` +
-    (outcome.dryRun ? " Era en seco: no quedó nada escrito." : "")
+    (outcome.dryRun ? " Era en seco: no quedó nada escrito." : "") +
+    (outcome.appOperations > 0
+      ? ` ${outcome.dryRun ? "Habría borrado" : "Borró"} ${appOperationsLabel(outcome.appOperations)}, que el Excel ya tiene.`
+      : "")
   );
+}
+
+// «1 operación registrada en la app», «2 operaciones registradas en la app».
+export function appOperationsLabel(count: number): string {
+  return count === 1
+    ? "1 operación registrada en la app"
+    : `${count} operaciones registradas en la app`;
 }
 
 const where = (issue: Issue) => (issue.ref ? ` ${issue.ref}` : "");

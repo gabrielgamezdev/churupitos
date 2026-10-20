@@ -141,11 +141,31 @@ describe("el informe", () => {
     debts: 1,
   };
   const oracle = { checks: 5, differences: [], budgetNotes: [], planningMonths: [] };
-  const report = buildReport(pkg, [month], { status: "ok", dryRun: true, counts, oracle });
+  const report = buildReport(pkg, [month], {
+    status: "ok",
+    dryRun: true,
+    counts,
+    oracle,
+    appOperations: 0,
+  });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
     expect(report).toContain("aceptó las 3 operaciones y sus 4 asientos");
     expect(report).toContain("Era en seco: no quedó nada escrito.");
+    expect(report).not.toContain("registradas en la app");
+  });
+
+  it("dice cuánto de lo registrado en la app borró la recarga", () => {
+    const discarded = buildReport(pkg, [month], {
+      status: "ok",
+      dryRun: false,
+      counts,
+      oracle,
+      appOperations: 2,
+    });
+    expect(discarded).toContain(
+      "Borró 2 operaciones registradas en la app, que el Excel ya tiene.",
+    );
   });
 
   it("lista el arrastre, los cobros y las deudas con sus importes", () => {
@@ -165,6 +185,7 @@ describe("el informe", () => {
       status: "ok",
       dryRun: true,
       counts,
+      appOperations: 0,
       oracle: {
         checks: 5,
         differences: [

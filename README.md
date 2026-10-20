@@ -79,7 +79,10 @@ npm run import:load     # lo mismo, pero vacía la base local y se queda escrito
 ```
 
 La base solo se vacía con `reset_imported_data()`, que se niega si hay operaciones
-registradas desde la app: esas no están en ningún Excel (el candado del corte).
+registradas desde la app: después del corte no estarán en ningún Excel (el candado del
+corte). Hasta el corte se registra en paralelo y el Excel ya las tiene, así que la
+recarga las borra si se le pide: `npm run import:load -- --discard-app-data`, y lo
+mismo con `import:load:cloud`. En seco no hace falta: dice cuántas borraría.
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
 que enviaría el login se ven en http://localhost:54324. Las cuentas de prueba, con
