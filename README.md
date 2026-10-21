@@ -7,8 +7,8 @@ presupuesto por sobres y varias cuentas**. Es una PWA pensada para el teléfono,
 sustituye unos Excels mensuales donde cada sobre tiene dinero repartido entre varios
 bancos, y cada ingreso llega con su propia tasa de cambio.
 
-> **Estado:** en construcción, módulos **M8 · Entre sobres y cuentas** y **M9 · Cobros y reparto**,
-> en los teléfonos. El plan completo está en
+> **Estado:** en construcción, módulo **M10 · El mes**; **M8** y **M9**, en los teléfonos. El
+> plan completo está en
 > [`docs/ESTADO.md`](docs/ESTADO.md).
 
 ## Qué la hace distinta

@@ -1,14 +1,16 @@
 # Estado
 
-## Ahora: M9 · Cobros y reparto (en curso), y M8 en los teléfonos
+## Ahora: M10 · El mes (en curso), y M8 y M9 en los teléfonos
 
-Cobrar desde la app un ingreso esperado del presupuesto, con su tasa, y repartirlo en
-dólares entre los sobres, con el plan del mes como propuesta. Está construido; falta
-probarlo en los teléfonos, su paso 7. Su plan: `docs/modulos/M9-cobros-y-reparto.md`.
+Preparar desde la app el presupuesto del mes siguiente, copiando el último, y cambiar el
+de cualquier mes: los ingresos esperados y el plan de cada sobre, con el cuadre a la
+vista. El plan, aprobado, está en `docs/modulos/M10-el-mes.md`.
 
 M8 · Entre sobres y cuentas (mover entre sobres, traspasar, cambiar de divisa y cubrir un
-descubierto) está construido; falta probarlo en los teléfonos, su paso 7, y por decisión
-del autor M9 se construye mientras. Su plan: `docs/modulos/M8-entre-sobres-y-cuentas.md`.
+descubierto) y M9 · Cobros y reparto (cobrar un ingreso esperado y repartirlo) están
+construidos; falta probarlos en los teléfonos, su paso 7. Por decisión del autor, M10 se
+construye mientras. Sus planes: `docs/modulos/M8-entre-sobres-y-cuentas.md` y
+`docs/modulos/M9-cobros-y-reparto.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
 
@@ -47,6 +49,7 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M8 | Entre sobres y cuentas | Préstamos entre sobres, traspasos, cambio de divisa | Lo usan a diario |
 | M9 | Cobros y reparto | Ingreso esperado → cobro → reparto por sobre | Ídem |
 | M10 | El mes | Plan del mes y apertura del siguiente | Ídem |
+| M11 | Sobres y cuentas | Crear; borrar lo que no tiene nada; archivar lo que tiene historia y está en cero | Ídem |
 | — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | — |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
@@ -67,7 +70,7 @@ del producto:
   compara, se ajusta el importador y se recarga todo.
 - **Hasta el corte se registra en paralelo** (2026-10-20): en el Excel y en la app. Al
   recargar, lo registrado en la app se borra a propósito, porque el Excel ya lo tiene, y
-  lo importado no se corrige desde la app.
+  lo importado no se corrige desde la app, salvo el presupuesto (M10, 2026-10-21).
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Claro y oscuro, según el teléfono** (2026-10-15).
