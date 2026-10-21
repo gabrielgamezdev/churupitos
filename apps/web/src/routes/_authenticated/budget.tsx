@@ -158,6 +158,15 @@ function IncomesSection({
           { label: "Cobrado", cents: totals?.receivedUsdCents },
           { label: "Falta", cents: totals?.pendingUsdCents },
         ]}
+        progress={
+          totals && totals.expectedUsdCents > 0
+            ? {
+                label: "Cobrado",
+                cents: totals.receivedUsdCents,
+                of: totals.expectedUsdCents,
+              }
+            : undefined
+        }
       />
       {incomes.data && accounts.data ? (
         incomes.data.length === 0 ? (

@@ -130,7 +130,7 @@ Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
-estirar y recargar), `ScreenHeader`, `Toaster` (el aviso de abajo), `Field` y `AmountInput` (los campos de los
+estirar y recargar), `ScreenHeader`, `Toaster` (el aviso de abajo), `ProgressBar`, `StatusBadge`, `Field` y `AmountInput` (los campos de los
 formularios; el monto, escrito como en un cajero) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
@@ -165,9 +165,10 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **AttentionList** | «Para revisar» en Inicio, sin tono de alarma: los sobres en descubierto (cada uno con su cuenta, su saldo en `overdrawn` y «Descubierto»; lleva al sobre) y lo que deben que venció o vence en 7 días o menos («Por pagar · en 3 días»; vencida, en `danger`; lleva a Deudas). Hasta cinco de cada, y «Y N más». Sin nada que revisar, no se ve |
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
-| **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
+| **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta. En los ingresos, debajo, una `ProgressBar` de lo cobrado frente a lo esperado |
+| **ProgressBar** | Cuánto va de algo que tiene referencia: una barra fina en `brand` sobre `surface-sunken`, que no pasa de llena. Solo donde hay con qué comparar (lo entregado del plan, lo cobrado de lo esperado), y siempre con la cifra al lado; para el lector de pantalla dice «$ X de $ Y». Nada de tartas |
 | **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y su `StatusBadge`, «Cobrado» o «Pendiente». Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |
-| **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y su `StatusBadge`: «Entregado», «Le llegaron $ X» o «Pendiente» (`R18`); debajo, la fuente de fondos y la acción. Lleva al sobre. Los de $0 van aparte, plegados |
+| **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y su `StatusBadge`: «Entregado», «Le llegaron $ X» o «Pendiente» (`R18`); debajo, la fuente de fondos y la acción. Debajo, una `ProgressBar` de lo que le llegó frente a lo planeado (llena si está entregado). Lleva al sobre. Los de $0 van aparte, plegados |
 | **DebtTotals** | Lo pendiente: lo que deben y lo que les deben, cada moneda por su lado y sin las pagadas |
 | **DebtGroupList** | Lo que deben en un mes de vencimiento (o sin fecha): su nombre y lo que suma arriba, y sus cuotas |
 | **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `danger`) e importe en su moneda. Una pagada lleva su pastilla «✅ Pagada» y va en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |

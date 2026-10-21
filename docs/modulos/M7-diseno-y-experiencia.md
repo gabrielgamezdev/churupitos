@@ -91,7 +91,7 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 8. [x] **El color y las pastillas** (2026-10-20): `money-out` pasa a ser `danger`.
 9. [x] **Inicio** (2026-10-20): «Para revisar», con los descubiertos y las deudas que
    vencen en 7 días o ya vencieron.
-10. [ ] **Las barras del Presupuesto.**
+10. [x] **Las barras del Presupuesto** (2026-10-20).
 11. [ ] **Movimientos**, con quién registró cada uno también en los libros.
 12. [ ] **Sugerencias de concepto** al registrar, con su sobre.
 13. [ ] **En los teléfonos:** lo usan unos días y cuentan los toques de un gasto típico.

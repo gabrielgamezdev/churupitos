@@ -443,6 +443,7 @@ function GalleryPage() {
               { label: "Cobrado", cents: 15000 },
               { label: "Falta", cents: 2000 },
             ]}
+            progress={{ label: "Cobrado", cents: 15000, of: 17000 }}
           />
           <List>
             {SAMPLE_INCOMES.map((income) => {
