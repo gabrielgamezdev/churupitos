@@ -141,8 +141,8 @@ adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
 `DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
-`OperationForm`, `MoveForm`, `EnvelopePicker`, `DayField` y `OperationActions` en
-`operations/`) y los del libro, que comparten
+`OperationForm`, `MoveForm`, `EnvelopePicker`, `DayField`, `CoverLink` y
+`OperationActions` en `operations/`) y los del libro, que comparten
 cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker`, `OperationSheet`,
 `RecentOperations`, `OperationRow` y `OperationDetail`), y «Para revisar», en `features/home/`
 (`AttentionList`). Todos entran en la galería al construirse, con datos inventados.
@@ -155,7 +155,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **Money** | Pinta un importe: movimiento con signo (lo que entra, en `money-in`), saldo o descubierto |
 | **StatusBadge** | Los ✅ y ⏳ del Excel en una pastilla que además lo dice con palabras: «✅ Cobrado», «⏳ Pendiente». Lo hecho, en `brand` sobre `brand-soft`; lo pendiente, en `ink-muted` sobre `surface-sunken` |
 | **CurrencyCard** | Una moneda en el inicio, con el borde izquierdo en su color (`ves` o `usd`): lo del hogar (sin «Otro») en grande; debajo, el total con «Otro» si lo hay y cuántas cuentas |
-| **AccountRow** | Una cuenta en la lista de su moneda, con su parte de «Otro» si la tiene. Las cuentas en cero siguen, en `ink-muted` |
+| **AccountRow** | Una cuenta en la lista de su moneda, con su parte de «Otro» si la tiene. Las cuentas en cero siguen, en `ink-muted`. Puede llevar una acción a su derecha, fuera del enlace, como «Cubrir» |
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji, en `third-party` y dentro de un borde punteado |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
@@ -163,7 +163,8 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **Sheet** | Una hoja que sube desde abajo sobre un velo `scrim`, en `surface-raised` y con las esquinas de arriba en `radius-lg`, hasta el 90 % del alto. Siempre con título, y encima, si hace falta, qué es en `label`. Se cierra con la X, tocando fuera o con el atrás de Android (`CloseWatcher`). Ningún campo se enfoca solo, y con la hoja abierta estirar no recarga. Es para mirar algo y actuar sobre ello; un formulario va a pantalla completa |
 | **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, la cifra en `display-amount` (en un gasto o un ingreso, el total con su signo; en algo que se mueve sin cambiar el total, cuánto pasó, sin signo), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar»: borrar no pregunta, cierra la hoja y deja «Deshacer» en el aviso. Uno importado dice que, hasta el corte, se corrige en el Excel |
 | **Toaster** | El aviso de abajo, después de guardar: qué pasó, debajo lo que cambió por ello («🍔 Comida queda en Bs X») y, si se puede, «Deshacer» en `brand`. En `surface-raised` con `shadow-card`, justo encima de la barra (en un formulario, pegado al borde). Uno a la vez: el nuevo reemplaza al anterior. Con «Deshacer» dura 10 s, y si no, 5; tocarlo detiene la cuenta, y la X lo cierra. Deshacer deja el aviso «Deshecho», o dice por qué no se pudo |
-| **AttentionList** | «Para revisar» en Inicio, sin tono de alarma: los sobres en descubierto (cada uno con su cuenta, su saldo en `overdrawn` y «Descubierto»; lleva al sobre) y lo que deben que venció o vence en 7 días o menos («Por pagar · en 3 días»; vencida, en `danger`; lleva a Deudas). Hasta cinco de cada, y «Y N más». Sin nada que revisar, no se ve |
+| **AttentionList** | «Para revisar» en Inicio, sin tono de alarma: los sobres en descubierto (cada uno con su cuenta, su saldo en `overdrawn` y «Descubierto»; lleva al sobre, y al lado, «Cubrir») y lo que deben que venció o vence en 7 días o menos («Por pagar · en 3 días»; vencida, en `danger`; lleva a Deudas). Hasta cinco de cada, y «Y N más». Sin nada que revisar, no se ve |
+| **CoverLink** | «Cubrir», un botón `outline` junto a un sobre en descubierto (en «Para revisar» y en la pantalla del sobre): abre Mover con el destino puesto y lo que le falta para llegar a cero, en la misma cuenta. Solo queda elegir de qué sobre sale |
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron, en `OperationRow`, con «Ver todos» que abre Movimientos. Al tocar una se abre su `OperationSheet` |
 | **OperationRow** | Una operación en una lista (Inicio, Movimientos): su concepto, su sobre (o cuántos) y su cuenta; a la derecha, el importe y debajo el día (si la lista no va ya por días) y «por Ana». Un traspaso, que no cambia el total, dice cuánto pasó, sin signo |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |

@@ -7,7 +7,7 @@ import { MoveForm } from "@/features/operations/move-form";
 import { emptyMoveForm, type Carry } from "@/features/operations/move-form-schema";
 import { OperationForm } from "@/features/operations/operation-form";
 import { emptyOperationForm } from "@/features/operations/operation-form-schema";
-import { parseAmountInput } from "@/lib/amount-input";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 import { today } from "@/lib/months";
 
@@ -20,6 +20,9 @@ type NewOperationSearch = {
   amount?: number;
   description?: string;
   currency?: Currency;
+  // Abrir directo en Mover, con el sobre de destino: «Cubrir» un descubierto (M8).
+  mode?: "move";
+  toEnvelope?: string;
 };
 
 export const Route = createFileRoute("/_authenticated/operations/new")({
@@ -34,6 +37,8 @@ export const Route = createFileRoute("/_authenticated/operations/new")({
         : undefined,
     description: typeof search.description === "string" ? search.description : undefined,
     currency: search.currency === "VES" || search.currency === "USD" ? search.currency : undefined,
+    mode: search.mode === "move" ? "move" : undefined,
+    toEnvelope: typeof search.toEnvelope === "string" ? search.toEnvelope : undefined,
   }),
   component: NewOperationPage,
 });
@@ -41,7 +46,8 @@ export const Route = createFileRoute("/_authenticated/operations/new")({
 // Registrar: al guardar vuelve a la pantalla desde la que se abrió, que ya enseña el
 // movimiento nuevo.
 function NewOperationPage() {
-  const { account, envelope, kind, amount, description, currency } = Route.useSearch();
+  const { account, envelope, kind, amount, description, currency, mode, toEnvelope } =
+    Route.useSearch();
   const { session } = Route.useRouteContext();
   const router = useRouter();
   const canGoBack = useCanGoBack();
@@ -52,14 +58,29 @@ function NewOperationPage() {
   const [screen, setScreen] = useState<
     | { form: "operation"; initial: ReturnType<typeof emptyOperationForm> }
     | { form: "move"; initial: ReturnType<typeof emptyMoveForm> }
-  >(() => ({
-    form: "operation",
-    initial: emptyOperationForm(today(), account, envelope, {
-      kind,
-      amountCents: amount,
-      description,
-    }),
-  }));
+  >(() =>
+    mode === "move"
+      ? {
+          form: "move",
+          initial: {
+            ...emptyMoveForm({
+              amount: amount === undefined ? "" : amountInputText(amount),
+              accountId: account ?? "",
+              day: today(),
+              description: description ?? "",
+            }),
+            toEnvelope: toEnvelope ?? "",
+          },
+        }
+      : {
+          form: "operation",
+          initial: emptyOperationForm(today(), account, envelope, {
+            kind,
+            amountCents: amount,
+            description,
+          }),
+        },
+  );
   const toMove = (carry: Carry) => setScreen({ form: "move", initial: emptyMoveForm(carry) });
   const toOperation = (nextKind: "expense" | "income", carry: Carry) =>
     setScreen({

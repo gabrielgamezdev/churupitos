@@ -11,6 +11,7 @@ import { useAccountBalances, type AccountBalance } from "@/features/balances/use
 import { dueLabel } from "@/features/debts/debt-view";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { CoverLink } from "@/features/operations/cover-link";
 import { today } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
@@ -76,8 +77,12 @@ export function AttentionList({
         {overdrafts.slice(0, MAX_ROWS).map((cell) => {
           const envelope = envelopeById[cell.envelopeId];
           return (
-            <ListRow key={`${cell.accountId}-${cell.envelopeId}`} asChild>
-              <Link to="/envelopes/$envelopeId" params={{ envelopeId: cell.envelopeId }}>
+            <ListRow key={`${cell.accountId}-${cell.envelopeId}`} className="gap-2 py-0 pr-3">
+              <Link
+                to="/envelopes/$envelopeId"
+                params={{ envelopeId: cell.envelopeId }}
+                className="flex min-h-tap min-w-0 flex-1 items-center justify-between gap-3 py-3"
+              >
                 <span className="flex min-w-0 flex-col items-start gap-0.5">
                   {envelope && (
                     <EnvelopeChip
@@ -100,6 +105,12 @@ export function AttentionList({
                   <Badge variant="overdrawn">Descubierto</Badge>
                 </span>
               </Link>
+              <CoverLink
+                accountId={cell.accountId}
+                envelopeId={cell.envelopeId}
+                shortfallCents={-cell.balanceCents}
+                label={`Cubrir ${envelope?.name ?? "el sobre"} en ${accountById[cell.accountId]?.name ?? "su cuenta"}`}
+              />
             </ListRow>
           );
         })}

@@ -25,6 +25,7 @@ import { householdMembersQuery } from "@/features/household/members";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationSheet } from "@/features/ledger/operation-sheet";
+import { CoverLink } from "@/features/operations/cover-link";
 import { envelopeLedgerQuery } from "@/features/ledger/queries";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
@@ -134,7 +135,7 @@ function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
           En qué cuentas está
         </h2>
         {cells.data && accounts.data ? (
-          <CellList rows={envelopeCellRows(cells.data, accounts.data)} />
+          <CellList rows={envelopeCellRows(cells.data, accounts.data)} envelope={envelope} />
         ) : (
           <MissingData
             queries={[cells, accounts]}
@@ -188,7 +189,13 @@ function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
 }
 
 // Cada cuenta en la que está el sobre, con lo que tiene en ella; lleva a la cuenta.
-function CellList({ rows }: { rows: { account: AccountBalance; balanceCents: number }[] }) {
+function CellList({
+  rows,
+  envelope,
+}: {
+  rows: { account: AccountBalance; balanceCents: number }[];
+  envelope: Envelope;
+}) {
   if (rows.length === 0) {
     return (
       <EmptyState className="rounded-lg bg-surface-raised">
@@ -206,6 +213,16 @@ function CellList({ rows }: { rows: { account: AccountBalance; balanceCents: num
           currency={account.currency}
           balanceCents={balanceCents}
           thirdPartyCents={0}
+          action={
+            balanceCents < 0 ? (
+              <CoverLink
+                accountId={account.accountId}
+                envelopeId={envelope.id}
+                shortfallCents={-balanceCents}
+                label={`Cubrir ${envelope.name} en ${account.name}`}
+              />
+            ) : undefined
+          }
         />
       ))}
     </List>

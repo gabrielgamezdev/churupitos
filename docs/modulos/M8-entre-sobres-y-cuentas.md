@@ -63,7 +63,8 @@ Y «Cubrir» en «Para revisar» y en la pantalla de un sobre.
 
 - Registran en la app sus movimientos entre sobres, traspasos y cambios durante unos
   días, en paralelo con el Excel, y los saldos coinciden.
-- Un descubierto se cubre en dos toques desde Inicio.
+- Un descubierto se cubre en tres toques desde Inicio: «Cubrir», el sobre de donde sale y
+  «Guardar».
 - `npm run check` en verde, en local y en la CI; la base, también en la nube.
 
 ## Pasos
@@ -75,7 +76,7 @@ Y «Cubrir» en «Para revisar» y en la pantalla de un sobre.
    quedan.
 4. [x] **El cambio de divisa** (2026-10-21, con el paso 3): lo que llega y la tasa.
 5. [x] **Corregir, borrar y deshacer** los tres (2026-10-21).
-6. [ ] **«Cubrir»**, en «Para revisar» y en el sobre.
+6. [x] **«Cubrir»** (2026-10-21), en «Para revisar» y en el sobre.
 7. [ ] **En los teléfonos:** lo usan unos días.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

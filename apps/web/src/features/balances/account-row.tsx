@@ -16,6 +16,8 @@ interface AccountRowProps {
   thirdPartyCents: number;
   // Con él, toda la fila lleva a la cuenta.
   accountId?: string;
+  // A la derecha, fuera del enlace: «Cubrir» en un descubierto.
+  action?: React.ReactNode;
 }
 
 // Una cuenta en la lista de su moneda, con su saldo de hoy. Una cuenta en cero sigue
@@ -26,6 +28,7 @@ export function AccountRow({
   balanceCents,
   thirdPartyCents,
   accountId,
+  action,
 }: AccountRowProps) {
   const content = (
     <>
@@ -49,6 +52,21 @@ export function AccountRow({
 
   const muted = cn(balanceCents === 0 && "text-ink-muted");
   if (!accountId) return <ListRow className={muted}>{content}</ListRow>;
+  if (action) {
+    // Dos cosas que se tocan en la fila: la cuenta y la acción, una al lado de la otra.
+    return (
+      <ListRow className={cn("gap-2 py-0 pr-3", muted)}>
+        <Link
+          to="/accounts/$accountId"
+          params={{ accountId }}
+          className="flex min-h-tap min-w-0 flex-1 items-center justify-between gap-3 py-3"
+        >
+          {content}
+        </Link>
+        {action}
+      </ListRow>
+    );
+  }
   return (
     <ListRow asChild className={muted}>
       <Link to="/accounts/$accountId" params={{ accountId }}>
