@@ -1,15 +1,16 @@
 # Estado
 
-## Ahora: M10 · El mes (en curso), y M8 y M9 en los teléfonos
+## Ahora: M8, M9 y M10, en los teléfonos
 
-Preparar desde la app el presupuesto del mes siguiente, copiando el último, y cambiar el
-de cualquier mes: los ingresos esperados y el plan de cada sobre, con el cuadre a la
-vista. El plan, aprobado, está en `docs/modulos/M10-el-mes.md`.
+M10 · El mes (preparar el presupuesto del mes siguiente copiando el último, y cambiar el
+de cualquier mes, con el cuadre a la vista) está construido; falta probarlo en los
+teléfonos, su paso 6. Su plan: `docs/modulos/M10-el-mes.md`. Después viene M11 · Sobres
+y cuentas, y luego el corte.
 
 M8 · Entre sobres y cuentas (mover entre sobres, traspasar, cambiar de divisa y cubrir un
 descubierto) y M9 · Cobros y reparto (cobrar un ingreso esperado y repartirlo) están
 construidos; falta probarlos en los teléfonos, su paso 7. Por decisión del autor, M10 se
-construye mientras. Sus planes: `docs/modulos/M8-entre-sobres-y-cuentas.md` y
+construyó mientras. Sus planes: `docs/modulos/M8-entre-sobres-y-cuentas.md` y
 `docs/modulos/M9-cobros-y-reparto.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
