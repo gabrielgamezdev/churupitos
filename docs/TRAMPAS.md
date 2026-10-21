@@ -65,6 +65,14 @@ obligó a reescribir el historial.
 
 ## Supabase
 
+### Una tabla nueva sin `grant` da «permission denied» desde la app
+Desde el 2026-10-30, Supabase ya no da permisos automáticos a las tablas nuevas de
+`public`, tampoco al recrear la base desde las migraciones (`db reset`, un proyecto
+nuevo). Lo que ya existe los conserva, así que el fallo aparece solo al recrear.
+**Cada tabla y cada vista da los suyos en su misma migración**: `revoke all … from anon,
+authenticated` y `grant select … to authenticated`. `rls.test.sql` falla si falta uno o
+sobra alguno.
+
 ### `[auth.email] enable_signup = false` apaga el login por correo
 Con eso en `supabase/config.toml`, iniciar sesión responde *"Email logins are
 disabled"* (`email_provider_disabled`), aunque el usuario exista y la contraseña

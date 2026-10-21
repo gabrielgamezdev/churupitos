@@ -2,7 +2,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(9);
 
 -- Una tabla sin RLS es pública para cualquiera con la URL de la app. Esta prueba
 -- falla en cuanto una migración nueva olvide activarlo.
@@ -16,6 +16,32 @@ select is_empty(
       and not c.relrowsecurity
   $$,
   'todas las tablas de public tienen RLS activado'
+);
+
+-- Desde el 2026-10-30, Supabase no da permisos automáticos a las tablas nuevas: cada
+-- tabla y cada vista da los suyos en su migración. La app solo lee de ellas (escribe con
+-- funciones, ADR 0008), y sin sesión no se lee nada. Falla si una tabla nueva olvida su
+-- `grant` o si alguna conserva permisos de más.
+select is_empty(
+  $$
+    select c.relname
+    from pg_class c
+    join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public'
+      and c.relkind in ('r', 'p', 'v', 'm')
+      and not has_table_privilege('authenticated', c.oid, 'select')
+  $$,
+  'la app puede leer todas las tablas y vistas de public, con su permiso explícito'
+);
+
+select is_empty(
+  $$
+    select g.table_name || ' ' || g.grantee || ' ' || g.privilege_type
+    from information_schema.role_table_grants g
+    where g.table_schema = 'public'
+      and (g.grantee = 'anon' or (g.grantee = 'authenticated' and g.privilege_type <> 'SELECT'))
+  $$,
+  'ni permisos sin sesión ni permisos de escritura sobre ninguna tabla'
 );
 
 -- Una vista lee, por defecto, con los permisos de su dueño, y así se salta el RLS
