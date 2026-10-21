@@ -46,6 +46,8 @@ En Windows, cerrar el `npm` que se lanzó en segundo plano no cierra el `node` d
 puerto o, peor, las pruebas hablan con la vieja. En una tarde de pruebas se juntaron diez.
 **Al terminar, cerrar también los `node` cuya línea de órdenes tenga `vite.js" preview`**
 (PowerShell: `Get-CimInstance Win32_Process` filtrando por `CommandLine`).
+Y no arrancarla a la vez que `npm run build`: Vite vacía `dist` al empezar a compilar,
+la vista previa no la encuentra y se cierra, y la prueba falla sin pantalla de entrada.
 
 ## El importador
 
