@@ -17,6 +17,9 @@ interface EnvelopePickerProps {
   cellByEnvelope: Map<string, number>;
   currency: Currency | undefined;
   error?: string;
+  // Con dos en una pantalla (Mover), cada uno lleva su nombre y su etiqueta.
+  id?: string;
+  label?: string;
 }
 
 // El sobre de Registrar en botones (M7): cada uno con su emoji y lo que tiene en la
@@ -30,6 +33,8 @@ export function EnvelopePicker({
   cellByEnvelope,
   currency,
   error,
+  id = "envelope",
+  label = "Sobre",
 }: EnvelopePickerProps) {
   const [showAll, setShowAll] = useState(false);
   // El elegido, siempre a la vista, aunque sea de los de «Más sobres».
@@ -38,10 +43,10 @@ export function EnvelopePicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <span id="envelope-label" className="text-body font-medium">
-        Sobre
+      <span id={`${id}-label`} className="text-body font-medium">
+        {label}
       </span>
-      <div role="radiogroup" aria-labelledby="envelope-label" className="grid grid-cols-2 gap-2">
+      <div role="radiogroup" aria-labelledby={`${id}-label`} className="grid grid-cols-2 gap-2">
         {shown.map((envelope) => {
           const checked = envelope.id === value;
           const cents = cellByEnvelope.get(envelope.id);

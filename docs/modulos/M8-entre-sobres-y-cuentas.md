@@ -71,8 +71,9 @@ Y «Cubrir» en «Para revisar» y en la pantalla de un sobre.
 1. [x] **Plan aprobado** por el autor (2026-10-21).
 2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar y restaurar los
    tres tipos, con sus pruebas (la forma de cada uno y lo importado intocable).
-3. [ ] **Mover:** el formulario, con el tipo deducido, la comisión y cómo quedan.
-4. [ ] **El cambio de divisa:** lo que llega y la tasa.
+3. [x] **Mover** (2026-10-21): el formulario, con el tipo deducido, la comisión y cómo
+   quedan.
+4. [x] **El cambio de divisa** (2026-10-21, con el paso 3): lo que llega y la tasa.
 5. [ ] **Corregir, borrar y deshacer** los tres.
 6. [ ] **«Cubrir»**, en «Para revisar» y en el sobre.
 7. [ ] **En los teléfonos:** lo usan unos días.

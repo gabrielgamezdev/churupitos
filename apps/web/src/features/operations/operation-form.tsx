@@ -8,18 +8,16 @@ import { AmountInput } from "@/components/amount-field";
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { Field } from "@/components/field";
 import { Money } from "@/components/money";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
-import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
+import { useAccountBalances } from "@/features/balances/use-account-balances";
 import {
   conceptUsageQuery,
   envelopesQuery,
   envelopeUsageQuery,
-  type Envelope,
   type EnvelopeUsage,
 } from "@/features/envelopes/queries";
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
@@ -34,14 +32,9 @@ import { conceptSuggestions, type ConceptSuggestion } from "./concept-suggestion
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
 import { EnvelopePicker } from "./envelope-picker";
+import { EnvelopeSelect } from "./envelope-select";
 import { rememberAccount, rememberedAccount } from "./last-account";
-import {
-  draftEntries,
-  projectCells,
-  type CellChange,
-  type EntryInput,
-  type OperationKind,
-} from "./operation-draft";
+import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
 import {
   FEE_DESCRIPTION,
   formDraft,
@@ -50,6 +43,8 @@ import {
   type OperationFormValues,
 } from "./operation-form-schema";
 import { undoSavedOperation, useSaveOperation, type SaveOperationArgs } from "./save";
+import type { Carry } from "./move-form-schema";
+import { Remaining } from "./remaining";
 import { savedDetail } from "./saved-detail";
 
 // Cuántos días atrás se mira para ordenar los sobres por uso: unos dos meses.
@@ -57,10 +52,13 @@ const USAGE_DAYS = 60;
 // Y para proponer conceptos: medio año, para que salgan también los de cada tanto.
 const CONCEPT_DAYS = 180;
 
-const KINDS: { value: OperationKind; label: string }[] = [
+const KINDS: { value: OperationKind | "move"; label: string }[] = [
   { value: "expense", label: "Gasto" },
   { value: "income", label: "Ingreso" },
 ];
+
+// Al registrar, la tercera opción: lo que se mueve sin gastarse (M8).
+const MOVE = { value: "move" as const, label: "Mover" };
 
 const CURRENCIES: Currency[] = ["VES", "USD"];
 
@@ -76,6 +74,8 @@ interface OperationFormProps {
   onlyCurrency?: Currency;
   // Al registrar, quién lo hace: sin cuenta elegida, abre con la última que usó (M7).
   rememberFor?: string;
+  // Al registrar, pasar a Mover con lo ya escrito.
+  onMove?: (carry: Carry) => void;
   onSaved: () => void;
 }
 
@@ -88,6 +88,7 @@ export function OperationForm({
   previous,
   onlyCurrency,
   rememberFor,
+  onMove,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -241,9 +242,18 @@ export function OperationForm({
     <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-5">
       <Segmented
         label="Tipo"
-        options={KINDS}
+        options={onMove ? [...KINDS, MOVE] : KINDS}
         value={values.kind}
-        onChange={(kind) => setValue("kind", kind)}
+        onChange={(kind) =>
+          kind === "move"
+            ? onMove?.({
+                amount: getValues("total"),
+                accountId: getValues("accountId"),
+                day: getValues("day"),
+                description: getValues("description"),
+              })
+            : setValue("kind", kind)
+        }
       />
 
       <Field label="Monto" htmlFor="amount" error={errors.total?.message}>
@@ -502,81 +512,5 @@ export function OperationForm({
         </Button>
       </div>
     </form>
-  );
-}
-
-interface RemainingProps {
-  changes: CellChange[];
-  envelopeById: Map<string, Envelope>;
-  account: AccountBalance;
-}
-
-// Cómo queda cada sobre que toca el movimiento, en una línea (M7): «🍔 Comida queda en
-// Bs X». Un descubierto se dice y se guarda igual (R6).
-function Remaining({ changes, envelopeById, account }: RemainingProps) {
-  if (changes.length === 0) return null;
-  return (
-    <div className="flex flex-col gap-1 px-1">
-      {changes.map((change) => {
-        const envelope = envelopeById.get(change.envelopeId);
-        return (
-          <p
-            key={change.envelopeId}
-            className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-body text-ink-muted"
-          >
-            {envelope && (
-              <EnvelopeChip
-                name={envelope.name}
-                emoji={envelope.emoji}
-                isThirdParty={envelope.isThirdParty}
-                className={cn("text-body", !envelope.isThirdParty && "text-ink")}
-              />
-            )}
-            queda en
-            <Money cents={change.afterCents} currency={account.currency} className="text-amount" />
-            {change.afterCents < 0 && <Badge variant="overdrawn">Descubierto</Badge>}
-          </p>
-        );
-      })}
-      {changes.some((change) => change.afterCents < 0) && (
-        <p className="text-caption text-ink-muted">
-          Se puede guardar igual: el descubierto se cubre después.
-        </p>
-      )}
-    </div>
-  );
-}
-
-// Los sobres en el orden del presupuesto, cada uno con lo que tiene en la cuenta elegida.
-function EnvelopeSelect({
-  envelopes,
-  account,
-  cellByEnvelope,
-  invalid,
-  ...props
-}: React.ComponentProps<"select"> & {
-  envelopes: Envelope[];
-  account: AccountBalance | undefined;
-  cellByEnvelope: Map<string, number>;
-  invalid: boolean;
-}) {
-  return (
-    <NativeSelect aria-invalid={invalid ? true : undefined} {...props}>
-      <option value="">Elige el sobre</option>
-      {envelopes.map((envelope) => {
-        const cents = cellByEnvelope.get(envelope.id);
-        const name =
-          envelope.emoji && !envelope.isThirdParty
-            ? `${envelope.emoji} ${envelope.name}`
-            : envelope.name;
-        return (
-          <option key={envelope.id} value={envelope.id}>
-            {account && cents !== undefined
-              ? `${name} · ${formatMoney(cents, account.currency)}`
-              : name}
-          </option>
-        );
-      })}
-    </NativeSelect>
   );
 }

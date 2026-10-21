@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import type { Envelope } from "@/features/envelopes/queries";
 
-import { budgetBalance, formatRate, incomeTotals, summarizePlan } from "./budget-view";
+import { formatRate } from "@/lib/money";
+
+import { budgetBalance, incomeTotals, summarizePlan } from "./budget-view";
 import type { BudgetLine, ExpectedIncome } from "./queries";
 
 const income = (expectedUsdCents: number, received: boolean): ExpectedIncome => ({

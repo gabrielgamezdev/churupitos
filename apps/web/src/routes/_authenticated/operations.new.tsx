@@ -3,8 +3,11 @@ import { useState } from "react";
 
 import { Screen } from "@/components/screen";
 import { ScreenHeader } from "@/components/screen-header";
+import { MoveForm } from "@/features/operations/move-form";
+import { emptyMoveForm, type Carry } from "@/features/operations/move-form-schema";
 import { OperationForm } from "@/features/operations/operation-form";
 import { emptyOperationForm } from "@/features/operations/operation-form-schema";
+import { parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 import { today } from "@/lib/months";
 
@@ -44,9 +47,29 @@ function NewOperationPage() {
   const canGoBack = useCanGoBack();
   // Una vez al abrir: es lo que hace que guardar dos veces no duplique (ADR 0008).
   const [operationId] = useState(() => crypto.randomUUID());
-  const [initial] = useState(() =>
-    emptyOperationForm(today(), account, envelope, { kind, amountCents: amount, description }),
-  );
+  // Gasto o Ingreso, o Mover (M8). Al pasar de uno a otro se lleva lo ya escrito: el
+  // formulario nuevo empieza con eso.
+  const [screen, setScreen] = useState<
+    | { form: "operation"; initial: ReturnType<typeof emptyOperationForm> }
+    | { form: "move"; initial: ReturnType<typeof emptyMoveForm> }
+  >(() => ({
+    form: "operation",
+    initial: emptyOperationForm(today(), account, envelope, {
+      kind,
+      amountCents: amount,
+      description,
+    }),
+  }));
+  const toMove = (carry: Carry) => setScreen({ form: "move", initial: emptyMoveForm(carry) });
+  const toOperation = (nextKind: "expense" | "income", carry: Carry) =>
+    setScreen({
+      form: "operation",
+      initial: emptyOperationForm(carry.day, carry.accountId, undefined, {
+        kind: nextKind,
+        amountCents: parseAmountInput(carry.amount) ?? undefined,
+        description: carry.description,
+      }),
+    });
 
   const close = () => {
     if (canGoBack) router.history.back();
@@ -57,13 +80,27 @@ function NewOperationPage() {
     // Sin el hueco de la barra: abajo va «Guardar», fijo.
     <Screen className="pb-0">
       <ScreenHeader title="Registrar" back={{ to: "/" }} backLabel="Volver sin guardar" />
-      <OperationForm
-        operationId={operationId}
-        initial={initial}
-        onlyCurrency={currency}
-        rememberFor={session.user.id}
-        onSaved={close}
-      />
+      {screen.form === "operation" ? (
+        <OperationForm
+          // Uno nuevo cada vez que se vuelve, con lo que se trajo.
+          key={`operation-${screen.initial.kind}`}
+          operationId={operationId}
+          initial={screen.initial}
+          onlyCurrency={currency}
+          rememberFor={session.user.id}
+          // Pagar una deuda es un gasto o un cobro, nunca un movimiento.
+          onMove={currency ? undefined : toMove}
+          onSaved={close}
+        />
+      ) : (
+        <MoveForm
+          operationId={operationId}
+          initial={screen.initial}
+          rememberFor={session.user.id}
+          onKind={toOperation}
+          onSaved={close}
+        />
+      )}
     </Screen>
   );
 }

@@ -14,17 +14,6 @@ export function incomeTotals(incomes: ExpectedIncome[]) {
   };
 }
 
-const thousands = new Intl.NumberFormat("es-VE", { maximumFractionDigits: 0 });
-
-// La tasa de un cobro (R8): los Bs que llegaron por cada dólar, con dos decimales como
-// en el Excel. Solo se pinta; nunca se usa para calcular un importe. Se redondea en
-// centésimas con enteros, sin pasar por un decimal.
-export function formatRate(vesCents: number, usdCents: number): string {
-  const hundredths = Math.round((vesCents * 100) / usdCents);
-  const whole = thousands.format(Math.floor(hundredths / 100));
-  return `${whole},${String(hundredths % 100).padStart(2, "0")}`;
-}
-
 export type PlanRow = { line: BudgetLine; envelope: Envelope };
 
 // El plan como se enseña: los sobres con algo planeado, en el orden del presupuesto; y

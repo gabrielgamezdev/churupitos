@@ -5,9 +5,9 @@ import { Money } from "@/components/money";
 import { StatusBadge } from "@/components/status-badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatRate } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
 
-import { formatRate } from "./budget-view";
 import type { ExpectedIncome } from "./queries";
 
 interface IncomeRowProps {

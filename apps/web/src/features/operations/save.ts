@@ -4,11 +4,13 @@ import type { Json } from "@/lib/database.types";
 import { queryClient as appQueryClient } from "@/lib/query-client";
 import { supabase } from "@/lib/supabase";
 
+import type { MoveKind } from "./move-draft";
 import type { EntryInput, OperationKind } from "./operation-draft";
 
 export type SaveOperationArgs = {
   id: string;
-  kind: OperationKind;
+  // Un gasto o un ingreso, o algo que se mueve sin gastarse (M8).
+  kind: OperationKind | MoveKind;
   day: string;
   description: string;
   entries: EntryInput[];
