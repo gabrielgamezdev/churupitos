@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CurrencyCard, CurrencyCardSkeleton } from "@/features/balances/currency-card";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import { useCurrencyTotals } from "@/features/balances/use-currency-totals";
+import { RecentOperations } from "@/features/ledger/recent-operations";
 import { useCurrentMember } from "@/features/household/use-current-member";
 import { currencySlug } from "@/lib/money";
 
@@ -15,13 +16,14 @@ export const Route = createFileRoute("/_authenticated/")({
   component: HomePage,
 });
 
-// El inicio: el saludo, Ajustes y lo que hay hoy en cada moneda. Sin cabecera de
-// pantalla: es la primera, y no hay adónde volver.
+// El inicio: el saludo, Ajustes, lo que hay hoy en cada moneda y lo último registrado.
+// Sin cabecera de pantalla: es la primera, y no hay adónde volver.
 function HomePage() {
   return (
     <Screen className="pt-[max(1.5rem,env(safe-area-inset-top))]">
       <Greeting />
       <TodayByCurrency />
+      <RecentOperations />
     </Screen>
   );
 }

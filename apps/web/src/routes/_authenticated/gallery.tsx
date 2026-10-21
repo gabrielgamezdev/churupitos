@@ -9,6 +9,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Sheet } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EnvelopeSplit } from "@/features/accounts/envelope-split";
 import {
@@ -23,6 +24,7 @@ import {
   SAMPLE_LEDGER,
   SAMPLE_OPERATIONS,
   SAMPLE_PLAN,
+  SAMPLE_RECENT,
   SAMPLE_TODAY,
 } from "@/features/gallery/samples";
 import { AccountRow } from "@/features/balances/account-row";
@@ -31,6 +33,8 @@ import { BudgetCheckList } from "@/features/budget/budget-check-list";
 import { BudgetTotals } from "@/features/budget/budget-totals";
 import { IncomeRow } from "@/features/budget/income-row";
 import { PlanRow } from "@/features/budget/plan-row";
+import { OperationSheetContent } from "@/features/ledger/operation-sheet";
+import { RecentRow } from "@/features/ledger/recent-operations";
 import { AmountInput } from "@/components/amount-field";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
@@ -119,6 +123,8 @@ const TYPE_STYLES: [className: string, name: string, sample: string][] = [
 function GalleryPage() {
   const [theme, setTheme] = useState<ThemeChoice>(undefined);
   const [month, setMonth] = useState("2026-10");
+  const [openOperation, setOpenOperation] = useState<string | null>(null);
+  const sheetOperation = openOperation ? SAMPLE_OPERATIONS[openOperation] : undefined;
   const offlineSince = new Date();
   offlineSince.setHours(8, 15, 0, 0);
 
@@ -311,8 +317,26 @@ function GalleryPage() {
         </Section>
 
         <Section
+          title="Últimos registrados"
+          description="En Inicio: lo último que registraron en la app, con quién. Al tocarlo se abre su hoja."
+        >
+          <List>
+            {SAMPLE_RECENT.map((operation) => (
+              <RecentRow
+                key={operation.id}
+                operation={operation}
+                today={SAMPLE_TODAY}
+                accountById={SAMPLE_ACCOUNT_BY_ID}
+                envelopeById={SAMPLE_ENVELOPE_BY_ID}
+                onOpen={() => undefined}
+              />
+            ))}
+          </List>
+        </Section>
+
+        <Section
           title="Libro"
-          description="Lo más nuevo arriba. Al tocar un movimiento se despliega su operación entera."
+          description="Lo más nuevo arriba. Al tocar un movimiento, su operación entera se abre en una hoja; la hoja sigue el tema del teléfono, no el de la galería."
         >
           <LedgerList
             entries={SAMPLE_LEDGER}
@@ -328,17 +352,29 @@ function GalleryPage() {
                 />
               ) : null;
             }}
-            renderDetail={(entry) => {
-              const operation = SAMPLE_OPERATIONS[entry.operationId];
-              return operation ? (
-                <OperationEntries
-                  operation={operation}
-                  accountById={SAMPLE_ACCOUNT_BY_ID}
-                  envelopeById={SAMPLE_ENVELOPE_BY_ID}
-                />
-              ) : null;
-            }}
+            onOpen={(entry) => setOpenOperation(entry.operationId)}
           />
+          <Sheet
+            open={sheetOperation !== undefined}
+            onOpenChange={(open) => !open && setOpenOperation(null)}
+          >
+            {sheetOperation && (
+              <OperationSheetContent
+                operation={sheetOperation}
+                accountById={SAMPLE_ACCOUNT_BY_ID}
+                envelopeById={SAMPLE_ENVELOPE_BY_ID}
+                // Botones de muestra: los de verdad escriben en la base.
+                actions={
+                  sheetOperation.fromApp && (
+                    <div className="grid grid-cols-2 gap-2 border-t border-hairline pt-3">
+                      <Button variant="outline">Corregir</Button>
+                      <Button variant="outline">Borrar</Button>
+                    </div>
+                  )
+                }
+              />
+            )}
+          </Sheet>
         </Section>
 
         <Section

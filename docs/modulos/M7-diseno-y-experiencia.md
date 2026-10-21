@@ -74,7 +74,8 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 1. [x] **Plan aprobado** por el autor (2026-10-20).
 2. [x] **La barra** (2026-10-20): ＋ al centro con el contexto de la pantalla, Ajustes
    desde Inicio y sin botones flotantes.
-3. [ ] **La hoja de un movimiento** desde los libros, y **«Últimos registrados»** en Inicio.
+3. [x] **La hoja de un movimiento** desde los libros, y **«Últimos registrados»** en Inicio
+   (2026-10-20). El ingreso cobrado del Presupuesto sigue desplegando su reparto en la fila.
 4. [ ] **El aviso con «Deshacer»** al guardar, corregir y marcar o desmarcar una deuda.
 5. [ ] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con
    «Deshacer». En local y en la nube.

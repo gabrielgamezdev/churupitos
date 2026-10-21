@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { List } from "@/components/list";
 import { Money } from "@/components/money";
@@ -23,7 +23,7 @@ import {
 } from "@/features/envelopes/queries";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
-import { OperationDetail } from "@/features/ledger/operation-detail";
+import { OperationSheet } from "@/features/ledger/operation-sheet";
 import { envelopeLedgerQuery } from "@/features/ledger/queries";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
@@ -64,12 +64,14 @@ function EnvelopePage() {
       </Screen>
     );
   }
-  return <EnvelopeScreen envelope={envelope} envelopes={envelopes.data} />;
+  return <EnvelopeScreen envelope={envelope} />;
 }
 
 // Un sobre: lo que tiene, en qué cuentas está y su libro mes a mes, con los
 // movimientos de todas sus cuentas.
-function EnvelopeScreen({ envelope, envelopes }: { envelope: Envelope; envelopes: Envelope[] }) {
+function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
+  // La operación abierta en su hoja, si hay una.
+  const [openOperation, setOpenOperation] = useState<string | null>(null);
   const navigate = Route.useNavigate();
   const todayDay = today();
   const currentMonth = monthOf(todayDay);
@@ -89,10 +91,6 @@ function EnvelopeScreen({ envelope, envelopes }: { envelope: Envelope; envelopes
   const accountById = useMemo(
     () => Object.fromEntries((accounts.data ?? []).map((row) => [row.accountId, row])),
     [accounts.data],
-  );
-  const envelopeById = useMemo(
-    () => Object.fromEntries(envelopes.map((row) => [row.id, row])),
-    [envelopes],
   );
   const amounts = balances.data ? envelopeAmounts(envelope.id, balances.data) : undefined;
 
@@ -170,13 +168,7 @@ function EnvelopeScreen({ envelope, envelopes }: { envelope: Envelope; envelopes
                   {accountById[entry.accountId]?.name ?? "Otra cuenta"}
                 </span>
               )}
-              renderDetail={(entry) => (
-                <OperationDetail
-                  operationId={entry.operationId}
-                  accountById={accountById}
-                  envelopeById={envelopeById}
-                />
-              )}
+              onOpen={(entry) => setOpenOperation(entry.operationId)}
             />
           )
         ) : (
@@ -187,6 +179,7 @@ function EnvelopeScreen({ envelope, envelopes }: { envelope: Envelope; envelopes
           />
         )}
       </section>
+      <OperationSheet operationId={openOperation} onClose={() => setOpenOperation(null)} />
     </Screen>
   );
 }

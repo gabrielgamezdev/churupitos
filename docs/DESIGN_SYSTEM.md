@@ -62,6 +62,7 @@ tokens, así que nunca preguntan en qué tema están.
 | `usd` | `#855300` | `#f9cf55` | Identidad de los dólares: la etiqueta «$», el dorado oscurecido para leerse |
 | `usd-soft` | `#fbefcf` | `#3a2c08` | Fondo de la etiqueta «$» |
 | `focus-ring` | = `brand` | = `brand` | Anillo de foco: 2px sólidos, separados 2px del control |
+| `scrim` | `ink` al 45 % | negro al 60 % | El velo que oscurece la pantalla detrás de una hoja |
 
 - Entre los importes, `money-in` y `money-out` son **solo para movimientos**: un saldo
   positivo nunca lleva color.
@@ -129,13 +130,14 @@ debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de sha
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
 `Collapsible`, `Input`, `Label`, `NativeSelect` (una lista del sistema con el aspecto de
-`Input`) y `Segmented` (una de pocas opciones a la vista, como Gasto o Ingreso). Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
+`Input`), `Segmented` (una de pocas opciones a la vista, como Gasto o Ingreso) y `Sheet`
+(una hoja que sube desde abajo). Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
 `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
 `DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
 `OperationForm` y `OperationActions` en `operations/`) y los del libro, que comparten
-cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker` y
-`OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
+cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker`, `OperationSheet`,
+`RecentOperations` y `OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
 
 La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
 se entró directo por la dirección, va a la pantalla de arriba.
@@ -148,7 +150,10 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
-| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`); al tocar una fila se despliega su operación entera, y en un cobro cada línea lleva también su valor en $ (`R9`). Una registrada en la app dice quién la registró y lleva «Corregir» y «Borrar»; borrar se confirma ahí mismo, con el botón `destructive` |
+| **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`). Al tocar una fila, su operación se abre en un `OperationSheet` |
+| **Sheet** | Una hoja que sube desde abajo sobre un velo `scrim`, en `surface-raised` y con las esquinas de arriba en `radius-lg`, hasta el 90 % del alto. Siempre con título, y encima, si hace falta, qué es en `label`. Se cierra con la X, tocando fuera o con el atrás de Android (`CloseWatcher`). Ningún campo se enfoca solo, y con la hoja abierta estirar no recarga. Es para mirar algo y actuar sobre ello; un formulario va a pantalla completa |
+| **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, el total en `display-amount` (en un gasto o un ingreso), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar», que se confirma ahí mismo con el botón `destructive`; uno importado dice que, hasta el corte, se corrige en el Excel |
+| **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
 | **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y ✅ cobrado o ⏳ pendiente. Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |

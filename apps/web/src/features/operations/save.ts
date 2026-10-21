@@ -48,6 +48,11 @@ export function useDeleteOperation() {
       const { error } = await supabase.rpc("delete_operation", { op_id: id });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries(),
+    // Todo menos la operación borrada: su hoja se ve aún mientras baja, y volver a
+    // pedirla daría error.
+    onSuccess: (_data, id) =>
+      queryClient.invalidateQueries({
+        predicate: ({ queryKey }) => !(queryKey[0] === "operation" && queryKey[1] === id),
+      }),
   });
 }

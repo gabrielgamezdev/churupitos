@@ -7,9 +7,15 @@ import { cn } from "@/lib/utils";
 
 import { useDeleteOperation, writeErrorMessage } from "./save";
 
-// Corregir o borrar una operación registrada en la app, desde su detalle en el libro.
-// Borrar pide confirmarlo ahí mismo; sin red, las dos se apagan.
-export function OperationActions({ operationId }: { operationId: string }) {
+interface OperationActionsProps {
+  operationId: string;
+  // Al borrarla: la hoja que la enseña se cierra.
+  onDeleted?: () => void;
+}
+
+// Corregir o borrar una operación registrada en la app, desde su hoja. Borrar pide
+// confirmarlo ahí mismo; sin red, las dos se apagan.
+export function OperationActions({ operationId, onDeleted }: OperationActionsProps) {
   const online = useOnline();
   const [confirming, setConfirming] = useState(false);
   const remove = useDeleteOperation();
@@ -30,7 +36,7 @@ export function OperationActions({ operationId }: { operationId: string }) {
           <Button
             variant="destructive"
             disabled={!online || remove.isPending}
-            onClick={() => remove.mutate(operationId)}
+            onClick={() => remove.mutate(operationId, { onSuccess: onDeleted })}
           >
             {remove.isPending ? "Borrando…" : "Borrar"}
           </Button>

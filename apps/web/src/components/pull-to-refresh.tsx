@@ -28,7 +28,9 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
 
     const onStart = (event: TouchEvent) => {
       const touch = event.touches[0];
-      startY = !busy && window.scrollY <= 0 && touch ? touch.clientY : null;
+      // Con una hoja abierta, el dedo es para ella: el fondo no se recarga debajo.
+      const sheetOpen = document.querySelector("[role=dialog]") !== null;
+      startY = !busy && !sheetOpen && window.scrollY <= 0 && touch ? touch.clientY : null;
     };
     const onMove = (event: TouchEvent) => {
       const touch = event.touches[0];

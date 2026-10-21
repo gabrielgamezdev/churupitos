@@ -103,6 +103,8 @@ export type OperationDetail = {
   // Quién la registró en la app; lo importado del Excel no tiene autor.
   fromApp: boolean;
   authorName: string | null;
+  // Cuándo se registró en la app, con hora; lo importado no lo tiene.
+  registeredAt: string | null;
   entries: {
     id: string;
     accountId: string;
@@ -115,7 +117,7 @@ export type OperationDetail = {
   }[];
 };
 
-// Una operación entera, con todos sus asientos: lo que se despliega al tocar una fila.
+// Una operación entera, con todos sus asientos: lo que se abre al tocar una fila.
 export function operationQuery(operationId: string) {
   return queryOptions({
     queryKey: ["operation", operationId],
@@ -123,7 +125,7 @@ export function operationQuery(operationId: string) {
       const { data, error } = await supabase
         .from("operations")
         .select(
-          "kind, adjustment_reason, occurred_on, description, income_id, created_by, author:household_members(display_name), entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
+          "kind, adjustment_reason, occurred_on, description, income_id, created_by, created_at, author:household_members(display_name), entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
         )
         .eq("id", operationId)
         .order("position", { referencedTable: "entries" })
@@ -137,6 +139,7 @@ export function operationQuery(operationId: string) {
         incomeId: data.income_id,
         fromApp: data.created_by !== null,
         authorName: data.author?.display_name ?? null,
+        registeredAt: data.created_by !== null ? data.created_at : null,
         entries: data.entries.map((entry) => ({
           id: entry.id,
           accountId: entry.account_id,
@@ -150,3 +153,46 @@ export function operationQuery(operationId: string) {
     },
   });
 }
+
+export type RecentOperation = {
+  id: string;
+  kind: string;
+  day: string;
+  description: string;
+  authorName: string | null;
+  entries: { accountId: string; envelopeId: string; amountCents: number; isFee: boolean }[];
+};
+
+// Cuántas enseña Inicio: las de los últimos días, para corregir lo que se acaba de apuntar.
+export const RECENT_OPERATIONS_LIMIT = 5;
+
+// Lo último que registraron en la app, por cuándo se registró y no por su fecha: lo que
+// se acaba de apuntar sale arriba aunque sea de ayer. Lo importado del Excel no entra.
+export const recentOperationsQuery = queryOptions({
+  queryKey: ["recent-operations"],
+  queryFn: async (): Promise<RecentOperation[]> => {
+    const { data, error } = await supabase
+      .from("operations")
+      .select(
+        "id, kind, occurred_on, description, author:household_members(display_name), entries(account_id, envelope_id, amount_cents, is_fee, position)",
+      )
+      .not("created_by", "is", null)
+      .order("created_at", { ascending: false })
+      .order("position", { referencedTable: "entries" })
+      .limit(RECENT_OPERATIONS_LIMIT);
+    if (error) throw error;
+    return data.map((row) => ({
+      id: row.id,
+      kind: row.kind,
+      day: row.occurred_on,
+      description: row.description,
+      authorName: row.author?.display_name ?? null,
+      entries: row.entries.map((entry) => ({
+        accountId: entry.account_id,
+        envelopeId: entry.envelope_id,
+        amountCents: entry.amount_cents,
+        isFee: entry.is_fee,
+      })),
+    }));
+  },
+});

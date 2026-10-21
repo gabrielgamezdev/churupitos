@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { List } from "@/components/list";
@@ -17,7 +17,7 @@ import { useAccountBalances, type AccountBalance } from "@/features/balances/use
 import { envelopesQuery } from "@/features/envelopes/queries";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
-import { OperationDetail } from "@/features/ledger/operation-detail";
+import { OperationSheet } from "@/features/ledger/operation-sheet";
 import { accountLedgerQuery } from "@/features/ledger/queries";
 import { CURRENCY_NAMES, currencySlug, formatMoney } from "@/lib/money";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
@@ -58,16 +58,17 @@ function AccountPage() {
       </Screen>
     );
   }
-  return <AccountScreen account={account} accounts={accounts.data} />;
+  return <AccountScreen account={account} />;
 }
 
 interface AccountScreenProps {
   account: AccountBalance;
-  accounts: AccountBalance[];
 }
 
 // Una cuenta: su saldo, cuánto hay de cada sobre en ella y su libro, mes a mes.
-function AccountScreen({ account, accounts }: AccountScreenProps) {
+function AccountScreen({ account }: AccountScreenProps) {
+  // La operación abierta en su hoja, si hay una.
+  const [openOperation, setOpenOperation] = useState<string | null>(null);
   const navigate = Route.useNavigate();
   const todayDay = today();
   const currentMonth = monthOf(todayDay);
@@ -88,10 +89,6 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
   const envelopeById = useMemo(
     () => Object.fromEntries((envelopes.data ?? []).map((envelope) => [envelope.id, envelope])),
     [envelopes.data],
-  );
-  const accountById = useMemo(
-    () => Object.fromEntries(accounts.map((row) => [row.accountId, row])),
-    [accounts],
   );
 
   const { currency } = account;
@@ -171,13 +168,7 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
                   />
                 ) : null;
               }}
-              renderDetail={(entry) => (
-                <OperationDetail
-                  operationId={entry.operationId}
-                  accountById={accountById}
-                  envelopeById={envelopeById}
-                />
-              )}
+              onOpen={(entry) => setOpenOperation(entry.operationId)}
             />
           )
         ) : (
@@ -188,6 +179,7 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
           />
         )}
       </section>
+      <OperationSheet operationId={openOperation} onClose={() => setOpenOperation(null)} />
     </Screen>
   );
 }

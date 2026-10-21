@@ -7,7 +7,7 @@ import type { PlanRow } from "@/features/budget/budget-view";
 import type { BudgetChecks, ExpectedIncome } from "@/features/budget/queries";
 import type { Debt, DebtTotal } from "@/features/debts/queries";
 import type { Envelope } from "@/features/envelopes/queries";
-import type { LedgerEntry, OperationDetail } from "@/features/ledger/queries";
+import type { LedgerEntry, OperationDetail, RecentOperation } from "@/features/ledger/queries";
 
 const envelope = (id: string, name: string, emoji: string | null, position: number) => ({
   id,
@@ -85,6 +85,7 @@ const imported = (day: string, description = "") => ({
   incomeId: null,
   fromApp: false,
   authorName: null,
+  registeredAt: null,
 });
 
 const single = (id: string, envelopeId: string, amountCents: number, isFee = false) => ({
@@ -110,6 +111,7 @@ export const SAMPLE_OPERATIONS: Record<string, OperationDetail> = {
     description: "Mercado",
     fromApp: true,
     authorName: "Ana",
+    registeredAt: "2026-10-12T22:30:00Z",
   },
   comision: single("comision", "comida", -3000, true),
   pasaje: single("pasaje", "transporte", -5000),
@@ -296,4 +298,30 @@ export const SAMPLE_DEBT_TOTALS: DebtTotal[] = [
   { direction: "payable", currency: "VES", totalCents: 500000 },
   { direction: "payable", currency: "USD", totalCents: 6500 },
   { direction: "receivable", currency: "USD", totalCents: 1000 },
+];
+
+// Lo último registrado en la app, de los dos: un gasto repartido entre dos sobres y uno
+// en dólares de ayer.
+export const SAMPLE_RECENT: RecentOperation[] = [
+  {
+    id: "reciente-mercado",
+    kind: "expense",
+    day: SAMPLE_TODAY,
+    description: "Mercado",
+    authorName: "Ana",
+    entries: [
+      { accountId: "banco-a", envelopeId: "comida", amountCents: -60000, isFee: false },
+      { accountId: "banco-a", envelopeId: "transporte", amountCents: -12000, isFee: false },
+    ],
+  },
+  {
+    id: "reciente-pasaje",
+    kind: "expense",
+    day: "2026-10-14",
+    description: "Pasaje",
+    authorName: "Beto",
+    entries: [
+      { accountId: "billetera-b", envelopeId: "transporte", amountCents: -500, isFee: false },
+    ],
+  },
 ];

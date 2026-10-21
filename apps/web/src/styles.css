@@ -47,6 +47,7 @@
   --usd: light-dark(#855300, #f9cf55);
   --usd-soft: light-dark(#fbefcf, #3a2c08);
   --focus-ring: var(--brand);
+  --scrim: light-dark(rgb(19 32 26 / 0.45), rgb(0 0 0 / 0.6));
 }
 
 /* Lo que traiga un componente nuevo de shadcn con `dark:` sigue también al teléfono. */
@@ -75,6 +76,7 @@
   --color-usd: var(--usd);
   --color-usd-soft: var(--usd-soft);
   --color-focus-ring: var(--focus-ring);
+  --color-scrim: var(--scrim);
 
   /* Los nombres que esperan los componentes de shadcn, apuntando a los nuestros. El
      código propio usa los de arriba; `destructive` es el rojo de los errores. */

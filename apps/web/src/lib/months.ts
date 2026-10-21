@@ -60,6 +60,20 @@ export function dayMonthLabel(day: string): string {
   return dayMonth.format(toDate(day));
 }
 
+// Cuándo se registró algo en la app: «20 de octubre a las 3:15 p. m.». Es un instante, no un
+// día del libro: se lee en la hora de Caracas aunque el teléfono esté en otra (R13).
+const registeredAt = new Intl.DateTimeFormat("es-VE", {
+  day: "numeric",
+  month: "long",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/Caracas",
+});
+
+export function registeredAtLabel(instant: string): string {
+  return registeredAt.format(new Date(instant));
+}
+
 // El encabezado de cada día del libro: «Hoy», «Ayer» o «Lunes 13».
 export function dayLabel(day: string, todayDay: string): string {
   if (day === todayDay) return "Hoy";
