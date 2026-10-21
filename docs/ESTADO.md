@@ -6,6 +6,9 @@ Mover entre sobres, traspasar entre cuentas, cambiar de divisa y cubrir un descu
 desde la app. El plan, aprobado, está en
 `docs/modulos/M8-entre-sobres-y-cuentas.md`.
 
+Mientras M8 se prueba en los teléfonos, el plan de M9 · Cobros y reparto, por aprobar,
+está en `docs/modulos/M9-cobros-y-reparto.md`.
+
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
 
 Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
