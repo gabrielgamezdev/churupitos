@@ -25,7 +25,7 @@ export type Rows = {
 export type Plan = { rows: Rows; operationById: Map<string, DraftOperation> };
 
 // Lo registrado en la app que la recarga borró (o habría borrado, en seco).
-export type AppData = { operations: number; debts: number; months: number };
+export type AppData = { operations: number; debts: number; months: number; catalog: number };
 
 export type LoadOutcome =
   | { status: "not_run"; reason: string }
@@ -141,7 +141,7 @@ export async function writeRows(
   const tables = Object.keys(plan.rows) as (keyof Rows)[];
   let oracle: OracleResult | null = null;
   let written = !dryRun;
-  let appData: AppData = { operations: 0, debts: 0, months: 0 };
+  let appData: AppData = { operations: 0, debts: 0, months: 0, catalog: 0 };
   try {
     await sql.begin(async (tx) => {
       const [registered] = await tx<AppData[]>`
@@ -154,7 +154,12 @@ export async function writeRows(
             union all
             select month_start from public.budget_lines
             where created_by is not null or updated_by is not null
-          ) budget) as months`;
+          ) budget) as months,
+          (select count(*)::int from (
+            select id from public.envelopes where created_by is not null or updated_by is not null
+            union all
+            select id from public.accounts where created_by is not null or updated_by is not null
+          ) catalog) as catalog`;
       appData = registered ?? appData;
       // La base se vacía con su propia función, que lleva el candado del corte.
       await tx`select public.reset_imported_data(include_app_data => ${dryRun || discardAppData})`;

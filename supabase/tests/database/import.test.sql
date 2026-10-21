@@ -36,7 +36,7 @@ insert into public.operations (kind, occurred_on, description, created_by) value
 select throws_ok(
   'select public.reset_imported_data()',
   'P0001',
-  'Hay movimientos, deudas o presupuesto escritos desde la app: recargar desde los Excels los borraría',
+  'Hay datos escritos desde la app (movimientos, deudas, presupuesto, sobres o cuentas): recargar desde los Excels los borraría',
   'el candado: con operaciones de la app, la recarga se niega'
 );
 select lives_ok(

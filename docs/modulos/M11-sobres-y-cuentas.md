@@ -67,9 +67,9 @@
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-10-21).
-2. [ ] **Escribir en la base:** guardar, archivar y borrar sobres y cuentas, con sus
-   pruebas (en cero para archivar, nada para borrar, «Otro» intocable, nada nuevo en lo
-   archivado, el candado de la recarga).
+2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar, archivar y
+   borrar sobres y cuentas, con sus pruebas (en cero para archivar, nada para borrar, «Otro»
+   intocable, nada nuevo en lo archivado, el candado de la recarga, `R20`).
 3. [ ] **El importador:** archiva lo que no está en el Excel del mes en curso.
 4. [ ] **Sobres y cuentas:** la lista, crear, cambiar, archivar y borrar, con «Deshacer».
 5. [ ] **Lo archivado fuera de las listas:** Registrar, Mover, Cobrar, Planear, Sobres,

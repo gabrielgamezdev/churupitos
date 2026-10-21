@@ -25,28 +25,52 @@ export type Database = {
     Tables: {
       accounts: {
         Row: {
+          archived_at: string | null;
           created_at: string;
+          created_by: string | null;
           currency: string;
           id: string;
           name: string;
           position: number;
+          updated_by: string | null;
         };
         ComputedFields: never;
         Insert: {
+          archived_at?: string | null;
           created_at?: string;
+          created_by?: string | null;
           currency: string;
           id?: string;
           name: string;
           position?: number;
+          updated_by?: string | null;
         };
         Update: {
+          archived_at?: string | null;
           created_at?: string;
+          created_by?: string | null;
           currency?: string;
           id?: string;
           name?: string;
           position?: number;
+          updated_by?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "accounts_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "accounts_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       budget_lines: {
         Row: {
@@ -226,31 +250,55 @@ export type Database = {
       };
       envelopes: {
         Row: {
+          archived_at: string | null;
           created_at: string;
+          created_by: string | null;
           emoji: string | null;
           id: string;
           is_third_party: boolean;
           name: string;
           position: number;
+          updated_by: string | null;
         };
         ComputedFields: never;
         Insert: {
+          archived_at?: string | null;
           created_at?: string;
+          created_by?: string | null;
           emoji?: string | null;
           id?: string;
           is_third_party?: boolean;
           name: string;
           position?: number;
+          updated_by?: string | null;
         };
         Update: {
+          archived_at?: string | null;
           created_at?: string;
+          created_by?: string | null;
           emoji?: string | null;
           id?: string;
           is_third_party?: boolean;
           name?: string;
           position?: number;
+          updated_by?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "envelopes_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "envelopes_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       expected_incomes: {
         Row: {
@@ -592,11 +640,19 @@ export type Database = {
         Args: { as_of?: string };
         Returns: {
           account_id: string;
+          archived: boolean;
           balance_cents: number;
           currency: string;
           name: string;
           position: number;
           third_party_cents: number;
+        }[];
+      };
+      archive_unused: {
+        Args: { since: string };
+        Returns: {
+          account_count: number;
+          envelope_count: number;
         }[];
       };
       assert_operation_shape: { Args: { target: string }; Returns: undefined };
@@ -630,7 +686,9 @@ export type Database = {
           total_cents: number;
         }[];
       };
+      delete_account: { Args: { target_id: string }; Returns: undefined };
       delete_debt: { Args: { debt_id: string }; Returns: Json };
+      delete_envelope: { Args: { target_id: string }; Returns: undefined };
       delete_month: { Args: { target_month: string }; Returns: undefined };
       delete_operation: { Args: { op_id: string }; Returns: Json };
       envelope_balances: {
@@ -653,7 +711,15 @@ export type Database = {
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };
       restore_operation: { Args: { snapshot: Json }; Returns: undefined };
+      save_account: {
+        Args: { is_archived: boolean; new_currency: string; new_name: string; target_id: string };
+        Returns: undefined;
+      };
       save_debts: { Args: { debt_rows: Json }; Returns: undefined };
+      save_envelope: {
+        Args: { is_archived: boolean; new_emoji: string; new_name: string; target_id: string };
+        Returns: undefined;
+      };
       save_month: {
         Args: { income_rows: Json; line_rows: Json; target_month: string };
         Returns: undefined;

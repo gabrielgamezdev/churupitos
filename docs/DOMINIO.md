@@ -160,6 +160,12 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   que tiene presupuesto, y se prepara copiando ese. Lo cobrado no se quita: un ingreso
   esperado con su cobro sigue en la lista, y un sobre que ya recibió de un cobro del mes
   se deja en $0. El plan puede no sumar lo esperado mientras se prepara (`R12`).
+- **R20 — Lo que tiene historia se archiva, no se borra.** Un sobre o una cuenta se borra
+  solo si no tiene nada: ni asientos ni plan. Se archiva solo en cero en todas sus
+  celdas, porque si no ese dinero dejaría de verse y no cuadraría (`R2`); un sobre,
+  además, sin plan este mes ni en los siguientes. Archivado no recibe asientos nuevos y
+  sale de las listas, pero su historia sigue y se puede reactivar. «Otro» no se archiva ni
+  se borra (`R11`).
 
 ---
 

@@ -146,7 +146,7 @@ describe("el informe", () => {
     dryRun: true,
     counts,
     oracle,
-    appData: { operations: 0, debts: 0, months: 0 },
+    appData: { operations: 0, debts: 0, months: 0, catalog: 0 },
   });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
@@ -161,7 +161,7 @@ describe("el informe", () => {
       dryRun: false,
       counts,
       oracle,
-      appData: { operations: 2, debts: 1, months: 0 },
+      appData: { operations: 2, debts: 1, months: 0, catalog: 0 },
     });
     expect(discarded).toContain(
       "Borró 2 operaciones y 1 deuda registradas en la app, que el Excel ya tiene.",
@@ -174,10 +174,23 @@ describe("el informe", () => {
       dryRun: true,
       counts,
       oracle,
-      appData: { operations: 3, debts: 1, months: 1 },
+      appData: { operations: 3, debts: 1, months: 1, catalog: 0 },
     });
     expect(discarded).toContain(
       "Habría borrado 3 operaciones, 1 deuda y 1 mes del presupuesto registrados en la app, que el Excel ya tiene.",
+    );
+  });
+
+  it("cuenta también los sobres y las cuentas escritos en la app", () => {
+    const discarded = buildReport(pkg, [month], {
+      status: "ok",
+      dryRun: false,
+      counts,
+      oracle,
+      appData: { operations: 0, debts: 0, months: 0, catalog: 2 },
+    });
+    expect(discarded).toContain(
+      "Borró 2 sobres o cuentas registrados en la app, que el Excel ya tiene.",
     );
   });
 
@@ -198,7 +211,7 @@ describe("el informe", () => {
       status: "ok",
       dryRun: true,
       counts,
-      appData: { operations: 0, debts: 0, months: 0 },
+      appData: { operations: 0, debts: 0, months: 0, catalog: 0 },
       oracle: {
         checks: 5,
         differences: [
