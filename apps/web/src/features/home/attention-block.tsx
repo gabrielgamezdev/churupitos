@@ -8,22 +8,25 @@ import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { overdrawnCellsQuery, type OverdrawnCell } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
+import { expectedIncomesQuery } from "@/features/budget/queries";
 import { dueLabel } from "@/features/debts/debt-view";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { CoverLink } from "@/features/operations/cover-link";
-import { today } from "@/lib/months";
+import { monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
-import { attention } from "./attention";
+import { attention, incomesToReceive } from "./attention";
 
 // Cuántos de cada cosa se ven; el resto, en su pantalla.
 const MAX_ROWS = 5;
 
 // «Para revisar» en Inicio (M7). Es un bloque más, no un aviso: mientras carga o si no
-// carga, no se ve, y sin nada que revisar, tampoco.
+// carga, no se ve, y sin nada que revisar, tampoco. Los ingresos por cobrar, si tardan o
+// fallan, solo faltan ellos.
 export function AttentionBlock() {
   const cells = useQuery(overdrawnCellsQuery);
+  const incomes = useQuery(expectedIncomesQuery(monthOf(today())));
   const debts = useQuery(debtsQuery);
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
@@ -43,6 +46,7 @@ export function AttentionBlock() {
     <AttentionList
       overdrafts={overdrafts}
       dueSoon={dueSoon}
+      toReceive={incomes.data ? incomesToReceive(incomes.data) : null}
       today={todayDay}
       accountById={accountById}
       envelopeById={envelopeById}
@@ -53,21 +57,25 @@ export function AttentionBlock() {
 interface AttentionListProps {
   overdrafts: OverdrawnCell[];
   dueSoon: Debt[];
+  // Los ingresos del mes sin cobrar: una línea que lleva a Presupuesto.
+  toReceive: { count: number; usdCents: number } | null;
   today: string;
   accountById: Record<string, Pick<AccountBalance, "name">>;
   envelopeById: Record<string, Envelope>;
 }
 
 // Lo que pide atención, sin tono de alarma: cada sobre en descubierto con su cuenta, que
-// lleva al sobre, y cada cuota que vence pronto o venció, que lleva a Deudas.
+// lleva al sobre, cada cuota que vence pronto o venció, que lleva a Deudas, y lo que falta
+// por cobrar del mes, que lleva a Presupuesto.
 export function AttentionList({
   overdrafts,
   dueSoon,
+  toReceive,
   today,
   accountById,
   envelopeById,
 }: AttentionListProps) {
-  if (overdrafts.length === 0 && dueSoon.length === 0) return null;
+  if (overdrafts.length === 0 && dueSoon.length === 0 && !toReceive) return null;
   return (
     <section aria-labelledby="attention-title" className="flex flex-col gap-3">
       <h2 id="attention-title" className="text-heading">
@@ -141,6 +149,18 @@ export function AttentionList({
         })}
         {dueSoon.length > MAX_ROWS && (
           <MoreRow to="/debts">Y {dueSoon.length - MAX_ROWS} cuotas más que vencen pronto</MoreRow>
+        )}
+        {toReceive && (
+          <ListRow asChild>
+            <Link to="/budget">
+              <span className="text-body">
+                {toReceive.count === 1
+                  ? "1 ingreso por cobrar este mes"
+                  : `${toReceive.count} ingresos por cobrar este mes`}
+              </span>
+              <Money cents={toReceive.usdCents} currency="USD" className="text-amount" />
+            </Link>
+          </ListRow>
         )}
       </List>
     </section>

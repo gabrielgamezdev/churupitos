@@ -83,7 +83,7 @@ Y «Cobrar» en Presupuesto y la línea de lo que falta por cobrar en Inicio.
    falta y los Bs de cada línea.
 5. [x] **Corregir, borrar y deshacer** un cobro (2026-10-21): corregir abre Cobrar como
    estaba, y al borrarlo el ingreso vuelve a ⏳.
-6. [ ] **«Cobrar» en Presupuesto** y lo que falta por cobrar en Inicio.
+6. [x] **«Cobrar» en Presupuesto** y lo que falta por cobrar en Inicio (2026-10-21).
 7. [ ] **En los teléfonos:** lo usan unos días.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

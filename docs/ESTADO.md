@@ -3,8 +3,8 @@
 ## Ahora: M9 · Cobros y reparto (en curso), y M8 en los teléfonos
 
 Cobrar desde la app un ingreso esperado del presupuesto, con su tasa, y repartirlo en
-dólares entre los sobres, con el plan del mes como propuesta. El plan, aprobado, está en
-`docs/modulos/M9-cobros-y-reparto.md`.
+dólares entre los sobres, con el plan del mes como propuesta. Está construido; falta
+probarlo en los teléfonos, su paso 7. Su plan: `docs/modulos/M9-cobros-y-reparto.md`.
 
 M8 · Entre sobres y cuentas (mover entre sobres, traspasar, cambiar de divisa y cubrir un
 descubierto) está construido; falta probarlo en los teléfonos, su paso 7, y por decisión

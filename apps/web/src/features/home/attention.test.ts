@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Debt } from "@/features/debts/queries";
 
-import { attention } from "./attention";
+import { attention, incomesToReceive } from "./attention";
 
 const TODAY = "2026-10-20";
 
@@ -48,5 +48,39 @@ describe("lo que Inicio pone a revisar", () => {
       TODAY,
     );
     expect(dueSoon.map((row) => row.id)).toEqual(["vencida", "hoy", "en-siete"]);
+  });
+});
+
+describe("lo que falta por cobrar del mes", () => {
+  const income = (id: string, usd: number, received: boolean) => ({
+    id,
+    name: id,
+    emoji: null,
+    expectedUsdCents: usd,
+    receipt: received
+      ? {
+          operationId: "op",
+          day: TODAY,
+          accountId: "a",
+          currency: "USD" as const,
+          amountCents: usd,
+          usdCents: usd,
+        }
+      : null,
+  });
+
+  it("cuántos siguen pendientes y lo que suman en dólares", () => {
+    expect(
+      incomesToReceive([
+        income("a", 10000, true),
+        income("b", 20000, false),
+        income("c", 5000, false),
+      ]),
+    ).toEqual({ count: 2, usdCents: 25000 });
+  });
+
+  it("con todo cobrado, nada que revisar", () => {
+    expect(incomesToReceive([income("a", 10000, true)])).toBeNull();
+    expect(incomesToReceive([])).toBeNull();
   });
 });

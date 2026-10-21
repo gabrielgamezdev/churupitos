@@ -1,12 +1,15 @@
+import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { StatusBadge } from "@/components/status-badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatRate } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
+import { cn } from "@/lib/utils";
 
 import type { ExpectedIncome } from "./queries";
 
@@ -21,12 +24,13 @@ interface IncomeRowProps {
 
 // Un ingreso esperado, como una fila de «Ingresos esperados» del Excel: lo que se
 // espera en dólares y ✅/⏳. Uno cobrado dice cuándo, dónde y, en bolívares, a qué tasa
-// (R8, la de ese cobro).
+// (R8, la de ese cobro); uno pendiente ofrece «Cobrar» (M9), en cualquier mes, por si
+// el dinero llega antes.
 export function IncomeRow({ income, accountName, detail }: IncomeRowProps) {
   const { receipt } = income;
   const content = (
     <>
-      <span className="flex min-w-0 flex-col gap-0.5">
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-body">
           {income.emoji ? `${income.emoji} ${income.name}` : income.name}
         </span>
@@ -49,20 +53,31 @@ export function IncomeRow({ income, accountName, detail }: IncomeRowProps) {
           <Money cents={income.expectedUsdCents} currency="USD" className="text-amount" />
           <StatusBadge done={Boolean(receipt)}>{receipt ? "Cobrado" : "Pendiente"}</StatusBadge>
         </span>
-        {receipt ? (
+        {receipt && (
           <ChevronDown
             aria-hidden="true"
             className="size-4 text-ink-muted transition-transform group-data-[state=open]:rotate-180"
           />
-        ) : (
-          // El hueco de la flecha, para que las cifras queden en columna.
-          <span aria-hidden="true" className="size-4" />
         )}
       </span>
     </>
   );
 
-  if (!receipt) return <ListRow>{content}</ListRow>;
+  if (!receipt) {
+    return (
+      <ListRow className="py-2 pr-3">
+        {content}
+        <Link
+          to="/operations/receive/$incomeId"
+          params={{ incomeId: income.id }}
+          aria-label={`Cobrar ${income.name}`}
+          className={cn(buttonVariants({ variant: "outline" }), "shrink-0 px-3")}
+        >
+          Cobrar
+        </Link>
+      </ListRow>
+    );
+  }
   return (
     <Collapsible asChild>
       <li>
