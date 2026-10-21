@@ -143,7 +143,8 @@ adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
 `OperationForm`, `EnvelopePicker`, `DayField` y `OperationActions` en `operations/`) y los del libro, que comparten
 cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker`, `OperationSheet`,
-`RecentOperations` y `OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
+`RecentOperations` y `OperationDetail`), y «Para revisar», en `features/home/`
+(`AttentionList`). Todos entran en la galería al construirse, con datos inventados.
 
 La flecha de `ScreenHeader` vuelve a la pantalla anterior, como el atrás de Android; si
 se entró directo por la dirección, va a la pantalla de arriba.
@@ -161,6 +162,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **Sheet** | Una hoja que sube desde abajo sobre un velo `scrim`, en `surface-raised` y con las esquinas de arriba en `radius-lg`, hasta el 90 % del alto. Siempre con título, y encima, si hace falta, qué es en `label`. Se cierra con la X, tocando fuera o con el atrás de Android (`CloseWatcher`). Ningún campo se enfoca solo, y con la hoja abierta estirar no recarga. Es para mirar algo y actuar sobre ello; un formulario va a pantalla completa |
 | **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, el total en `display-amount` (en un gasto o un ingreso), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar»: borrar no pregunta, cierra la hoja y deja «Deshacer» en el aviso. Uno importado dice que, hasta el corte, se corrige en el Excel |
 | **Toaster** | El aviso de abajo, después de guardar: qué pasó, debajo lo que cambió por ello («🍔 Comida queda en Bs X») y, si se puede, «Deshacer» en `brand`. En `surface-raised` con `shadow-card`, justo encima de la barra (en un formulario, pegado al borde). Uno a la vez: el nuevo reemplaza al anterior. Con «Deshacer» dura 10 s, y si no, 5; tocarlo detiene la cuenta, y la X lo cierra. Deshacer deja el aviso «Deshecho», o dice por qué no se pudo |
+| **AttentionList** | «Para revisar» en Inicio, sin tono de alarma: los sobres en descubierto (cada uno con su cuenta, su saldo en `overdrawn` y «Descubierto»; lleva al sobre) y lo que deben que venció o vence en 7 días o menos («Por pagar · en 3 días»; vencida, en `danger`; lleva a Deudas). Hasta cinco de cada, y «Y N más». Sin nada que revisar, no se ve |
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |

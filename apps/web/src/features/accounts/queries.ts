@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 
+import type { Currency } from "@/lib/money";
 import { supabase } from "@/lib/supabase";
 
 // Las consultas propias de la pantalla de una cuenta; su libro está en
@@ -32,3 +33,26 @@ export function balancesAtQuery(day: string) {
     },
   });
 }
+
+export type OverdrawnCell = {
+  accountId: string;
+  envelopeId: string;
+  currency: Currency;
+  balanceCents: number;
+};
+
+// Las celdas en descubierto hoy, en todas las cuentas: lo que Inicio pone a revisar (M7).
+// El filtro lo hace la base, que solo devuelve las de saldo negativo.
+export const overdrawnCellsQuery = queryOptions({
+  queryKey: ["cell-balances", "overdrawn"],
+  queryFn: async (): Promise<OverdrawnCell[]> => {
+    const { data, error } = await supabase.rpc("cell_balances").lt("balance_cents", 0);
+    if (error) throw error;
+    return data.map((row) => ({
+      accountId: row.account_id,
+      envelopeId: row.envelope_id,
+      currency: row.currency as Currency,
+      balanceCents: row.balance_cents,
+    }));
+  },
+});

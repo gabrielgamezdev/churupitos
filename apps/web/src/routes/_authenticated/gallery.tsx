@@ -37,6 +37,8 @@ import { IncomeRow } from "@/features/budget/income-row";
 import { PlanRow } from "@/features/budget/plan-row";
 import { OperationSheetContent } from "@/features/ledger/operation-sheet";
 import { RecentRow } from "@/features/ledger/recent-operations";
+import { attention } from "@/features/home/attention";
+import { AttentionList } from "@/features/home/attention-block";
 import { AmountInput } from "@/components/amount-field";
 import { DayField } from "@/features/operations/day-field";
 import { envelopeOrder } from "@/features/operations/envelope-order";
@@ -348,6 +350,26 @@ function GalleryPage() {
           >
             Enseñar el aviso
           </Button>
+        </Section>
+
+        <Section
+          title="Para revisar"
+          description="En Inicio, sin tono de alarma: los sobres en descubierto y lo que vence en 7 días o ya venció. Sin nada, no se ve."
+        >
+          <AttentionList
+            overdrafts={[
+              {
+                accountId: "banco-a",
+                envelopeId: "transporte",
+                currency: "VES",
+                balanceCents: -5000,
+              },
+            ]}
+            dueSoon={attention([], SAMPLE_DEBTS, SAMPLE_TODAY).dueSoon}
+            today={SAMPLE_TODAY}
+            accountById={SAMPLE_ACCOUNT_BY_ID}
+            envelopeById={SAMPLE_ENVELOPE_BY_ID}
+          />
         </Section>
 
         <Section

@@ -159,6 +159,15 @@ un «Deshacer», la base local queda a medias.
 **Recargar la página entre bloques de escrituras, comparar la base antes y después, y
 si algo quedó a medias, `npm run import:load`.**
 
+### Una prueba que recarga la página justo después de guardar ve datos de antes
+La caché se guarda en el teléfono con hasta un segundo de retraso, y lo traído hace
+menos de un minuto no se vuelve a pedir. Si una prueba guarda y enseguida hace
+`page.goto`, la página nueva arranca con la caché de antes de guardar y no la refresca:
+parece que la pantalla no se entera del cambio. En la app no pasa, porque guardar
+invalida la caché sin recargar.
+**En las pruebas, navegar por la app (la barra, los botones), no con `page.goto`, entre
+una escritura y lo que la comprueba.**
+
 ### Sin red y con la sesión caducada, la app se queda en blanco o va al login
 La sesión de Supabase caduca cada hora. Sin red, `getSession` intenta renovarla, se
 queda segundos reintentando y acaba diciendo que no hay sesión. Y TanStack Query

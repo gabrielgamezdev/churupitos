@@ -89,7 +89,8 @@ Cada uno se prueba en los teléfonos antes del siguiente.
    sobres como botones ordenados por uso (`envelope_usage`), lo que queda en la celda en
    una línea, y repartir el monto de arriba con «Resto aquí» y «Falta por repartir».
 8. [x] **El color y las pastillas** (2026-10-20): `money-out` pasa a ser `danger`.
-9. [ ] **Inicio:** los descubiertos y las deudas próximas.
+9. [x] **Inicio** (2026-10-20): «Para revisar», con los descubiertos y las deudas que
+   vencen en 7 días o ya vencieron.
 10. [ ] **Las barras del Presupuesto.**
 11. [ ] **Movimientos**, con quién registró cada uno también en los libros.
 12. [ ] **Sugerencias de concepto** al registrar, con su sobre.
