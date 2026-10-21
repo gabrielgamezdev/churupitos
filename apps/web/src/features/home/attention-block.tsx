@@ -8,15 +8,15 @@ import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { overdrawnCellsQuery, type OverdrawnCell } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
-import { expectedIncomesQuery } from "@/features/budget/queries";
+import { budgetChecksQuery, expectedIncomesQuery } from "@/features/budget/queries";
 import { dueLabel } from "@/features/debts/debt-view";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { CoverLink } from "@/features/operations/cover-link";
-import { monthOf, today } from "@/lib/months";
+import { monthLabel, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
-import { attention, incomesToReceive } from "./attention";
+import { attention, incomesToReceive, monthToPrepare } from "./attention";
 
 // Cuántos de cada cosa se ven; el resto, en su pantalla.
 const MAX_ROWS = 5;
@@ -27,6 +27,7 @@ const MAX_ROWS = 5;
 export function AttentionBlock() {
   const cells = useQuery(overdrawnCellsQuery);
   const incomes = useQuery(expectedIncomesQuery(monthOf(today())));
+  const checks = useQuery(budgetChecksQuery);
   const debts = useQuery(debtsQuery);
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
@@ -47,6 +48,7 @@ export function AttentionBlock() {
       overdrafts={overdrafts}
       dueSoon={dueSoon}
       toReceive={incomes.data ? incomesToReceive(incomes.data) : null}
+      toPrepare={checks.data ? monthToPrepare(checks.data.at(-1)?.month, todayDay) : null}
       today={todayDay}
       accountById={accountById}
       envelopeById={envelopeById}
@@ -59,6 +61,8 @@ interface AttentionListProps {
   dueSoon: Debt[];
   // Los ingresos del mes sin cobrar: una línea que lleva a Presupuesto.
   toReceive: { count: number; usdCents: number } | null;
+  // El mes siguiente, si ya toca prepararlo y no está: lleva a Planear.
+  toPrepare: string | null;
   today: string;
   accountById: Record<string, Pick<AccountBalance, "name">>;
   envelopeById: Record<string, Envelope>;
@@ -66,16 +70,18 @@ interface AttentionListProps {
 
 // Lo que pide atención, sin tono de alarma: cada sobre en descubierto con su cuenta, que
 // lleva al sobre, cada cuota que vence pronto o venció, que lleva a Deudas, y lo que falta
-// por cobrar del mes, que lleva a Presupuesto.
+// por cobrar del mes, que lleva a Presupuesto, y el mes siguiente sin preparar, que lleva
+// a Planear.
 export function AttentionList({
   overdrafts,
   dueSoon,
   toReceive,
+  toPrepare,
   today,
   accountById,
   envelopeById,
 }: AttentionListProps) {
-  if (overdrafts.length === 0 && dueSoon.length === 0 && !toReceive) return null;
+  if (overdrafts.length === 0 && dueSoon.length === 0 && !toReceive && !toPrepare) return null;
   return (
     <section aria-labelledby="attention-title" className="flex flex-col gap-3">
       <h2 id="attention-title" className="text-heading">
@@ -159,6 +165,14 @@ export function AttentionList({
                   : `${toReceive.count} ingresos por cobrar este mes`}
               </span>
               <Money cents={toReceive.usdCents} currency="USD" className="text-amount" />
+            </Link>
+          </ListRow>
+        )}
+        {toPrepare && (
+          <ListRow asChild>
+            <Link to="/budget/$month/plan" params={{ month: toPrepare }}>
+              <span className="text-body">{monthLabel(toPrepare)} sin preparar</span>
+              <span className="shrink-0 text-body text-brand">Preparar</span>
             </Link>
           </ListRow>
         )}

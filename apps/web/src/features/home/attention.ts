@@ -1,6 +1,7 @@
 import type { OverdrawnCell } from "@/features/accounts/queries";
 import { daysBetween } from "@/features/debts/debt-view";
 import type { ExpectedIncome } from "@/features/budget/queries";
+import { addMonths, monthOf } from "@/lib/months";
 import type { Debt } from "@/features/debts/queries";
 
 // Cuántos días antes de vencer una cuota sale en Inicio.
@@ -41,4 +42,20 @@ export function incomesToReceive(incomes: ExpectedIncome[]) {
     count: pending.length,
     usdCents: pending.reduce((sum, income) => sum + income.expectedUsdCents, 0),
   };
+}
+
+// Desde qué día del mes Inicio recuerda preparar el siguiente: hacia el 25 se planifica.
+export const PREPARE_FROM_DAY = 25;
+
+// El mes que toca preparar (M10, R19), si ya es hora: el siguiente al último con
+// presupuesto, desde el día 25 del mes anterior. Si el mes en curso no tiene, enseguida.
+export function monthToPrepare(lastBudgetMonth: string | undefined, today: string) {
+  if (!lastBudgetMonth) return null;
+  const next = addMonths(lastBudgetMonth, 1);
+  const current = monthOf(today);
+  if (next <= current) return next;
+  if (next === addMonths(current, 1) && Number(today.slice(8, 10)) >= PREPARE_FROM_DAY) {
+    return next;
+  }
+  return null;
 }

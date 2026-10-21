@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Debt } from "@/features/debts/queries";
 
-import { attention, incomesToReceive } from "./attention";
+import { attention, incomesToReceive, monthToPrepare } from "./attention";
 
 const TODAY = "2026-10-20";
 
@@ -82,5 +82,25 @@ describe("lo que falta por cobrar del mes", () => {
   it("con todo cobrado, nada que revisar", () => {
     expect(incomesToReceive([income("a", 10000, true)])).toBeNull();
     expect(incomesToReceive([])).toBeNull();
+  });
+});
+
+describe("el mes siguiente sin preparar (M10)", () => {
+  it("desde el 25, si el siguiente no tiene presupuesto", () => {
+    expect(monthToPrepare("2026-10", "2026-10-24")).toBeNull();
+    expect(monthToPrepare("2026-10", "2026-10-25")).toBe("2026-11");
+  });
+
+  it("con el siguiente ya preparado, nada", () => {
+    expect(monthToPrepare("2026-11", "2026-10-28")).toBeNull();
+  });
+
+  it("si el mes en curso no tiene presupuesto, enseguida, y el que sigue al último", () => {
+    expect(monthToPrepare("2026-10", "2026-11-03")).toBe("2026-11");
+    expect(monthToPrepare("2026-09", "2026-11-03")).toBe("2026-10");
+  });
+
+  it("sin ningún presupuesto, nada que copiar", () => {
+    expect(monthToPrepare(undefined, "2026-10-28")).toBeNull();
   });
 });

@@ -86,7 +86,8 @@ Y en Presupuesto, «Preparar diciembre» o «Editar»; en Inicio, el mes sin pre
    abreviaturas y emojis que no son el nombre de ningún ingreso.
 4. [x] **Preparar y editar** desde Presupuesto (2026-10-21): «Editar» en cada mes y, al
    final del último, «Preparar diciembre».
-5. [ ] **Inicio:** el mes siguiente sin preparar.
+5. [x] **Inicio:** el mes siguiente sin preparar (2026-10-21), desde el 25, o enseguida si
+   el mes en curso no tiene presupuesto. Lleva directo a Planear.
 6. [ ] **En los teléfonos:** preparan el mes siguiente.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
