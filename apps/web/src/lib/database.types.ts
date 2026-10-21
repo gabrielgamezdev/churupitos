@@ -569,6 +569,17 @@ export type Database = {
           envelope_id: string;
         }[];
       };
+      concept_usage: {
+        Args: { since: string };
+        Returns: {
+          account_id: string;
+          description: string;
+          envelope_id: string;
+          kind: string;
+          last_on: string;
+          uses: number;
+        }[];
+      };
       currency_totals: {
         Args: { as_of?: string };
         Returns: {

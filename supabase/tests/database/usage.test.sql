@@ -1,9 +1,10 @@
--- Cuánto se usa cada sobre en cada cuenta, para ordenar los sobres en Registrar (M7).
+-- Cuánto se usa cada sobre en cada cuenta, y cada concepto con su sobre, para ordenar los
+-- sobres y proponer conceptos en Registrar (M7).
 -- Cuentas, sobres e importes inventados.
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(4);
+select plan(6);
 
 -- La base local puede tener una carga real del importador: se vacía aquí, y el
 -- rollback del final la deja como estaba.
@@ -25,12 +26,12 @@ insert into public.envelopes (id, name, position) values
 
 -- En el Banco A: dos gastos de Comida, uno con comisión de Casa; un gasto viejo de Casa;
 -- y un traspaso entre los dos sobres. En el Banco B, un gasto de Casa.
-insert into public.operations (id, kind, occurred_on, created_by) values
-  ('00000000-0000-4000-c000-0000000000c1', 'expense', '2026-10-10', null),
-  ('00000000-0000-4000-c000-0000000000c2', 'expense', '2026-10-12', null),
-  ('00000000-0000-4000-c000-0000000000c3', 'expense', '2026-07-01', null),
-  ('00000000-0000-4000-c000-0000000000c4', 'envelope_transfer', '2026-10-12', null),
-  ('00000000-0000-4000-c000-0000000000c5', 'expense', '2026-10-13', null);
+insert into public.operations (id, kind, occurred_on, description, created_by) values
+  ('00000000-0000-4000-c000-0000000000c1', 'expense', '2026-10-10', 'Mercado', null),
+  ('00000000-0000-4000-c000-0000000000c2', 'expense', '2026-10-12', 'Mercado', null),
+  ('00000000-0000-4000-c000-0000000000c3', 'expense', '2026-07-01', 'Gas', null),
+  ('00000000-0000-4000-c000-0000000000c4', 'envelope_transfer', '2026-10-12', 'Mover', null),
+  ('00000000-0000-4000-c000-0000000000c5', 'expense', '2026-10-13', '', null);
 insert into public.entries (operation_id, account_id, envelope_id, amount_cents, is_fee) values
   ('00000000-0000-4000-c000-0000000000c1', '00000000-0000-4000-a000-0000000000a1',
    '00000000-0000-4000-b000-0000000000b1', -1000, false),
@@ -71,6 +72,21 @@ select is(
 select is_empty(
   $$ select 1 from public.envelope_usage('2026-10-14') $$,
   'sin gastos desde el día, nada'
+);
+
+select results_eq(
+  $$ select u.description, u.kind, v.name, u.uses::int, u.last_on
+     from public.concept_usage('2026-09-01') u
+     join public.envelopes v on v.id = u.envelope_id
+     order by u.description $$,
+  $$ values ('Mercado', 'expense', 'Comida', 2, '2026-10-12'::date) $$,
+  'cada concepto con su sobre, cuántas veces y la última, sin comisiones, traspasos ni vacíos'
+);
+
+select is(
+  (select count(*)::int from public.concept_usage('2026-06-01') where description = 'Gas'),
+  1,
+  'lo de antes del día solo cuenta si el día es anterior'
 );
 
 -- Quien no es del hogar no ve nada: el RLS de las tablas manda.

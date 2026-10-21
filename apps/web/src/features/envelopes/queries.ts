@@ -90,3 +90,32 @@ export function envelopeUsageQuery(since: string) {
     },
   });
 }
+
+export type ConceptUsage = {
+  description: string;
+  kind: "expense" | "income";
+  accountId: string;
+  envelopeId: string;
+  uses: number;
+  lastOn: string;
+};
+
+// Cuántas veces se usó cada concepto en cada celda y tipo desde un día: las sugerencias
+// de concepto en Registrar (M7).
+export function conceptUsageQuery(since: string) {
+  return queryOptions({
+    queryKey: ["concept-usage", since],
+    queryFn: async (): Promise<ConceptUsage[]> => {
+      const { data, error } = await supabase.rpc("concept_usage", { since });
+      if (error) throw error;
+      return data.map((row) => ({
+        description: row.description,
+        kind: row.kind === "income" ? "income" : "expense",
+        accountId: row.account_id,
+        envelopeId: row.envelope_id,
+        uses: row.uses,
+        lastOn: row.last_on,
+      }));
+    },
+  });
+}

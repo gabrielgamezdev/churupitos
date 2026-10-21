@@ -1,5 +1,6 @@
 import type { OperationItem } from "@/features/ledger/queries";
 import type { Currency } from "@/lib/money";
+import { foldText } from "@/lib/text";
 
 // Lo que se puede filtrar en Movimientos (M7). Cada filtro, si está, deja solo las
 // operaciones con algún asiento que lo cumpla.
@@ -15,19 +16,12 @@ export type MovementFilters = {
 
 export const FROM_EXCEL = "excel";
 
-// «Café» y «cafe» son lo mismo para buscar.
-const fold = (text: string) =>
-  text
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
-
 export function filterOperations(
   items: OperationItem[],
   filters: MovementFilters,
   currencyOf: (accountId: string) => Currency | undefined,
 ): OperationItem[] {
-  const query = filters.q ? fold(filters.q.trim()) : "";
+  const query = filters.q ? foldText(filters.q.trim()) : "";
   return items.filter(
     (item) =>
       (!filters.currency ||
@@ -38,7 +32,7 @@ export function filterOperations(
         (filters.who === FROM_EXCEL ? item.createdBy === null : item.createdBy === filters.who)) &&
       (!query ||
         [item.description, ...item.entries.map((entry) => entry.description)].some((text) =>
-          fold(text).includes(query),
+          foldText(text).includes(query),
         )),
   );
 }

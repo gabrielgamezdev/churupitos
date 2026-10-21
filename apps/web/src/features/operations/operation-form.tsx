@@ -16,6 +16,7 @@ import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import {
+  conceptUsageQuery,
   envelopesQuery,
   envelopeUsageQuery,
   type Envelope,
@@ -29,6 +30,7 @@ import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
+import { conceptSuggestions, type ConceptSuggestion } from "./concept-suggestions";
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
 import { EnvelopePicker } from "./envelope-picker";
@@ -52,6 +54,8 @@ import { savedDetail } from "./saved-detail";
 
 // Cuántos días atrás se mira para ordenar los sobres por uso: unos dos meses.
 const USAGE_DAYS = 60;
+// Y para proponer conceptos: medio año, para que salgan también los de cada tanto.
+const CONCEPT_DAYS = 180;
 
 const KINDS: { value: OperationKind; label: string }[] = [
   { value: "expense", label: "Gasto" },
@@ -137,6 +141,36 @@ export function OperationForm({
   const [frozenUsage, setFrozenUsage] = useState<EnvelopeUsage[] | null>(null);
   if (frozenUsage === null && usage.data) setFrozenUsage(usage.data);
   const order = envelopeOrder(envelopes.data ?? [], frozenUsage ?? [], values.accountId);
+  // Los conceptos de antes, para proponerlos al escribir con su sobre (M7).
+  const [conceptsSince] = useState(() => addDays(today(), -CONCEPT_DAYS));
+  const concepts = useQuery(conceptUsageQuery(conceptsSince));
+  // El concepto que se eligió de las sugerencias: mientras no se cambie, no se proponen más.
+  const [pickedConcept, setPickedConcept] = useState<string | null>(null);
+  const suggestions =
+    values.description === pickedConcept
+      ? []
+      : conceptSuggestions(
+          concepts.data ?? [],
+          values.description,
+          values.kind,
+          values.accountId,
+        ).filter((suggestion) => envelopeById.has(suggestion.envelopeId));
+  // Al aparecer, a la vista: con el teclado abierto quedarían debajo de «Guardar».
+  const suggestionsRef = useRef<HTMLUListElement>(null);
+  const hasSuggestions = suggestions.length > 0;
+  useEffect(() => {
+    if (hasSuggestions) suggestionsRef.current?.scrollIntoView({ block: "nearest" });
+  }, [hasSuggestions]);
+  const pickConcept = (suggestion: ConceptSuggestion) => {
+    setValue("description", suggestion.description);
+    setPickedConcept(suggestion.description);
+    // Con un solo sobre, el del concepto: se ve en la sugerencia y en los botones.
+    if (getValues("lines").length === 1) {
+      setValue("lines.0.envelopeId", suggestion.envelopeId, {
+        shouldValidate: Boolean(errors.lines?.[0]?.envelopeId),
+      });
+    }
+  };
 
   const submit = handleSubmit(async (submitted) => {
     const entries = draftEntries(formDraft(submitted));
@@ -347,9 +381,48 @@ export function OperationForm({
 
       {account && <Remaining changes={changes} envelopeById={envelopeById} account={account} />}
 
-      <Field label="Concepto" htmlFor="description">
-        <Input id="description" autoComplete="off" {...register("description")} />
-      </Field>
+      <div className="flex flex-col gap-2">
+        <Field label="Concepto" htmlFor="description">
+          <Input
+            id="description"
+            autoComplete="off"
+            aria-controls={suggestions.length > 0 ? "concept-suggestions" : undefined}
+            {...register("description")}
+          />
+        </Field>
+        {suggestions.length > 0 && (
+          <ul
+            ref={suggestionsRef}
+            id="concept-suggestions"
+            aria-label="Conceptos de antes"
+            // El margen es lo que ocupa «Guardar», pegado abajo.
+            className="flex scroll-mb-24 flex-col divide-y divide-hairline overflow-hidden rounded-lg bg-surface-raised"
+          >
+            {suggestions.map((suggestion) => {
+              const envelope = envelopeById.get(suggestion.envelopeId);
+              return (
+                <li key={suggestion.description}>
+                  <button
+                    type="button"
+                    onClick={() => pickConcept(suggestion)}
+                    className="flex min-h-tap w-full items-center justify-between gap-3 px-4 py-2 text-left active:bg-surface-sunken"
+                  >
+                    <span className="min-w-0 truncate text-body">{suggestion.description}</span>
+                    {envelope && (
+                      <EnvelopeChip
+                        name={envelope.name}
+                        emoji={envelope.emoji}
+                        isThirdParty={envelope.isThirdParty}
+                        className="shrink-0 text-caption"
+                      />
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
 
       <DayField
         value={values.day}

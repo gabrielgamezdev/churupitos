@@ -95,7 +95,8 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 11. [x] **Movimientos** (2026-10-20, la base también en la nube): el mes de todas las
    cuentas, con búsqueda y filtros que quedan en la dirección, y quién registró cada
    movimiento también en los libros.
-12. [ ] **Sugerencias de concepto** al registrar, con su sobre.
+12. [x] **Sugerencias de concepto** al registrar, con su sobre (2026-10-20, la base también
+    en la nube: `concept_usage`).
 13. [ ] **En los teléfonos:** lo usan unos días y cuentan los toques de un gasto típico.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
