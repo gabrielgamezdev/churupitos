@@ -81,7 +81,8 @@ Y «Cobrar» en Presupuesto y la línea de lo que falta por cobrar en Inicio.
 3. [x] **Cobrar** (2026-10-21): la cuenta, lo que llegó, los dólares y la tasa.
 4. [x] **El reparto** (2026-10-21, con el paso 3): propuesto desde el plan, con lo que
    falta y los Bs de cada línea.
-5. [ ] **Corregir, borrar y deshacer** un cobro.
+5. [x] **Corregir, borrar y deshacer** un cobro (2026-10-21): corregir abre Cobrar como
+   estaba, y al borrarlo el ingreso vuelve a ⏳.
 6. [ ] **«Cobrar» en Presupuesto** y lo que falta por cobrar en Inicio.
 7. [ ] **En los teléfonos:** lo usan unos días.
 

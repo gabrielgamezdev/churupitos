@@ -7,12 +7,16 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { operationQuery, type OperationDetail } from "@/features/ledger/queries";
+import { budgetLinesQuery, expectedIncomeQuery, type BudgetLine } from "@/features/budget/queries";
 import { isAppKind, isMoveKind } from "@/features/operations/app-kinds";
 import { MoveForm } from "@/features/operations/move-form";
 import { moveFormValues } from "@/features/operations/move-form-schema";
 import { OperationForm } from "@/features/operations/operation-form";
 import { operationFormValues } from "@/features/operations/operation-form-schema";
 import type { SaveOperationArgs } from "@/features/operations/save";
+import { ReceiveForm, type IncomeToReceive } from "@/features/receipts/receive-form";
+import { receiveFormValues } from "@/features/receipts/receive-form-schema";
+import type { SaveReceiptArgs } from "@/features/receipts/save";
 
 export const Route = createFileRoute("/_authenticated/operations/$operationId/edit")({
   component: EditOperationPage,
@@ -51,7 +55,103 @@ function EditOperationPage() {
       </Screen>
     );
   }
+  if (operation.data.incomeId) {
+    return (
+      <EditReceipt
+        operationId={operationId}
+        incomeId={operation.data.incomeId}
+        operation={operation.data}
+      />
+    );
+  }
   return <EditForm operationId={operationId} operation={operation.data} />;
+}
+
+// Un cobro se corrige en Cobrar: con su ingreso, el plan de su mes y el reparto como estaba.
+function EditReceipt({
+  operationId,
+  incomeId,
+  operation,
+}: {
+  operationId: string;
+  incomeId: string;
+  operation: OperationDetail;
+}) {
+  const income = useQuery(expectedIncomeQuery(incomeId));
+  const plan = useQuery({
+    ...budgetLinesQuery(income.data?.month ?? ""),
+    enabled: income.data !== undefined,
+  });
+  if (!income.data || !plan.data) {
+    return (
+      <Screen>
+        <ScreenHeader {...HEADER} />
+        <MissingData
+          queries={[income, plan]}
+          errorMessage="No se pudo cargar el cobro."
+          skeleton={<Skeleton aria-label="Cargando" className="h-64 w-full" />}
+        />
+      </Screen>
+    );
+  }
+  return (
+    <ReceiptForm
+      operationId={operationId}
+      income={income.data}
+      plan={plan.data}
+      operation={operation}
+    />
+  );
+}
+
+function ReceiptForm({
+  operationId,
+  income,
+  plan,
+  operation,
+}: {
+  operationId: string;
+  income: IncomeToReceive;
+  plan: BudgetLine[];
+  operation: OperationDetail;
+}) {
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+  // Una vez, al abrir: lo que llegue después de la base no pisa lo que se está escribiendo.
+  const [initial] = useState(() => receiveFormValues(operation));
+  // Como estaba al abrir: lo que «Deshacer» vuelve a guardar.
+  const [previous] = useState((): SaveReceiptArgs => ({
+    id: operationId,
+    incomeId: income.id,
+    day: operation.day,
+    description: operation.description,
+    entries: operation.entries.map((entry) => ({
+      account_id: entry.accountId,
+      envelope_id: entry.envelopeId,
+      amount_cents: entry.amountCents,
+      is_fee: entry.isFee,
+      description: entry.description,
+      usd_value_cents: entry.usdValueCents,
+    })),
+  }));
+  const close = () => {
+    if (canGoBack) router.history.back();
+    else void router.navigate({ to: "/budget", replace: true });
+  };
+  return (
+    // Sin el hueco de la barra: abajo va «Guardar», fijo.
+    <Screen className="pb-0">
+      <ScreenHeader {...HEADER} />
+      <ReceiveForm
+        operationId={operationId}
+        income={income}
+        plan={plan}
+        initial={initial}
+        previous={previous}
+        onSaved={close}
+      />
+    </Screen>
+  );
 }
 
 function EditForm({ operationId, operation }: { operationId: string; operation: OperationDetail }) {

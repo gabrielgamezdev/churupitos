@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 
+import { parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 
 import {
   emptyReceiveForm,
   receiptEntries,
   receiveFormSchema,
+  receiveFormValues,
   receivePending,
 } from "./receive-form-schema";
 
@@ -88,5 +90,46 @@ describe("el formulario de Cobrar", () => {
       proposal: [],
     });
     expect(blank.lines).toEqual([{ envelopeId: "", usd: "" }]);
+  });
+});
+
+describe("corregir un cobro guardado", () => {
+  it("vuelve a enseñarlo como se cobró, y guardarlo sin tocar nada deja los mismos asientos", () => {
+    const saved = {
+      day: "2026-10-15",
+      description: "Bono",
+      entries: [
+        {
+          accountId: "bank",
+          envelopeId: "savings",
+          amountCents: 2400000,
+          isFee: false,
+          description: "",
+          usdValueCents: 6000,
+        },
+        {
+          accountId: "bank",
+          envelopeId: "food",
+          amountCents: 1600000,
+          isFee: false,
+          description: "",
+          usdValueCents: 4000,
+        },
+      ],
+    };
+    const values = receiveFormValues(saved);
+    expect(parseAmountInput(values.received)).toBe(4000000);
+    expect(values).toMatchObject({
+      accountId: "bank",
+      usd: "100,00",
+      lines: [
+        { envelopeId: "savings", usd: "60,00" },
+        { envelopeId: "food", usd: "40,00" },
+      ],
+      hasFee: false,
+    });
+    expect(
+      receiptEntries(values, "VES")?.map((e) => [e.envelope_id, e.amount_cents, e.usd_value_cents]),
+    ).toEqual(saved.entries.map((e) => [e.envelopeId, e.amountCents, e.usdValueCents]));
   });
 });

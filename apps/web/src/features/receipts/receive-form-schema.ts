@@ -160,3 +160,40 @@ export function emptyReceiveForm(options: {
     fee: { envelopeId: "", amount: "", description: FEE_DESCRIPTION },
   };
 }
+
+// Un cobro guardado, como lo vuelve a enseñar el formulario para corregirlo: lo que llegó
+// es la suma de sus líneas, y los dólares, la de sus valores en dólares (o la misma, si la
+// cuenta es en dólares).
+export function receiveFormValues(operation: {
+  day: string;
+  description: string;
+  entries: {
+    accountId: string;
+    envelopeId: string;
+    amountCents: number;
+    isFee: boolean;
+    description: string;
+    usdValueCents: number | null;
+  }[];
+}): ReceiveFormValues {
+  const lines = operation.entries.filter((entry) => !entry.isFee);
+  const fee = operation.entries.find((entry) => entry.isFee);
+  const usdOf = (entry: (typeof lines)[number]) => entry.usdValueCents ?? entry.amountCents;
+  return {
+    accountId: lines[0]?.accountId ?? "",
+    received: amountInputText(lines.reduce((sum, entry) => sum + entry.amountCents, 0)),
+    usd: amountInputText(lines.reduce((sum, entry) => sum + usdOf(entry), 0)),
+    day: operation.day,
+    description: operation.description,
+    lines: lines.map((entry) => ({
+      envelopeId: entry.envelopeId,
+      usd: amountInputText(usdOf(entry)),
+    })),
+    hasFee: fee !== undefined,
+    fee: {
+      envelopeId: fee?.envelopeId ?? "",
+      amount: fee ? amountInputText(fee.amountCents) : "",
+      description: fee?.description || FEE_DESCRIPTION,
+    },
+  };
+}

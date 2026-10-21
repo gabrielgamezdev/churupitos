@@ -72,6 +72,7 @@ function LoadedOperation({ operationId, onClose }: { operationId: string; onClos
           <OperationActions
             operationId={operationId}
             kind={kind}
+            receipt={operation.data.incomeId !== null}
             description={operation.data.description}
             onDeleted={onClose}
           />

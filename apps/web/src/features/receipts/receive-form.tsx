@@ -119,6 +119,14 @@ export function ReceiveForm({
   const cellByEnvelope = new Map(cells.data?.map((cell) => [cell.envelopeId, cell.balanceCents]));
   const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
   const planByEnvelope = new Map(plan.map((line) => [line.envelopeId, line]));
+  // Al corregir, lo que este mismo cobro ya le había dado a cada sobre: se devuelve antes
+  // de decir cuánto le faltaba.
+  const alreadyGiven = new Map<string, number>();
+  for (const entry of previous?.entries ?? []) {
+    if (entry.is_fee) continue;
+    const usd = entry.usd_value_cents ?? entry.amount_cents;
+    alreadyGiven.set(entry.envelope_id, (alreadyGiven.get(entry.envelope_id) ?? 0) + usd);
+  }
   const envelopeOptions = budgetOrder(envelopes.data ?? []);
 
   const usd = recognizedUsd(values, currency);
@@ -231,7 +239,12 @@ export function ReceiveForm({
           const planned = planByEnvelope.get(envelopeId);
           // Lo que le faltaba antes de este cobro: lo planeado menos lo que ya recibió.
           const lacked = planned
-            ? Math.max(planned.plannedUsdCents - planned.allocatedUsdCents, 0)
+            ? Math.max(
+                planned.plannedUsdCents -
+                  planned.allocatedUsdCents +
+                  (alreadyGiven.get(envelopeId) ?? 0),
+                0,
+              )
             : null;
           return (
             <div key={field.id} className="flex flex-col gap-2 rounded-lg bg-surface-raised p-3">

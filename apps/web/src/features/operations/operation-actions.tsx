@@ -21,6 +21,8 @@ const DELETED: Record<AppKind, string> = {
 interface OperationActionsProps {
   operationId: string;
   kind: AppKind;
+  // Un cobro del presupuesto: al borrarlo, su ingreso vuelve a ⏳ (M9).
+  receipt?: boolean;
   description: string;
   // Al borrarla: la hoja que la enseña se cierra.
   onDeleted?: () => void;
@@ -31,6 +33,7 @@ interface OperationActionsProps {
 export function OperationActions({
   operationId,
   kind,
+  receipt = false,
   description,
   onDeleted,
 }: OperationActionsProps) {
@@ -45,7 +48,7 @@ export function OperationActions({
         showToast(
           snapshot
             ? {
-                message: DELETED[kind],
+                message: receipt ? "Cobro borrado" : DELETED[kind],
                 detail: description || undefined,
                 action: { label: "Deshacer", run: undoDeletedOperation(snapshot) },
               }
