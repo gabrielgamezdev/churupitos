@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type { Json } from "@/lib/database.types";
 import { queryClient as appQueryClient } from "@/lib/query-client";
 import { supabase } from "@/lib/supabase";
 
@@ -25,9 +26,16 @@ async function saveOperation({ id, kind, day, description, entries }: SaveOperat
   if (error) throw error;
 }
 
-// Borra una operación registrada en la app (ADR 0008). Lo importado, la base no deja.
-async function deleteOperation(id: string) {
-  const { error } = await supabase.rpc("delete_operation", { op_id: id });
+// Borra una operación registrada en la app (ADR 0008); lo importado, la base no deja.
+// Devuelve lo que borró, para deshacerlo, o null si ya no estaba.
+async function deleteOperation(id: string): Promise<Json> {
+  const { data, error } = await supabase.rpc("delete_operation", { op_id: id });
+  if (error) throw error;
+  return data;
+}
+
+async function restoreOperation(snapshot: Json) {
+  const { error } = await supabase.rpc("restore_operation", { snapshot });
   if (error) throw error;
 }
 
@@ -59,6 +67,15 @@ export function undoSavedOperation(id: string, previous: SaveOperationArgs | und
   return async () => {
     if (previous) await saveOperation(previous);
     else await deleteOperation(id);
+    await appQueryClient.invalidateQueries();
+  };
+}
+
+// El «Deshacer» del aviso después de borrar: la base la vuelve a poner tal cual, con su
+// autor y su sitio en el día (R14).
+export function undoDeletedOperation(snapshot: Json) {
+  return async () => {
+    await restoreOperation(snapshot);
     await appQueryClient.invalidateQueries();
   };
 }

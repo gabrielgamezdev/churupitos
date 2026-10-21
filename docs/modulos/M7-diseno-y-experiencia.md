@@ -79,8 +79,9 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 4. [x] **El aviso con «Deshacer»** al guardar, corregir y marcar o desmarcar una deuda
    (2026-10-20, la base también en la nube), y al agregar o corregir una deuda.
    Deshacer un «No está pagada» la vuelve a pagada con el día que tenía.
-5. [ ] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con
-   «Deshacer». En local y en la nube.
+5. [x] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con
+   «Deshacer» (2026-10-20, también en la nube). Borrar devuelve lo que borró, y
+   restaurarlo lo deja igual: autor, cuándo se registró y su sitio en el día.
 6. [ ] **Registrar, primera parte:** el monto como cajero con el teclado numérico,
    «Guardar» visible sobre el teclado, la cuenta recordada, la fecha en botones y la
    comisión plegada.

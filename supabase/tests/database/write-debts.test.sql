@@ -1,9 +1,9 @@
 -- Lo que escribe la app en las deudas (ADR 0008): agregarlas, también en cuotas,
--- corregirlas, marcarlas pagadas y borrarlas (R17, D9). Conceptos e importes inventados.
+-- corregirlas, marcarlas pagadas, borrarlas y deshacer el borrado (R17, D9). Conceptos e importes inventados.
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(21);
 
 -- La base local puede tener una carga real del importador: se vacía aquí, y el
 -- rollback del final la deja como estaba.
@@ -121,8 +121,13 @@ select throws_ok(
   'una deuda sin monto no se guarda'
 );
 
+-- Cómo estaba antes de borrarla: deshacer la tiene que dejar igual.
+create temporary table kept_debt on commit drop as
+  select id, direction, description, amount_cents, currency, due_on, position, created_at, paid_on, created_by from public.debts where id = '00000000-0000-4000-d000-0000000000d2';
+create temporary table snapshots (value jsonb) on commit drop;
+
 select lives_ok(
-  $$ select public.delete_debt('00000000-0000-4000-d000-0000000000d2') $$,
+  $$ insert into snapshots select public.delete_debt('00000000-0000-4000-d000-0000000000d2') $$,
   'un miembro borra una deuda'
 );
 
@@ -131,12 +136,40 @@ select is_empty(
   'borrada, ya no está'
 );
 
+select lives_ok(
+  $$ select public.restore_debt((select value from snapshots)) $$,
+  'deshacer la devuelve'
+);
+
+select results_eq(
+  $$ select id, direction, description, amount_cents, currency, due_on, position, created_at, paid_on, created_by from public.debts where id = '00000000-0000-4000-d000-0000000000d2' $$,
+  $$ select * from kept_debt $$,
+  'igual: con su sitio en la lista, si está pagada y quién la agregó'
+);
+
+select lives_ok(
+  $$ select public.restore_debt((select value from snapshots)) $$,
+  'deshacer dos veces no es un error'
+);
+
+select is(
+  (select count(*)::int from public.debts where id = '00000000-0000-4000-d000-0000000000d2'),
+  1,
+  'y no la duplica'
+);
+
 set local request.jwt.claims = '{"sub": "00000000-0000-4000-8000-00000000000c", "role": "authenticated"}';
 
 select throws_ok(
   $$ select public.set_debt_paid('00000000-0000-4000-d000-0000000000d1', true) $$,
   '42501', 'Solo los miembros del hogar pueden marcar deudas',
   'una cuenta ajena no marca nada'
+);
+
+select throws_ok(
+  $$ select public.restore_debt((select value from snapshots)) $$,
+  '42501', 'Solo los miembros del hogar pueden deshacer',
+  'una cuenta ajena no restaura'
 );
 
 reset role;

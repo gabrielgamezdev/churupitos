@@ -152,7 +152,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
 | **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`). Al tocar una fila, su operación se abre en un `OperationSheet` |
 | **Sheet** | Una hoja que sube desde abajo sobre un velo `scrim`, en `surface-raised` y con las esquinas de arriba en `radius-lg`, hasta el 90 % del alto. Siempre con título, y encima, si hace falta, qué es en `label`. Se cierra con la X, tocando fuera o con el atrás de Android (`CloseWatcher`). Ningún campo se enfoca solo, y con la hoja abierta estirar no recarga. Es para mirar algo y actuar sobre ello; un formulario va a pantalla completa |
-| **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, el total en `display-amount` (en un gasto o un ingreso), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar», que se confirma ahí mismo con el botón `destructive`; uno importado dice que, hasta el corte, se corrige en el Excel |
+| **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, el total en `display-amount` (en un gasto o un ingreso), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar»: borrar no pregunta, cierra la hoja y deja «Deshacer» en el aviso. Uno importado dice que, hasta el corte, se corrige en el Excel |
 | **Toaster** | El aviso de abajo, después de guardar: qué pasó, debajo lo que cambió por ello («🍔 Comida queda en Bs X») y, si se puede, «Deshacer» en `brand`. En `surface-raised` con `shadow-card`, justo encima de la barra (en un formulario, pegado al borde). Uno a la vez: el nuevo reemplaza al anterior. Con «Deshacer» dura 10 s, y si no, 5; tocarlo detiene la cuenta, y la X lo cierra. Deshacer deja el aviso «Deshecho», o dice por qué no se pudo |
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
@@ -162,7 +162,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **DebtTotals** | Lo pendiente: lo que deben y lo que les deben, cada moneda por su lado y sin las pagadas |
 | **DebtGroupList** | Lo que deben en un mes de vencimiento (o sin fecha): su nombre y lo que suma arriba, y sus cuotas |
 | **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
-| **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que se confirma ahí mismo. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
+| **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que no pregunta: deja «Deshacer» en el aviso. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
 | **DebtForm** | Agregar o corregir una deuda: quién debe, concepto, moneda, monto y fecha límite. Al agregar, «Agregar en cuotas»: cuántas y cada cuánto, con la lista de las cuotas y sus fechas |
 | **OperationForm** | Registrar: Gasto o Ingreso, monto, cuenta, sobre, concepto, fecha y la comisión si la hubo. Debajo, cómo queda cada sobre de la cuenta; un descubierto lleva su etiqueta y se guarda igual (`R6`). Sin red, «Guardar» se apaga y lo dice |
 | **AmountInput** | Un monto con el símbolo de su moneda delante y el teclado numérico; se lee en céntimos con enteros |
@@ -192,8 +192,9 @@ se entró directo por la dirección, va a la pantalla de arriba.
   cobrado o entregado y lo pendiente, también como en el Excel. Nunca de adorno en
   títulos, botones ni avisos.
 - «Otro» va entre comillas latinas dentro de una frase.
-- Un aviso dice qué pasó, corto y en pasado («Gasto guardado», «Marcada como pagada»), y
-  lo que se acaba de guardar se arregla con su «Deshacer», no preguntando antes.
+- Un aviso dice qué pasó, corto y en pasado («Gasto guardado», «Deuda borrada»), y lo que
+  se acaba de guardar o borrar se arregla con su «Deshacer», no preguntando antes. Solo
+  preguntaría algo que borre varias cosas a la vez.
 
 ## Iconos
 

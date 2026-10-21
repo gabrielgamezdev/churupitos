@@ -1,10 +1,10 @@
--- Lo que escribe la app (ADR 0008): guardar y borrar un gasto o un ingreso con las dos
--- funciones de la base, con las reglas de siempre (R5, R6, R16) y sin tocar lo
+-- Lo que escribe la app (ADR 0008): guardar, borrar y restaurar un gasto o un ingreso con
+-- las funciones de la base, con las reglas de siempre (R5, R6, R16) y sin tocar lo
 -- importado. Cuentas, sobres e importes inventados.
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(21);
+select plan(28);
 
 -- Sin `set constraints all immediate`: las funciones comprueban la forma (R5) ellas
 -- mismas, que es lo que se prueba aquí.
@@ -203,8 +203,15 @@ select throws_ok(
 -- El otro miembro: lo de la app es del hogar, no de quien lo registró.
 set local request.jwt.claims = '{"sub": "00000000-0000-4000-8000-00000000000b", "role": "authenticated"}';
 
+-- Cómo estaba antes de borrarla: deshacer la tiene que dejar igual.
+create temporary table kept_entries on commit drop as
+  select e.id, e.position, e.amount_cents, o.created_by, o.created_at
+  from public.entries e join public.operations o on o.id = e.operation_id
+  where o.id = '00000000-0000-4000-c000-0000000000c2';
+create temporary table snapshots (value jsonb) on commit drop;
+
 select lives_ok(
-  $$ select public.delete_operation('00000000-0000-4000-c000-0000000000c2') $$,
+  $$ insert into snapshots select public.delete_operation('00000000-0000-4000-c000-0000000000c2') $$,
   'un miembro borra lo que registró el otro'
 );
 
@@ -220,6 +227,50 @@ select lives_ok(
 );
 
 -- ---------------------------------------------------------------------------
+-- Deshacer un borrado
+-- ---------------------------------------------------------------------------
+
+-- Un ingreso con su asiento en negativo: lo que llega lo manda el teléfono.
+select throws_ok(
+  $$ select public.restore_operation(jsonb_set(
+       (select value from snapshots), '{entries,0,amount_cents}', '-2000')) $$,
+  '23514', null,
+  'R5: lo que se restaura cumple la forma de su tipo'
+);
+
+select lives_ok(
+  $$ select public.restore_operation((select value from snapshots)) $$,
+  'deshacer devuelve lo borrado'
+);
+
+select results_eq(
+  $$ select e.id, e.position, e.amount_cents, o.created_by, o.created_at
+     from public.entries e join public.operations o on o.id = e.operation_id
+     where o.id = '00000000-0000-4000-c000-0000000000c2' order by e.position $$,
+  $$ select * from kept_entries order by position $$,
+  'R14: vuelve igual, con sus asientos en su sitio del día, su autor y cuándo se registró'
+);
+
+select lives_ok(
+  $$ select public.restore_operation((select value from snapshots)) $$,
+  'deshacer dos veces no es un error'
+);
+
+select is(
+  (select count(*)::int from public.entries where operation_id = '00000000-0000-4000-c000-0000000000c2'),
+  (select count(*)::int from kept_entries),
+  'y no la duplica'
+);
+
+select throws_ok(
+  $$ select public.restore_operation(jsonb_set(
+       (select value from snapshots), '{operation,created_by}', 'null')) $$,
+  '42501', 'Lo importado del Excel no se restaura: hasta el corte vive allí',
+  'lo importado no se restaura desde la app'
+);
+
+
+-- ---------------------------------------------------------------------------
 -- Quien no es del hogar, o no tiene sesión
 -- ---------------------------------------------------------------------------
 
@@ -231,6 +282,12 @@ select throws_ok(
        jsonb_build_array(pg_temp.line('Banco A', 'Comida', -100))) $$,
   '42501', 'Solo los miembros del hogar pueden registrar',
   'una cuenta ajena no registra'
+);
+
+select throws_ok(
+  $$ select public.restore_operation((select value from snapshots)) $$,
+  '42501', 'Solo los miembros del hogar pueden deshacer',
+  'una cuenta ajena no restaura'
 );
 
 reset role;

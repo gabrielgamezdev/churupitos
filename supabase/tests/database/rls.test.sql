@@ -49,7 +49,8 @@ select results_eq(
       and p.prorettype not in ('trigger'::regtype, 'event_trigger'::regtype)
     order by 1
   $$,
-  $$ values ('delete_debt'), ('delete_operation'), ('is_household_member'), ('save_debts'),
+  $$ values ('delete_debt'), ('delete_operation'), ('is_household_member'),
+            ('restore_debt'), ('restore_operation'), ('save_debts'),
             ('save_operation'), ('set_debt_paid') $$,
   'solo saltan el RLS la función que dice si eres del hogar y las que escribe la app'
 );

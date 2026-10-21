@@ -562,8 +562,8 @@ export type Database = {
           total_cents: number;
         }[];
       };
-      delete_debt: { Args: { debt_id: string }; Returns: undefined };
-      delete_operation: { Args: { op_id: string }; Returns: undefined };
+      delete_debt: { Args: { debt_id: string }; Returns: Json };
+      delete_operation: { Args: { op_id: string }; Returns: Json };
       envelope_balances: {
         Args: { as_of?: string };
         Returns: {
@@ -574,6 +574,8 @@ export type Database = {
       };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
+      restore_debt: { Args: { snapshot: Json }; Returns: undefined };
+      restore_operation: { Args: { snapshot: Json }; Returns: undefined };
       save_debts: { Args: { debt_rows: Json }; Returns: undefined };
       save_operation: {
         Args: {

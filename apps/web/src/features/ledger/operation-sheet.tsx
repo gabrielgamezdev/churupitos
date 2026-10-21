@@ -68,7 +68,12 @@ function LoadedOperation({ operationId, onClose }: { operationId: string; onClos
       // Lo registrado en la app se corrige o se borra; lo importado, no (ADR 0008).
       actions={
         fromApp && (kind === "expense" || kind === "income") ? (
-          <OperationActions operationId={operationId} onDeleted={onClose} />
+          <OperationActions
+            operationId={operationId}
+            kind={kind}
+            description={operation.data.description}
+            onDeleted={onClose}
+          />
         ) : null
       }
     />

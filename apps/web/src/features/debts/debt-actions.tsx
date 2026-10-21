@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { showToast } from "@/lib/toast";
@@ -8,49 +7,39 @@ import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
 import type { Debt } from "./queries";
-import { undoDebtPaid, useDeleteDebt, useSetDebtPaid } from "./write";
+import { undoDebtPaid, undoDeletedDebt, useDeleteDebt, useSetDebtPaid } from "./write";
 
 // Lo que se hace con una deuda desde su fila: marcarla pagada (o desmarcarla), corregirla
-// y borrarla. Pagar es un gasto aparte (R17): una pagada ofrece registrarlo, con el monto
-// y el concepto ya escritos. Sin red, todo se apaga.
+// y borrarla, que no pregunta: el aviso de abajo lo deshace (M7). Pagar es un gasto aparte
+// (R17): una pagada ofrece registrarlo, con el monto y el concepto ya escritos. Sin red,
+// todo se apaga.
 export function DebtActions({ debt }: { debt: Debt }) {
   const online = useOnline();
-  const [confirming, setConfirming] = useState(false);
   const setPaid = useSetDebtPaid();
   const remove = useDeleteDebt();
   const paid = debt.paidOn !== null;
   const error = setPaid.error ?? remove.error;
 
-  if (confirming) {
-    return (
-      <div className="flex flex-col gap-2 rounded-md bg-surface-sunken p-3">
-        <p className="text-body">¿Borrar esta deuda?</p>
-        {remove.error && (
-          <p role="alert" className="text-body text-destructive">
-            No se borró. {writeErrorMessage(remove.error)}
-          </p>
-        )}
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" onClick={() => setConfirming(false)}>
-            Cancelar
-          </Button>
-          <Button
-            variant="destructive"
-            disabled={!online || remove.isPending}
-            onClick={() => remove.mutate(debt.id)}
-          >
-            {remove.isPending ? "Borrando…" : "Borrar"}
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const deleteIt = () =>
+    remove.mutate(debt.id, {
+      // Sin lo borrado, otro la borró antes: no hay nada que deshacer.
+      onSuccess: (snapshot) =>
+        showToast(
+          snapshot
+            ? {
+                message: "Deuda borrada",
+                detail: debt.description,
+                action: { label: "Deshacer", run: undoDeletedDebt(snapshot) },
+              }
+            : { message: "Ya estaba borrada" },
+        ),
+    });
 
   return (
     <div className="flex flex-col gap-2 rounded-md bg-surface-sunken p-3">
       {error && (
         <p role="alert" className="text-body text-destructive">
-          No se guardó. {writeErrorMessage(error)}
+          {remove.error ? "No se borró." : "No se guardó."} {writeErrorMessage(error)}
         </p>
       )}
       <Button
@@ -96,8 +85,8 @@ export function DebtActions({ debt }: { debt: Debt }) {
         >
           Corregir
         </Link>
-        <Button variant="outline" disabled={!online} onClick={() => setConfirming(true)}>
-          Borrar
+        <Button variant="outline" disabled={!online || remove.isPending} onClick={deleteIt}>
+          {remove.isPending ? "Borrando…" : "Borrar"}
         </Button>
       </div>
     </div>

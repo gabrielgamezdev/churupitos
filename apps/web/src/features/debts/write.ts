@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import type { Json } from "@/lib/database.types";
 import { queryClient as appQueryClient } from "@/lib/query-client";
 import { supabase } from "@/lib/supabase";
 
@@ -20,8 +21,15 @@ async function setDebtPaid({ id, paid, day }: { id: string; paid: boolean; day?:
   if (error) throw error;
 }
 
-async function deleteDebt(id: string) {
-  const { error } = await supabase.rpc("delete_debt", { debt_id: id });
+// Devuelve lo que borró, para deshacerlo, o null si ya no estaba.
+async function deleteDebt(id: string): Promise<Json> {
+  const { data, error } = await supabase.rpc("delete_debt", { debt_id: id });
+  if (error) throw error;
+  return data;
+}
+
+async function restoreDebt(snapshot: Json) {
+  const { error } = await supabase.rpc("restore_debt", { snapshot });
   if (error) throw error;
 }
 
@@ -70,6 +78,14 @@ export function undoDebtPaid(before: Debt) {
       paid: before.paidOn !== null,
       day: before.paidOn ?? undefined,
     });
+    await appQueryClient.invalidateQueries();
+  };
+}
+
+// Lo borrado vuelve tal cual: su sitio en la lista, si estaba pagada y quién la agregó.
+export function undoDeletedDebt(snapshot: Json) {
+  return async () => {
+    await restoreDebt(snapshot);
     await appQueryClient.invalidateQueries();
   };
 }
