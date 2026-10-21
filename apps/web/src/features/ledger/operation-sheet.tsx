@@ -7,6 +7,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { isAppKind } from "@/features/operations/app-kinds";
 import { OperationActions } from "@/features/operations/operation-actions";
 import { dayMonthLabel, registeredAtLabel } from "@/lib/months";
 
@@ -67,7 +68,7 @@ function LoadedOperation({ operationId, onClose }: { operationId: string; onClos
       envelopeById={envelopeById}
       // Lo registrado en la app se corrige o se borra; lo importado, no (ADR 0008).
       actions={
-        fromApp && (kind === "expense" || kind === "income") ? (
+        fromApp && isAppKind(kind) ? (
           <OperationActions
             operationId={operationId}
             kind={kind}
@@ -94,24 +95,25 @@ export function OperationSheetContent({
   envelopeById,
   actions,
 }: OperationSheetContentProps) {
-  // El total solo en un gasto o un ingreso: en un traspaso o un cambio, sus asientos se
-  // compensan o van en dos monedas, y lo que cuenta es cada uno.
+  // La cifra grande: lo que entró o salió, o, en algo que se mueve sin cambiar el total
+  // (entre sobres, un traspaso), cuánto pasó, sin signo. Un ajuste no la lleva: lo explican
+  // sus asientos.
   const { totals } =
-    operation.kind === "expense" || operation.kind === "income"
-      ? summarizeOperation(operation.entries, (accountId) => accountById[accountId]?.currency)
-      : { totals: [] };
+    operation.kind === "adjustment"
+      ? { totals: [] }
+      : summarizeOperation(operation.entries, (accountId) => accountById[accountId]?.currency);
 
   return (
     <SheetContent
       eyebrow={`${operationLabel(operation)} · ${dayMonthLabel(operation.day)}`}
       title={operation.description || "Sin concepto"}
     >
-      {totals.map(({ currency, cents }) => (
+      {totals.map(({ currency, cents, movedCents }) => (
         <Money
           key={currency}
-          cents={cents}
+          cents={cents === 0 ? movedCents : cents}
           currency={currency}
-          kind="movement"
+          kind={cents === 0 ? "balance" : "movement"}
           className="text-display-amount"
         />
       ))}

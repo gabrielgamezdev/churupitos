@@ -8,6 +8,7 @@ import {
   formMoveKind,
   moveDraft,
   moveFormSchema,
+  moveFormValues,
 } from "./move-form-schema";
 
 const CURRENCIES: Record<string, Currency> = { bank: "VES", other: "VES", cash: "USD" };
@@ -85,5 +86,63 @@ describe("el formulario de Mover", () => {
     expect(defaultMoveDescription("envelope_transfer", names)).toBe("De Comida a Ahorro");
     expect(defaultMoveDescription("account_transfer", names)).toBe("De Banco A a Banco C");
     expect(defaultMoveDescription("exchange", names)).toBe("Cambio de Banco A a Banco C");
+  });
+
+  it("un movimiento guardado vuelve al formulario como se escribió", () => {
+    const values = moveFormValues({
+      day: "2026-10-20",
+      description: "Al Banco C",
+      entries: [
+        {
+          accountId: "bank",
+          envelopeId: "savings",
+          amountCents: -10000,
+          isFee: false,
+          description: "",
+        },
+        {
+          accountId: "other",
+          envelopeId: "food",
+          amountCents: 10000,
+          isFee: false,
+          description: "",
+        },
+        {
+          accountId: "bank",
+          envelopeId: "savings",
+          amountCents: -150,
+          isFee: true,
+          description: "Comisión",
+        },
+      ],
+    });
+    expect(values).toMatchObject({
+      fromAccount: "bank",
+      fromEnvelope: "savings",
+      toAccount: "other",
+      toEnvelope: "food",
+      amount: "100,00",
+      hasFee: true,
+      fee: { envelopeId: "savings", amount: "1,50", description: "Comisión" },
+    });
+    expect(moveDraft(values!, currencyOf)).toMatchObject({
+      amountCents: 10000,
+      arrivedCents: 10000,
+    });
+  });
+
+  it("uno de varias partes no se corrige desde la app", () => {
+    expect(
+      moveFormValues({
+        day: "2026-10-20",
+        description: "Cambio repartido",
+        entries: [
+          { accountId: "cash", envelopeId: "a", amountCents: -100, isFee: false, description: "" },
+          { accountId: "cash", envelopeId: "b", amountCents: -100, isFee: false, description: "" },
+          { accountId: "bank", envelopeId: "a", amountCents: 50000, isFee: false, description: "" },
+          { accountId: "bank", envelopeId: "b", amountCents: 50000, isFee: false, description: "" },
+        ],
+      }),
+    ).toBeNull();
   });
 });

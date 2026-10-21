@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { parseAmountInput } from "@/lib/amount-input";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 
 import { moveKind, type MoveDraft, type MoveKind } from "./move-draft";
@@ -131,4 +131,44 @@ export function defaultMoveDescription(
   if (kind === "envelope_transfer") return `De ${names.fromEnvelope} a ${names.toEnvelope}`;
   if (kind === "account_transfer") return `De ${names.fromAccount} a ${names.toAccount}`;
   return `Cambio de ${names.fromAccount} a ${names.toAccount}`;
+}
+
+// Un movimiento guardado, como lo vuelve a enseñar el formulario para corregirlo. Solo
+// los de una salida y una entrada, que son los que registra la app; con varias partes
+// (algunos cambios importados), null.
+export function moveFormValues(operation: {
+  day: string;
+  description: string;
+  entries: {
+    accountId: string;
+    envelopeId: string;
+    amountCents: number;
+    isFee: boolean;
+    description: string;
+  }[];
+}): MoveFormValues | null {
+  const lines = operation.entries.filter((entry) => !entry.isFee);
+  const out = lines.filter((entry) => entry.amountCents < 0);
+  const into = lines.filter((entry) => entry.amountCents > 0);
+  if (out.length !== 1 || into.length !== 1) return null;
+  const [from] = out as [(typeof out)[number]];
+  const [to] = into as [(typeof into)[number]];
+  const fee = operation.entries.find((entry) => entry.isFee);
+  return {
+    fromAccount: from.accountId,
+    fromEnvelope: from.envelopeId,
+    toAccount: to.accountId,
+    toEnvelope: to.envelopeId,
+    amount: amountInputText(from.amountCents),
+    // Solo cuenta en un cambio; en lo demás es lo mismo que sale.
+    arrived: amountInputText(to.amountCents),
+    day: operation.day,
+    description: operation.description,
+    hasFee: fee !== undefined,
+    fee: {
+      envelopeId: fee?.envelopeId ?? "",
+      amount: fee ? amountInputText(fee.amountCents) : "",
+      description: fee?.description || FEE_DESCRIPTION,
+    },
+  };
 }

@@ -7,6 +7,9 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { operationQuery, type OperationDetail } from "@/features/ledger/queries";
+import { isAppKind, isMoveKind } from "@/features/operations/app-kinds";
+import { MoveForm } from "@/features/operations/move-form";
+import { moveFormValues } from "@/features/operations/move-form-schema";
 import { OperationForm } from "@/features/operations/operation-form";
 import { operationFormValues } from "@/features/operations/operation-form-schema";
 import type { SaveOperationArgs } from "@/features/operations/save";
@@ -17,8 +20,8 @@ export const Route = createFileRoute("/_authenticated/operations/$operationId/ed
 
 const HEADER = { title: "Corregir", back: { to: "/" }, backLabel: "Volver sin guardar" } as const;
 
-// Corregir: el mismo formulario de Registrar, con la operación como estaba. Guardar la
-// reemplaza entera (ADR 0008); al terminar vuelve al libro del que salió.
+// Corregir: el mismo formulario de Registrar (o de Mover), con la operación como estaba.
+// Guardar la reemplaza entera (ADR 0008); al terminar vuelve al libro del que salió.
 function EditOperationPage() {
   const { operationId } = Route.useParams();
   const operation = useQuery(operationQuery(operationId));
@@ -36,7 +39,7 @@ function EditOperationPage() {
     );
   }
   const { fromApp, kind } = operation.data;
-  if (!fromApp || (kind !== "expense" && kind !== "income")) {
+  if (!fromApp || !isAppKind(kind)) {
     return (
       <Screen>
         <ScreenHeader {...HEADER} />
@@ -55,12 +58,17 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
   const router = useRouter();
   const canGoBack = useCanGoBack();
   // Una vez, al abrir: lo que llegue después de la base no pisa lo que se está escribiendo.
-  const [initial] = useState(() => operationFormValues(operation));
+  const [initial] = useState(() =>
+    isMoveKind(operation.kind) ? null : operationFormValues(operation),
+  );
+  const [moveInitial] = useState(() =>
+    isMoveKind(operation.kind) ? moveFormValues(operation) : null,
+  );
   // Como estaba al abrir: lo que «Deshacer» vuelve a guardar.
   const [previous] = useState((): SaveOperationArgs => ({
     id: operationId,
-    // La página ya comprobó que es un gasto o un ingreso.
-    kind: operation.kind === "income" ? "income" : "expense",
+    // La página ya comprobó que la app sabe registrarla.
+    kind: isAppKind(operation.kind) ? operation.kind : "expense",
     day: operation.day,
     description: operation.description,
     entries: operation.entries.map((entry) => ({
@@ -81,12 +89,27 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
     // Sin el hueco de la barra: abajo va «Guardar», fijo.
     <Screen className="pb-0">
       <ScreenHeader {...HEADER} />
-      <OperationForm
-        operationId={operationId}
-        initial={initial}
-        previous={previous}
-        onSaved={close}
-      />
+      {moveInitial ? (
+        <MoveForm
+          operationId={operationId}
+          initial={moveInitial}
+          previous={previous}
+          onSaved={close}
+        />
+      ) : initial ? (
+        <OperationForm
+          operationId={operationId}
+          initial={initial}
+          previous={previous}
+          onSaved={close}
+        />
+      ) : (
+        // Un movimiento de varias partes: la app solo registra los de una salida y una
+        // entrada.
+        <EmptyState className="rounded-lg bg-surface-raised">
+          Este movimiento tiene varias partes: se corrige en el Excel.
+        </EmptyState>
+      )}
     </Screen>
   );
 }

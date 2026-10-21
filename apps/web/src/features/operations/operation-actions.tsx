@@ -6,12 +6,21 @@ import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
-import type { OperationKind } from "./operation-draft";
+import type { AppKind } from "./app-kinds";
 import { undoDeletedOperation, useDeleteOperation } from "./save";
+
+// Lo que dice el aviso al borrar, según lo que era.
+const DELETED: Record<AppKind, string> = {
+  expense: "Gasto borrado",
+  income: "Ingreso borrado",
+  envelope_transfer: "Movimiento borrado",
+  account_transfer: "Traspaso borrado",
+  exchange: "Cambio borrado",
+};
 
 interface OperationActionsProps {
   operationId: string;
-  kind: OperationKind;
+  kind: AppKind;
   description: string;
   // Al borrarla: la hoja que la enseña se cierra.
   onDeleted?: () => void;
@@ -36,7 +45,7 @@ export function OperationActions({
         showToast(
           snapshot
             ? {
-                message: kind === "income" ? "Ingreso borrado" : "Gasto borrado",
+                message: DELETED[kind],
                 detail: description || undefined,
                 action: { label: "Deshacer", run: undoDeletedOperation(snapshot) },
               }
