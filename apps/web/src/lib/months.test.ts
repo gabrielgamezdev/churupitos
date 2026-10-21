@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  addDays,
   addMonths,
   dayLabel,
   dayMonthLabel,
@@ -51,5 +52,14 @@ describe("los meses del libro", () => {
     expect(dayLabel("2026-10-14", "2026-10-15")).toBe("Ayer");
     expect(dayLabel("2026-09-30", "2026-10-01")).toBe("Ayer");
     expect(dayLabel("2026-10-12", "2026-10-15")).toBe("Lunes 12");
+  });
+});
+
+describe("contar días", () => {
+  it("cruza el fin de mes y el de un febrero", () => {
+    expect(addDays("2026-10-01", -1)).toBe("2026-09-30");
+    expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
+    expect(addDays("2026-12-31", 1)).toBe("2027-01-01");
+    expect(addDays("2026-10-20", 0)).toBe("2026-10-20");
   });
 });

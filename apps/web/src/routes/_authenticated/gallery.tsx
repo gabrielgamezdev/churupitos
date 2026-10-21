@@ -37,6 +37,8 @@ import { PlanRow } from "@/features/budget/plan-row";
 import { OperationSheetContent } from "@/features/ledger/operation-sheet";
 import { RecentRow } from "@/features/ledger/recent-operations";
 import { AmountInput } from "@/components/amount-field";
+import { DayField } from "@/features/operations/day-field";
+import { amountInputText } from "@/lib/amount-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -473,11 +475,26 @@ function GalleryPage() {
 
         <Section
           title="Campos"
-          description="Los de Registrar: el monto lleva delante el símbolo de la moneda; la lista abre la del sistema."
+          description="Los de Registrar. El monto se escribe como en un cajero: cada cifra entra por la derecha. En Registrar va grande; la lista abre la del sistema."
         >
           <div className="flex flex-col gap-2">
+            <Label htmlFor="gallery-amount-hero">Monto, en Registrar</Label>
+            <AmountInput
+              id="gallery-amount-hero"
+              size="hero"
+              currency="USD"
+              invalid={false}
+              defaultValue={amountInputText(2500)}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="gallery-amount">Monto</Label>
-            <AmountInput id="gallery-amount" currency="VES" invalid={false} defaultValue="1500" />
+            <AmountInput
+              id="gallery-amount"
+              currency="VES"
+              invalid={false}
+              defaultValue={amountInputText(150000)}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="gallery-envelope">Sobre</Label>
@@ -490,6 +507,7 @@ function GalleryPage() {
             <Label htmlFor="gallery-description">Concepto</Label>
             <Input id="gallery-description" defaultValue="Mercado" />
           </div>
+          <GalleryDayField />
         </Section>
 
         <Section title="Estados">
@@ -549,5 +567,23 @@ function Section({ title, description, children }: SectionProps) {
       </div>
       {children}
     </section>
+  );
+}
+
+// La fecha de Registrar, con un día de muestra y sin formulario detrás.
+function GalleryDayField() {
+  const [day, setDay] = useState(SAMPLE_TODAY);
+  return (
+    <DayField
+      value={day}
+      today={SAMPLE_TODAY}
+      onChange={setDay}
+      dateInput={{
+        name: "gallery-day",
+        onChange: async (event) => setDay((event.target as HTMLInputElement).value),
+        onBlur: async () => undefined,
+        ref: () => undefined,
+      }}
+    />
   );
 }

@@ -39,6 +39,7 @@ export const Route = createFileRoute("/_authenticated/operations/new")({
 // movimiento nuevo.
 function NewOperationPage() {
   const { account, envelope, kind, amount, description, currency } = Route.useSearch();
+  const { session } = Route.useRouteContext();
   const router = useRouter();
   const canGoBack = useCanGoBack();
   // Una vez al abrir: es lo que hace que guardar dos veces no duplique (ADR 0008).
@@ -53,12 +54,14 @@ function NewOperationPage() {
   };
 
   return (
-    <Screen>
+    // Sin el hueco de la barra: abajo va «Guardar», fijo.
+    <Screen className="pb-0">
       <ScreenHeader title="Registrar" back={{ to: "/" }} backLabel="Volver sin guardar" />
       <OperationForm
         operationId={operationId}
         initial={initial}
         onlyCurrency={currency}
+        rememberFor={session.user.id}
         onSaved={close}
       />
     </Screen>

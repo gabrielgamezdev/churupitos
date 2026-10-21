@@ -8,7 +8,7 @@ import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Segmented } from "@/components/ui/segmented";
-import { parseAmountInput } from "@/features/operations/amount-input";
+import { parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
 import { showToast } from "@/lib/toast";

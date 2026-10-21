@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { amountInputText, parseAmountInput } from "@/features/operations/amount-input";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 
 import type { Debt, DebtDirection } from "./queries";

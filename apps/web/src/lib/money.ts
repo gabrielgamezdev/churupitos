@@ -27,15 +27,21 @@ export interface FormatMoneyOptions {
   signed?: boolean;
 }
 
+// La cifra sola, sin signo ni símbolo, con punto de miles y coma decimal. Es también lo
+// que se ve en un campo de monto mientras se escribe.
+export function formatAmount(cents: number): string {
+  if (!Number.isSafeInteger(cents)) throw new Error(`importe no entero: ${cents}`);
+  const absolute = Math.abs(cents);
+  const whole = thousands.format(Math.floor(absolute / 100));
+  const fraction = String(absolute % 100).padStart(2, "0");
+  return `${whole},${fraction}`;
+}
+
 export function formatMoney(
   cents: number,
   currency: Currency,
   { signed = false }: FormatMoneyOptions = {},
 ): string {
-  if (!Number.isSafeInteger(cents)) throw new Error(`importe no entero: ${cents}`);
-  const absolute = Math.abs(cents);
-  const whole = thousands.format(Math.floor(absolute / 100));
-  const fraction = String(absolute % 100).padStart(2, "0");
   const sign = cents < 0 ? MINUS : signed && cents > 0 ? "+" : "";
-  return `${sign}${SYMBOLS[currency]} ${whole},${fraction}`;
+  return `${sign}${SYMBOLS[currency]} ${formatAmount(cents)}`;
 }

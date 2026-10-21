@@ -74,11 +74,17 @@ export function registeredAtLabel(instant: string): string {
   return registeredAt.format(new Date(instant));
 }
 
+// El día `delta` días después (o antes, en negativo) de otro, con el calendario y sin
+// pasar por ninguna zona horaria (R13).
+export function addDays(day: string, delta: number): string {
+  const date = toDate(day);
+  date.setDate(date.getDate() + delta);
+  return today(date);
+}
+
 // El encabezado de cada día del libro: «Hoy», «Ayer» o «Lunes 13».
 export function dayLabel(day: string, todayDay: string): string {
   if (day === todayDay) return "Hoy";
-  const yesterday = toDate(todayDay);
-  yesterday.setDate(yesterday.getDate() - 1);
-  if (day === today(yesterday)) return "Ayer";
+  if (day === addDays(todayDay, -1)) return "Ayer";
   return `${capitalize(weekday.format(toDate(day)))} ${Number(day.slice(8))}`;
 }

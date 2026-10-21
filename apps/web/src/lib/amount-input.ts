@@ -1,3 +1,5 @@
+import { formatAmount } from "@/lib/money";
+
 // Lo que se teclea en un campo de monto, en céntimos (ADR 0002). Se lee como texto y
 // con enteros, sin pasar nunca por un decimal de coma flotante.
 //
@@ -28,9 +30,22 @@ export function parseAmountInput(text: string): number | null {
   return Number.isSafeInteger(cents) && cents > 0 ? cents : null;
 }
 
-// Un importe como se teclearía, para volver a enseñarlo en un formulario: sin signo, sin
-// separador de miles y con coma («1500,00»), que `parseAmountInput` lee igual.
+// Un importe como se ve en un campo de monto, para volver a enseñarlo en un formulario:
+// sin signo, con punto de miles y coma decimal. `parseAmountInput` lo lee igual.
 export function amountInputText(cents: number): string {
-  const absolute = Math.abs(cents);
-  return `${Math.floor(absolute / 100)},${String(absolute % 100).padStart(2, "0")}`;
+  return formatAmount(cents);
+}
+
+// Cuántas cifras caben: hasta los miles de millones, lejos de lo que pierde precisión.
+export const MAX_AMOUNT_DIGITS = 12;
+
+// El monto como en un cajero (M7): cada cifra entra por la derecha y la coma no se
+// escribe nunca. «» → «0,01» → «0,12» → «1,23»; borrar saca la última. Recibe lo que
+// quedó en el campo después de teclear, se queda con las cifras y lo vuelve a escribir;
+// sin ninguna, el campo queda vacío y enseña «0,00» de ejemplo. Con todas las cifras
+// ocupadas, una más no entra.
+export function cashierAmount(typed: string): string {
+  const digits = typed.replace(/\D/g, "").replace(/^0+/, "");
+  if (digits === "") return "";
+  return formatAmount(Number(digits.slice(0, MAX_AMOUNT_DIGITS)));
 }

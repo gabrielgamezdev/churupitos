@@ -82,11 +82,12 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 5. [x] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con
    «Deshacer» (2026-10-20, también en la nube). Borrar devuelve lo que borró, y
    restaurarlo lo deja igual: autor, cuándo se registró y su sitio en el día.
-6. [ ] **Registrar, primera parte:** el monto como cajero con el teclado numérico,
-   «Guardar» visible sobre el teclado, la cuenta recordada, la fecha en botones y la
-   comisión plegada.
+6. [x] **Registrar, primera parte** (2026-10-20): el monto como cajero con el teclado
+   numérico (también en Deudas), «Guardar» visible sobre el teclado, la cuenta
+   recordada, la fecha en botones y la comisión plegada.
 7. [ ] **Registrar, segunda parte:** los sobres como botones ordenados por uso (una
-   función nueva en la base) y repartir con «Falta por repartir».
+   función nueva en la base), lo que queda en la celda en una línea, y repartir con
+   «Falta por repartir».
 8. [ ] **El color y las pastillas.**
 9. [ ] **Inicio:** los descubiertos y las deudas próximas.
 10. [ ] **Las barras del Presupuesto.**

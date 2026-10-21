@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
 // El aviso de abajo (M7), justo encima de la barra; en un formulario, que no la tiene,
-// pegado al borde. La región se queda montada aunque no haya aviso: así el lector de
+// encima de su «Guardar». La región se queda montada aunque no haya aviso: así el lector de
 // pantalla anuncia cada uno nuevo.
 export function Toaster() {
   const toast = useSyncExternalStore(subscribeToToast, currentToast);
@@ -30,7 +30,7 @@ export function Toaster() {
       className={cn(
         "pointer-events-none fixed inset-x-0 z-40 mx-auto flex max-w-md px-4",
         isFormScreen(pathname)
-          ? "bottom-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]"
+          ? "bottom-[calc(env(safe-area-inset-bottom,0px)_+_5.5rem)]"
           : "bottom-[calc(var(--tab-bar-height)_+_env(safe-area-inset-bottom,0px)_+_0.5rem)]",
       )}
     >

@@ -90,7 +90,7 @@ Una sola familia: **Geist**, variable, la que ya carga la app (`@fontsource-vari
 
 | Estilo | Tamaño / interlineado | Peso | Para qué |
 |---|---|---|---|
-| `display-amount` | 32 / 38 px, −0,02 em | 650 | El saldo grande: uno por pantalla, salvo en el inicio, uno por tarjeta de moneda |
+| `display-amount` | 32 / 38 px, −0,02 em | 650 | La cifra protagonista, una por pantalla: el saldo grande (en el inicio, uno por tarjeta de moneda), el monto en Registrar y el total de un movimiento en su hoja |
 | `title` | 20 / 26 px, −0,01 em | 600 | El título de una pantalla |
 | `heading` | 16 / 22 px | 600 | Secciones y el nombre de una moneda en su tarjeta |
 | `body` | 15 / 22 px | 400 | El concepto de un movimiento y el texto corrido |
@@ -125,7 +125,7 @@ Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
 estirar y recargar), `ScreenHeader`, `Toaster` (el aviso de abajo), `Field` y `AmountInput` (los campos de los
-formularios) y los estados (`MissingData`, `StaleDataBanner` y,
+formularios; el monto, escrito como en un cajero) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
@@ -135,7 +135,7 @@ adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
 `DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
-`OperationForm` y `OperationActions` en `operations/`) y los del libro, que comparten
+`OperationForm`, `DayField` y `OperationActions` en `operations/`) y los del libro, que comparten
 cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker`, `OperationSheet`,
 `RecentOperations` y `OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
 
@@ -164,7 +164,9 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
 | **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que no pregunta: deja «Deshacer» en el aviso. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
 | **DebtForm** | Agregar o corregir una deuda: quién debe, concepto, moneda, monto y fecha límite. Al agregar, «Agregar en cuotas»: cuántas y cada cuánto, con la lista de las cuotas y sus fechas |
-| **OperationForm** | Registrar: Gasto o Ingreso, monto, cuenta, sobre, concepto, fecha y la comisión si la hubo. Debajo, cómo queda cada sobre de la cuenta; un descubierto lleva su etiqueta y se guarda igual (`R6`). Sin red, «Guardar» se apaga y lo dice |
+| **OperationForm** | Registrar: Gasto o Ingreso; el monto, protagonista en `display-amount` y ya con el teclado abierto; la cuenta (la de la pantalla de la que se viene o, si no, la última que usó esa persona en ese teléfono); el sobre; el concepto; la fecha (`DayField`), y «Agregar comisión» plegada como enlace. Debajo, cómo queda cada sobre de la cuenta; un descubierto lleva su etiqueta y se guarda igual (`R6`). «Guardar gasto · Bs X» va pegado abajo, también encima del teclado. Sin red, se apaga y lo dice |
+| **AmountInput** | Un monto escrito como en un cajero, con el teclado numérico del sistema: cada cifra entra por la derecha («0,01 → 0,12 → 1,23») y borrar saca la última; la coma no se escribe nunca y los miles se ponen solos. Pegar un monto lo reemplaza entero. En Registrar va grande (`hero`): sin caja, subrayado, y con el foco el subrayado pasa a `brand` |
+| **DayField** | La fecha en tres botones, «Hoy · Ayer · Otro día»; «Otro día» abre el calendario del teléfono |
 | **AmountInput** | Un monto con el símbolo de su moneda delante y el teclado numérico; se lee en céntimos con enteros |
 | **BudgetCheckList** | El cuadre del mes (`R12`): ✅ si cuadra o, en `overdrawn` con su icono, por cuánto no. Avisa; nunca impide |
 | **ScreenHeader** | Atrás, el título y el saldo de lo que se mira, y a la derecha la acción de la pantalla si la tiene («Agregar» en Deudas, en `outline`). La primera pantalla de una sección va sin flecha; Ajustes, que no tiene pestaña, la lleva |

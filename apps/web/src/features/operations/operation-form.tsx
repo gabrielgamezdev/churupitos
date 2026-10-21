@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { AmountInput } from "@/components/amount-field";
@@ -16,12 +17,15 @@ import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { parseAmountInput } from "@/lib/amount-input";
 import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
+import { today } from "@/lib/months";
 import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
 import { writeErrorMessage } from "@/lib/write-error";
 
-import { parseAmountInput } from "./amount-input";
+import { DayField } from "./day-field";
+import { rememberAccount, rememberedAccount } from "./last-account";
 import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
 import {
   FEE_DESCRIPTION,
@@ -49,6 +53,8 @@ interface OperationFormProps {
   previous?: SaveOperationArgs;
   // Solo las cuentas de una moneda: al registrar el pago de una deuda, la suya.
   onlyCurrency?: Currency;
+  // Al registrar, quién lo hace: sin cuenta elegida, abre con la última que usó (M7).
+  rememberFor?: string;
   onSaved: () => void;
 }
 
@@ -60,6 +66,7 @@ export function OperationForm({
   initial,
   previous,
   onlyCurrency,
+  rememberFor,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -77,6 +84,19 @@ export function OperationForm({
     resolver: zodResolver(operationFormSchema),
     defaultValues: initial,
   });
+
+  const remembered = useRef(false);
+  useEffect(() => {
+    if (remembered.current || !rememberFor || !accounts.data) return;
+    remembered.current = true;
+    if (getValues("accountId")) return;
+    const usable = accounts.data.filter((row) => !onlyCurrency || row.currency === onlyCurrency);
+    const accountId = rememberedAccount(
+      rememberFor,
+      usable.map((row) => row.accountId),
+    );
+    if (accountId) setValue("accountId", accountId);
+  }, [accounts.data, getValues, onlyCurrency, rememberFor, setValue]);
 
   const lines = useFieldArray({ control, name: "lines" });
   const values = useWatch({ control }) as OperationFormValues;
@@ -108,6 +128,7 @@ export function OperationForm({
         description: submitted.description.trim(),
         entries,
       });
+      if (rememberFor) rememberAccount(rememberFor, submitted.accountId);
       // Cómo quedó, con los saldos de antes de guardar: los de después aún no llegaron.
       const savedAccount = accounts.data?.find((row) => row.accountId === submitted.accountId);
       const detail =
@@ -148,8 +169,13 @@ export function OperationForm({
   const split = lines.fields.length > 1;
   const total = values.lines.reduce((sum, line) => sum + (parseAmountInput(line.amount) ?? 0), 0);
   const addLine = () => lines.append({ envelopeId: "", amount: "" });
+  const saveLabel = previous
+    ? "Guardar corrección"
+    : values.kind === "expense"
+      ? "Guardar gasto"
+      : "Guardar ingreso";
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+    <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-5">
       <Segmented
         label="Tipo"
         options={KINDS}
@@ -161,8 +187,11 @@ export function OperationForm({
         <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
           <AmountInput
             id="amount"
+            size="hero"
             currency={account?.currency}
             invalid={Boolean(lineError?.amount)}
+            // Al registrar, lo primero es la cifra: el teclado ya abierto.
+            autoFocus={!previous && !initial.lines[0]?.amount}
             {...register("lines.0.amount")}
           />
         </Field>
@@ -266,9 +295,13 @@ export function OperationForm({
         <Input id="description" autoComplete="off" {...register("description")} />
       </Field>
 
-      <Field label="Fecha" htmlFor="day" error={errors.day?.message}>
-        <Input id="day" type="date" {...register("day")} />
-      </Field>
+      <DayField
+        value={values.day}
+        today={today()}
+        onChange={(day) => setValue("day", day, { shouldValidate: Boolean(errors.day) })}
+        dateInput={register("day")}
+        error={errors.day?.message}
+      />
 
       {values.hasFee ? (
         <fieldset className="flex flex-col gap-4 rounded-lg bg-surface-raised p-4">
@@ -315,7 +348,7 @@ export function OperationForm({
           </Field>
         </fieldset>
       ) : (
-        <Button type="button" variant="outline" onClick={toggleFee}>
+        <Button type="button" variant="link" className="self-start px-0" onClick={toggleFee}>
           Agregar comisión
         </Button>
       )}
@@ -363,20 +396,24 @@ export function OperationForm({
         </section>
       )}
 
-      <div className="flex flex-col gap-2">
+      {/* Pegado abajo mientras se baja por el formulario, y encima del teclado cuando
+          está abierto (`interactive-widget` en index.html): siempre se alcanza. */}
+      <div className="sticky bottom-0 -mx-4 mt-auto flex flex-col gap-2 border-t border-hairline bg-surface px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]">
         {save.error && (
           <p role="alert" className="text-body text-destructive">
             No se guardó. {writeErrorMessage(save.error)}
           </p>
         )}
-        <Button type="submit" disabled={!online || isSubmitting}>
-          {isSubmitting ? "Guardando…" : "Guardar"}
-        </Button>
         {!online && (
           <p className="text-caption text-ink-muted">
             Sin conexión no se puede registrar: guárdalo cuando haya red.
           </p>
         )}
+        <Button type="submit" disabled={!online || isSubmitting}>
+          {isSubmitting
+            ? "Guardando…"
+            : `${saveLabel}${account && total > 0 ? ` · ${formatMoney(total, account.currency)}` : ""}`}
+        </Button>
       </div>
     </form>
   );

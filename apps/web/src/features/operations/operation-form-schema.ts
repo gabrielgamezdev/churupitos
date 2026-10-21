@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { amountInputText, parseAmountInput } from "./amount-input";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
+
 import type { OperationDraft, OperationKind } from "./operation-draft";
 
 // El formulario de Registrar. Los montos son texto, como se teclean; pasan a céntimos

@@ -78,7 +78,8 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
   };
 
   return (
-    <Screen>
+    // Sin el hueco de la barra: abajo va «Guardar», fijo.
+    <Screen className="pb-0">
       <ScreenHeader {...HEADER} />
       <OperationForm
         operationId={operationId}
