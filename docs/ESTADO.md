@@ -1,9 +1,9 @@
 # Estado
 
-## Ahora: M8 · Entre sobres y cuentas (en planificación)
+## Ahora: M8 · Entre sobres y cuentas (en curso)
 
 Mover entre sobres, traspasar entre cuentas, cambiar de divisa y cubrir un descubierto
-desde la app. El plan, con las decisiones propuestas y por aprobar, está en
+desde la app. El plan, aprobado, está en
 `docs/modulos/M8-entre-sobres-y-cuentas.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.

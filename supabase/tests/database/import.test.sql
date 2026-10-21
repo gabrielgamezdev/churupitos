@@ -5,6 +5,10 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(7);
 
+-- La base puede tener una carga real y, en la nube, lo registrado de verdad en la app:
+-- se vacía todo para empezar sin nada, y el rollback del final lo deja como estaba.
+select public.reset_imported_data(include_app_data => true);
+
 insert into auth.users (id, email) values
   ('00000000-0000-4000-8000-00000000000a', 'miembro.a@ejemplo.test');
 insert into public.household_members (user_id, display_name) values

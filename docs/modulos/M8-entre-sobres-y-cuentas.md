@@ -1,7 +1,6 @@
 # M8 · Entre sobres y cuentas
 
-- **Estado:** en planificación (desde 2026-10-21). Falta que el autor apruebe las
-  decisiones.
+- **Estado:** en curso (desde 2026-10-21). El plan está aprobado.
 - **Objetivo:** registrar desde la app los tres movimientos que todavía solo se hacen en
   el Excel (mover entre sobres, traspasar entre cuentas y cambiar de divisa) y cubrir un
   descubierto en dos toques. Con esto, todo lo del día a día se registra en la app; solo
@@ -23,7 +22,7 @@
 - **La v2** tenía «cubrir ahora» con lo que faltaba, que aquí se recupera. Su canje entre
   sobres en dos monedas sin mover cuentas no existe en el Excel, y no entra.
 
-## Decisiones (propuestas)
+## Decisiones (2026-10-21)
 
 1. **Un solo formulario, «Mover»**, como tercera opción de Registrar: «Gasto · Ingreso ·
    Mover». Se dice de dónde sale (cuenta y sobre) y adónde llega (cuenta y sobre), y el
@@ -69,9 +68,9 @@ Y «Cubrir» en «Para revisar» y en la pantalla de un sobre.
 
 ## Pasos
 
-1. [ ] **Plan aprobado** por el autor.
-2. [ ] **Escribir en la base:** guardar y restaurar los tres tipos, con sus pruebas (la
-   forma de cada uno y lo importado intocable). En local y en la nube.
+1. [x] **Plan aprobado** por el autor (2026-10-21).
+2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar y restaurar los
+   tres tipos, con sus pruebas (la forma de cada uno y lo importado intocable).
 3. [ ] **Mover:** el formulario, con el tipo deducido, la comisión y cómo quedan.
 4. [ ] **El cambio de divisa:** lo que llega y la tasa.
 5. [ ] **Corregir, borrar y deshacer** los tres.

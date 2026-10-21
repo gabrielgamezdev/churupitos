@@ -169,10 +169,10 @@ select throws_ok(
 
 select throws_ok(
   $$ select public.save_operation(
-       gen_random_uuid(), 'exchange', '2026-01-12', 'Cambio',
+       gen_random_uuid(), 'adjustment', '2026-01-12', 'Ajuste',
        jsonb_build_array(pg_temp.line('Banco A', 'Comida', -100))) $$,
-  '23514', 'La app todavía solo registra gastos e ingresos',
-  'por ahora la app solo registra gastos e ingresos'
+  '23514', 'La app no registra ajustes: los trae el Excel',
+  'los ajustes no se registran desde la app'
 );
 
 select throws_ok(

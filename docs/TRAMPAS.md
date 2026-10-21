@@ -102,6 +102,14 @@ nunca confirma: una operación mal formada **pasa sin error y la prueba sale ver
 `set constraints all immediate`**, y registra cada operación con sus asientos en una
 sola sentencia (un `with … insert`), para que se compruebe entera.
 
+### Con uso de verdad en la nube, una prueba que vacía tablas se corta
+Lo registrado en la app guarda quién lo registró, y la base no deja borrar a un miembro
+ni recargar mientras haya algo suyo. En local no se nota, porque la recarga lo borra;
+en la nube, desde que se usa de verdad, `delete from household_members` o
+`reset_imported_data()` fallan. No se pierde nada (cada archivo acaba en `rollback`).
+**Toda prueba que empiece de cero llama antes a
+`reset_imported_data(include_app_data => true)`**, dentro de su transacción.
+
 ### `supabase test db --linked` no encuentra pgTAP en la nube
 Falla con *"function plan(integer) does not exist"* en cada archivo, aunque diga que
 la extensión ya existe: el usuario temporal con el que entra la CLI no tiene

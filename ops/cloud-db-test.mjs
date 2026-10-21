@@ -38,7 +38,18 @@ try {
   for (const file of readdirSync(testsDir).filter((name) => name.endsWith(".sql")).sort()) {
     const text = readFileSync(join(testsDir, file), "utf8");
     // pgTAP se instala en `extensions`, dentro de la transacción de cada archivo.
-    const results = await sql.unsafe(`set search_path to public, extensions;\n${text}`);
+    let results;
+    try {
+      results = await sql.unsafe(`set search_path to public, extensions;\n${text}`);
+    } catch (error) {
+      // Un error a mitad de archivo deja su transacción abierta y abortada: se deshace, se
+      // cuenta como fallo y se sigue con el siguiente. Nada se confirma.
+      await sql.unsafe("rollback");
+      failed += 1;
+      console.log(`${file}: se cortó con un error`);
+      console.log(`  ${error.message}`);
+      continue;
+    }
     const lines = results
       .flat()
       .flatMap((row) => Object.values(row ?? {}))

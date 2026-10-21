@@ -82,7 +82,10 @@ select results_eq(
 );
 
 -- La base local trae las cuentas de seed.sql: se vacía para que la prueba no
--- dependa de ellas. Todo vuelve atrás con el rollback del final.
+-- dependa de ellas. Antes, lo registrado en la app, que guarda quién lo registró: en la
+-- nube, con uso de verdad, no dejaría borrar a sus miembros. Todo vuelve atrás con el
+-- rollback del final.
+select public.reset_imported_data(include_app_data => true);
 delete from public.household_members;
 
 -- Tres cuentas: dos del hogar y una que no lo es.
