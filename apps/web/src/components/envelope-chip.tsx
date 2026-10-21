@@ -14,13 +14,14 @@ export function EnvelopeChip({ name, emoji, isThirdParty = false, className }: E
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap",
+        "inline-flex max-w-full min-w-0 items-center gap-1 whitespace-nowrap",
         isThirdParty ? "text-third-party" : "text-ink-muted",
         className,
       )}
     >
       {!isThirdParty && emoji && <span aria-hidden="true">{emoji}</span>}
-      {name}
+      {/* Un nombre largo se corta con «…» si no cabe, en vez de empujar lo de al lado. */}
+      <span className="truncate">{name}</span>
     </span>
   );
 }

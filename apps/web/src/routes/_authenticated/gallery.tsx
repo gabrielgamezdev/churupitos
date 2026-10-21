@@ -38,6 +38,8 @@ import { OperationSheetContent } from "@/features/ledger/operation-sheet";
 import { RecentRow } from "@/features/ledger/recent-operations";
 import { AmountInput } from "@/components/amount-field";
 import { DayField } from "@/features/operations/day-field";
+import { envelopeOrder } from "@/features/operations/envelope-order";
+import { EnvelopePicker } from "@/features/operations/envelope-picker";
 import { amountInputText } from "@/lib/amount-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Input } from "@/components/ui/input";
@@ -507,6 +509,7 @@ function GalleryPage() {
             <Label htmlFor="gallery-description">Concepto</Label>
             <Input id="gallery-description" defaultValue="Mercado" />
           </div>
+          <GalleryEnvelopePicker />
           <GalleryDayField />
         </Section>
 
@@ -584,6 +587,24 @@ function GalleryDayField() {
         onBlur: async () => undefined,
         ref: () => undefined,
       }}
+    />
+  );
+}
+
+// Los sobres de Registrar, con lo de una cuenta de muestra: uno en descubierto.
+function GalleryEnvelopePicker() {
+  const [envelopeId, setEnvelopeId] = useState("");
+  const { top, rest } = envelopeOrder(SAMPLE_ENVELOPES, [], "");
+  return (
+    <EnvelopePicker
+      top={top}
+      rest={rest}
+      value={envelopeId}
+      onChange={setEnvelopeId}
+      cellByEnvelope={
+        new Map(SAMPLE_ENVELOPE_ROWS.map((row) => [row.envelope.id, row.balanceCents]))
+      }
+      currency="VES"
     />
   );
 }

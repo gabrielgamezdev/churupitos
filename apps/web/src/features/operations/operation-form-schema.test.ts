@@ -6,12 +6,13 @@ import {
   formDraft,
   operationFormSchema,
   operationFormValues,
+  splitPending,
 } from "./operation-form-schema";
 
 const filled = {
   ...emptyOperationForm("2026-10-20", "Banco A", "Comida"),
   description: "Mercado",
-  lines: [{ envelopeId: "Comida", amount: "150" }],
+  total: "150",
 };
 
 describe("el formulario de Registrar", () => {
@@ -20,6 +21,7 @@ describe("el formulario de Registrar", () => {
       kind: "expense",
       day: "2026-10-20",
       accountId: "Banco A",
+      total: "",
       lines: [{ envelopeId: "Comida", amount: "" }],
       hasFee: false,
     });
@@ -31,12 +33,13 @@ describe("el formulario de Registrar", () => {
     const missing = operationFormSchema.safeParse({
       ...filled,
       accountId: "",
-      lines: [{ envelopeId: "", amount: "0" }],
+      total: "0",
+      lines: [{ envelopeId: "", amount: "" }],
     });
     expect(missing.error?.issues.map((issue) => issue.message)).toEqual([
       "Elige la cuenta.",
-      "Elige el sobre.",
       "Escribe un monto mayor que cero.",
+      "Elige el sobre.",
     ]);
   });
 
@@ -64,9 +67,48 @@ describe("el formulario de Registrar", () => {
       lines: [{ envelopeId: "Comida", amountCents: 15000 }],
       fee: { envelopeId: "Comida", amountCents: 150, description: "Comisión" },
     });
-    expect(formDraft({ ...filled, lines: [{ envelopeId: "Comida", amount: "" }] }).lines).toEqual(
-      [],
-    );
+    expect(formDraft({ ...filled, total: "" }).lines).toEqual([]);
+  });
+
+  it("al repartir, cada sobre lleva su parte y entre todas suman el total", () => {
+    const split = {
+      ...filled,
+      total: "100",
+      lines: [
+        { envelopeId: "Comida", amount: "60" },
+        { envelopeId: "Casa", amount: "30" },
+      ],
+    };
+    const messages = (values: typeof split) =>
+      operationFormSchema.safeParse(values).error?.issues.map((issue) => issue.message);
+    expect(splitPending(split)).toBe(1000);
+    expect(messages(split)).toEqual(["Falta repartir parte del monto."]);
+
+    const done = { ...split, lines: [split.lines[0]!, { envelopeId: "Casa", amount: "40" }] };
+    expect(splitPending(done)).toBe(0);
+    expect(messages(done)).toBeUndefined();
+    expect(formDraft(done).lines).toEqual([
+      { envelopeId: "Comida", amountCents: 6000 },
+      { envelopeId: "Casa", amountCents: 4000 },
+    ]);
+
+    const over = { ...split, lines: [split.lines[0]!, { envelopeId: "Casa", amount: "50" }] };
+    expect(splitPending(over)).toBe(-1000);
+    expect(messages(over)).toEqual(["Lo repartido pasa del monto."]);
+  });
+
+  it("al repartir, cada sobre pide su parte", () => {
+    const result = operationFormSchema.safeParse({
+      ...filled,
+      total: "100",
+      lines: [
+        { envelopeId: "Comida", amount: "100" },
+        { envelopeId: "Casa", amount: "" },
+      ],
+    });
+    expect(result.error?.issues.map((issue) => issue.message)).toEqual([
+      "Escribe cuánto va a este sobre.",
+    ]);
   });
 });
 
@@ -106,6 +148,7 @@ describe("corregir una operación guardada", () => {
       accountId: "Banco A",
       day: "2026-10-18",
       description: "Mercado",
+      total: "150,05",
       lines: [
         { envelopeId: "Comida", amount: "120,00" },
         { envelopeId: "Ahorro", amount: "30,05" },

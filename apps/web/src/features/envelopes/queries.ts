@@ -71,3 +71,22 @@ export function envelopeCellsQuery(envelopeId: string) {
     },
   });
 }
+
+export type EnvelopeUsage = { accountId: string; envelopeId: string; uses: number };
+
+// Cuántos gastos e ingresos sueltos tuvo cada celda desde un día: el orden de los sobres
+// en Registrar (M7).
+export function envelopeUsageQuery(since: string) {
+  return queryOptions({
+    queryKey: ["envelope-usage", since],
+    queryFn: async (): Promise<EnvelopeUsage[]> => {
+      const { data, error } = await supabase.rpc("envelope_usage", { since });
+      if (error) throw error;
+      return data.map((row) => ({
+        accountId: row.account_id,
+        envelopeId: row.envelope_id,
+        uses: row.uses,
+      }));
+    },
+  });
+}

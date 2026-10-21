@@ -572,6 +572,14 @@ export type Database = {
           envelope_id: string;
         }[];
       };
+      envelope_usage: {
+        Args: { since: string };
+        Returns: {
+          account_id: string;
+          envelope_id: string;
+          uses: number;
+        }[];
+      };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };

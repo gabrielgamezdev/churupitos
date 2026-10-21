@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { AmountInput } from "@/components/amount-field";
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { Field } from "@/components/field";
-import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,25 +15,43 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
-import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
-import { parseAmountInput } from "@/lib/amount-input";
+import {
+  envelopesQuery,
+  envelopeUsageQuery,
+  type Envelope,
+  type EnvelopeUsage,
+} from "@/features/envelopes/queries";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
-import { today } from "@/lib/months";
+import { addDays, today } from "@/lib/months";
 import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
+import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
 import { DayField } from "./day-field";
+import { budgetOrder, envelopeOrder } from "./envelope-order";
+import { EnvelopePicker } from "./envelope-picker";
 import { rememberAccount, rememberedAccount } from "./last-account";
-import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
+import {
+  draftEntries,
+  projectCells,
+  type CellChange,
+  type EntryInput,
+  type OperationKind,
+} from "./operation-draft";
 import {
   FEE_DESCRIPTION,
   formDraft,
   operationFormSchema,
+  splitPending,
   type OperationFormValues,
 } from "./operation-form-schema";
 import { undoSavedOperation, useSaveOperation, type SaveOperationArgs } from "./save";
 import { savedDetail } from "./saved-detail";
+
+// Cuántos días atrás se mira para ordenar los sobres por uso: unos dos meses.
+const USAGE_DAYS = 60;
 
 const KINDS: { value: OperationKind; label: string }[] = [
   { value: "expense", label: "Gasto" },
@@ -113,10 +130,13 @@ export function OperationForm({
     ? projectCells(draftEntries(formDraft(values)), cells.data, previousEntries(values.accountId))
     : [];
   const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
-  // En el orden del presupuesto, y «Otro» al final (R11).
-  const envelopeOptions = [...(envelopes.data ?? [])].sort(
-    (a, b) => Number(a.isThirdParty) - Number(b.isThirdParty) || a.position - b.position,
-  );
+  const envelopeOptions = budgetOrder(envelopes.data ?? []);
+  // Cuánto se usa cada sobre, fijado al abrir: que no salten mientras se elige (M7).
+  const [since] = useState(() => addDays(today(), -USAGE_DAYS));
+  const usage = useQuery(envelopeUsageQuery(since));
+  const [frozenUsage, setFrozenUsage] = useState<EnvelopeUsage[] | null>(null);
+  if (frozenUsage === null && usage.data) setFrozenUsage(usage.data);
+  const order = envelopeOrder(envelopes.data ?? [], frozenUsage ?? [], values.accountId);
 
   const submit = handleSubmit(async (submitted) => {
     const entries = draftEntries(formDraft(submitted));
@@ -167,8 +187,17 @@ export function OperationForm({
 
   const lineError = errors.lines?.[0];
   const split = lines.fields.length > 1;
-  const total = values.lines.reduce((sum, line) => sum + (parseAmountInput(line.amount) ?? 0), 0);
+  const total = parseAmountInput(values.total) ?? 0;
+  const pending = splitPending(values);
   const addLine = () => lines.append({ envelopeId: "", amount: "" });
+  // Lo que falta, en el sobre de esa línea, sumado a lo que ya tenía.
+  const restHere = (index: number) => {
+    if (pending === null || pending <= 0) return;
+    const current = parseAmountInput(getValues(`lines.${index}.amount`)) ?? 0;
+    setValue(`lines.${index}.amount`, amountInputText(current + pending), {
+      shouldValidate: Boolean(errors.lines),
+    });
+  };
   const saveLabel = previous
     ? "Guardar corrección"
     : values.kind === "expense"
@@ -183,19 +212,17 @@ export function OperationForm({
         onChange={(kind) => setValue("kind", kind)}
       />
 
-      {!split && (
-        <Field label="Monto" htmlFor="amount" error={lineError?.amount?.message}>
-          <AmountInput
-            id="amount"
-            size="hero"
-            currency={account?.currency}
-            invalid={Boolean(lineError?.amount)}
-            // Al registrar, lo primero es la cifra: el teclado ya abierto.
-            autoFocus={!previous && !initial.lines[0]?.amount}
-            {...register("lines.0.amount")}
-          />
-        </Field>
-      )}
+      <Field label="Monto" htmlFor="amount" error={errors.total?.message}>
+        <AmountInput
+          id="amount"
+          size="hero"
+          currency={account?.currency}
+          invalid={Boolean(errors.total)}
+          // Al registrar, lo primero es la cifra: el teclado ya abierto.
+          autoFocus={!previous && !initial.total}
+          {...register("total")}
+        />
+      </Field>
 
       <Field label="Cuenta" htmlFor="account" error={errors.accountId?.message}>
         <NativeSelect
@@ -221,7 +248,7 @@ export function OperationForm({
       </Field>
 
       {split ? (
-        // Un gasto repartido: cada sobre con su parte, y el total debajo.
+        // Un gasto repartido: cada sobre con su parte, y cuánto falta por repartir.
         <fieldset className="flex flex-col gap-3">
           <legend className="pb-2 text-body font-medium">Sobres</legend>
           {lines.fields.map((field, index) => {
@@ -249,12 +276,21 @@ export function OperationForm({
                     <X aria-hidden="true" />
                   </Button>
                 </div>
-                <AmountInput
-                  aria-label={`Monto del sobre ${index + 1}`}
-                  currency={account?.currency}
-                  invalid={Boolean(error?.amount)}
-                  {...register(`lines.${index}.amount`)}
-                />
+                <div className="flex items-center gap-2">
+                  <span className="min-w-0 flex-1">
+                    <AmountInput
+                      aria-label={`Monto del sobre ${index + 1}`}
+                      currency={account?.currency}
+                      invalid={Boolean(error?.amount)}
+                      {...register(`lines.${index}.amount`)}
+                    />
+                  </span>
+                  {pending !== null && pending > 0 && (
+                    <Button type="button" variant="outline" onClick={() => restHere(index)}>
+                      Resto aquí
+                    </Button>
+                  )}
+                </div>
                 {(error?.envelopeId ?? error?.amount) && (
                   <p className="text-body text-destructive">
                     {error?.envelopeId?.message ?? error?.amount?.message}
@@ -266,30 +302,50 @@ export function OperationForm({
           <Button type="button" variant="outline" onClick={addLine}>
             Agregar otro sobre
           </Button>
-          {account && (
-            <p className="flex justify-between px-1 text-body">
-              <span>Total</span>
-              <Money cents={total} currency={account.currency} className="text-amount" />
+          {account && pending !== null && (
+            <p className="flex justify-between gap-3 px-1 text-body">
+              <span>
+                {pending > 0
+                  ? "Falta por repartir"
+                  : pending < 0
+                    ? "Repartido de más"
+                    : "Todo repartido"}
+              </span>
+              {pending !== 0 && (
+                <Money
+                  cents={Math.abs(pending)}
+                  currency={account.currency}
+                  className={cn("text-amount", pending < 0 && "text-destructive")}
+                />
+              )}
             </p>
+          )}
+          {errors.lines?.root?.message && (
+            <p className="px-1 text-body text-destructive">{errors.lines.root.message}</p>
           )}
         </fieldset>
       ) : (
         <div className="flex flex-col gap-1">
-          <Field label="Sobre" htmlFor="envelope" error={lineError?.envelopeId?.message}>
-            <EnvelopeSelect
-              id="envelope"
-              envelopes={envelopeOptions}
-              account={account}
-              cellByEnvelope={cellByEnvelope}
-              invalid={Boolean(lineError?.envelopeId)}
-              {...register("lines.0.envelopeId")}
-            />
-          </Field>
+          <EnvelopePicker
+            top={order.top}
+            rest={order.rest}
+            value={values.lines[0]?.envelopeId ?? ""}
+            onChange={(envelopeId) =>
+              setValue("lines.0.envelopeId", envelopeId, {
+                shouldValidate: Boolean(lineError?.envelopeId),
+              })
+            }
+            cellByEnvelope={cellByEnvelope}
+            currency={account?.currency}
+            error={lineError?.envelopeId?.message}
+          />
           <Button type="button" variant="link" className="self-start px-0" onClick={addLine}>
             Repartir entre varios sobres
           </Button>
         </div>
       )}
+
+      {account && <Remaining changes={changes} envelopeById={envelopeById} account={account} />}
 
       <Field label="Concepto" htmlFor="description">
         <Input id="description" autoComplete="off" {...register("description")} />
@@ -353,49 +409,6 @@ export function OperationForm({
         </Button>
       )}
 
-      {account && changes.length > 0 && (
-        <section aria-labelledby="changes-title" className="flex flex-col gap-2">
-          <h2 id="changes-title" className="text-heading">
-            Cómo queda en {account.name}
-          </h2>
-          <List>
-            {changes.map((change) => {
-              const envelope = envelopeById.get(change.envelopeId);
-              return (
-                <ListRow key={change.envelopeId}>
-                  <span className="flex min-w-0 flex-col items-start gap-1">
-                    {envelope && (
-                      <EnvelopeChip
-                        name={envelope.name}
-                        emoji={envelope.emoji}
-                        isThirdParty={envelope.isThirdParty}
-                        className="text-body"
-                      />
-                    )}
-                    {change.afterCents < 0 && <Badge variant="overdrawn">Descubierto</Badge>}
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end">
-                    <span className="text-caption text-ink-muted">
-                      Ahora <Money cents={change.beforeCents} currency={account.currency} />
-                    </span>
-                    <Money
-                      cents={change.afterCents}
-                      currency={account.currency}
-                      className="text-amount"
-                    />
-                  </span>
-                </ListRow>
-              );
-            })}
-          </List>
-          {changes.some((change) => change.afterCents < 0) && (
-            <p className="px-1 text-caption text-ink-muted">
-              Se puede guardar igual: el descubierto se cubre después.
-            </p>
-          )}
-        </section>
-      )}
-
       {/* Pegado abajo mientras se baja por el formulario, y encima del teclado cuando
           está abierto (`interactive-widget` en index.html): siempre se alcanza. */}
       <div className="sticky bottom-0 -mx-4 mt-auto flex flex-col gap-2 border-t border-hairline bg-surface px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]">
@@ -416,6 +429,48 @@ export function OperationForm({
         </Button>
       </div>
     </form>
+  );
+}
+
+interface RemainingProps {
+  changes: CellChange[];
+  envelopeById: Map<string, Envelope>;
+  account: AccountBalance;
+}
+
+// Cómo queda cada sobre que toca el movimiento, en una línea (M7): «🍔 Comida queda en
+// Bs X». Un descubierto se dice y se guarda igual (R6).
+function Remaining({ changes, envelopeById, account }: RemainingProps) {
+  if (changes.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1 px-1">
+      {changes.map((change) => {
+        const envelope = envelopeById.get(change.envelopeId);
+        return (
+          <p
+            key={change.envelopeId}
+            className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-body text-ink-muted"
+          >
+            {envelope && (
+              <EnvelopeChip
+                name={envelope.name}
+                emoji={envelope.emoji}
+                isThirdParty={envelope.isThirdParty}
+                className={cn("text-body", !envelope.isThirdParty && "text-ink")}
+              />
+            )}
+            queda en
+            <Money cents={change.afterCents} currency={account.currency} className="text-amount" />
+            {change.afterCents < 0 && <Badge variant="overdrawn">Descubierto</Badge>}
+          </p>
+        );
+      })}
+      {changes.some((change) => change.afterCents < 0) && (
+        <p className="text-caption text-ink-muted">
+          Se puede guardar igual: el descubierto se cubre después.
+        </p>
+      )}
+    </div>
   );
 }
 
