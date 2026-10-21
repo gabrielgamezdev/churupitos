@@ -7,6 +7,7 @@ import { envelopeOrder, TOP_ENVELOPES } from "./envelope-order";
 const envelope = (id: string, position: number, isThirdParty = false): Envelope => ({
   id,
   name: id,
+  archived: false,
   emoji: null,
   isThirdParty,
   position,

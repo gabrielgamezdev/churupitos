@@ -10,11 +10,12 @@ import { useCurrentMember } from "@/features/household/use-current-member";
 import { supabase } from "@/lib/supabase";
 import { useOnline } from "@/lib/use-online";
 
-export const Route = createFileRoute("/_authenticated/settings")({
+export const Route = createFileRoute("/_authenticated/settings/")({
   component: SettingsPage,
 });
 
-// Ajustes: lo que no es dinero. Elegir el tema llegará aquí (docs/ESTADO.md).
+// Ajustes: lo que no es dinero, y los sobres y las cuentas (M11). Elegir el tema llegará
+// aquí (docs/ESTADO.md).
 function SettingsPage() {
   const { session } = Route.useRouteContext();
   const member = useCurrentMember(session.user.id);
@@ -54,6 +55,12 @@ function SettingsPage() {
           La app
         </h2>
         <List>
+          <ListRow asChild>
+            <Link to="/settings/catalog">
+              <span className="text-body">Sobres y cuentas</span>
+              <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />
+            </Link>
+          </ListRow>
           <ListRow asChild>
             <Link to="/gallery">
               <span className="text-body">Galería de componentes</span>

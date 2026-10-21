@@ -50,6 +50,9 @@ describe("las secciones de la barra", () => {
     expect(isFormScreen("/operations/abc/edit")).toBe(true);
     expect(isFormScreen("/debts/new")).toBe(true);
     expect(isFormScreen("/budget/2026-12/plan")).toBe(true);
+    expect(isFormScreen("/settings/envelopes/new")).toBe(true);
+    expect(isFormScreen("/settings/accounts/abc")).toBe(true);
+    expect(isFormScreen("/settings/catalog")).toBe(false);
     expect(isFormScreen("/debts/abc/edit")).toBe(true);
     expect(isFormScreen("/debts")).toBe(false);
     expect(isFormScreen("/envelopes/abc")).toBe(false);

@@ -49,6 +49,7 @@ describe("los ingresos del mes", () => {
 const envelope = (id: string, position: number): Envelope => ({
   id,
   name: id,
+  archived: false,
   emoji: null,
   isThirdParty: false,
   position,

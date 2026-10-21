@@ -7,6 +7,7 @@ import { envelopeAmounts, envelopeCellRows, envelopeMonthBounds } from "./envelo
 
 const account = (accountId: string, currency: "VES" | "USD"): AccountBalance => ({
   accountId,
+  archived: false,
   name: accountId,
   currency,
   balanceCents: 0,

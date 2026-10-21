@@ -35,7 +35,9 @@ export function isFormScreen(pathname: string): boolean {
     pathname.startsWith("/operations/") ||
     pathname === "/debts/new" ||
     (pathname.startsWith("/debts/") && pathname.endsWith("/edit")) ||
-    (pathname.startsWith("/budget/") && pathname.endsWith("/plan"))
+    (pathname.startsWith("/budget/") && pathname.endsWith("/plan")) ||
+    pathname.startsWith("/settings/envelopes/") ||
+    pathname.startsWith("/settings/accounts/")
   );
 }
 

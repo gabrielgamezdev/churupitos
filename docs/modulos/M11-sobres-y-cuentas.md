@@ -73,7 +73,8 @@
 3. [x] **El importador** (2026-10-21): archiva lo que está en cero y no se usó ni se
    planeó desde el mes en curso del Excel, y lo dice. En local archivó los 4 sobres; en la
    nube lo hará la próxima recarga.
-4. [ ] **Sobres y cuentas:** la lista, crear, cambiar, archivar y borrar, con «Deshacer».
+4. [x] **Sobres y cuentas** (2026-10-21): la lista, crear, cambiar, archivar y borrar, con
+   «Deshacer», y por qué no se puede cuando todavía no se puede.
 5. [ ] **Lo archivado fuera de las listas:** Registrar, Mover, Cobrar, Planear, Sobres,
    cada moneda e Inicio.
 6. [ ] **En los teléfonos.**

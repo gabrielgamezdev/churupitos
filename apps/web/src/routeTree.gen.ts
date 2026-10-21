@@ -14,7 +14,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
 import { Route as AuthenticatedMovementsRouteImport } from './routes/_authenticated/movements'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
 import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget.index'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
@@ -23,10 +22,16 @@ import { Route as AuthenticatedDebtsNewRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
 import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/envelopes.$envelopeId'
 import { Route as AuthenticatedOperationsNewRouteImport } from './routes/_authenticated/operations.new'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings.index'
+import { Route as AuthenticatedSettingsCatalogRouteImport } from './routes/_authenticated/settings.catalog'
 import { Route as AuthenticatedBudgetMonthPlanRouteImport } from './routes/_authenticated/budget.$month.plan'
 import { Route as AuthenticatedDebtsDebtIdEditRouteImport } from './routes/_authenticated/debts.$debtId.edit'
 import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
 import { Route as AuthenticatedOperationsReceiveIncomeIdRouteImport } from './routes/_authenticated/operations.receive.$incomeId'
+import { Route as AuthenticatedSettingsAccountsAccountIdRouteImport } from './routes/_authenticated/settings.accounts.$accountId'
+import { Route as AuthenticatedSettingsAccountsNewRouteImport } from './routes/_authenticated/settings.accounts.new'
+import { Route as AuthenticatedSettingsEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/settings.envelopes.$envelopeId'
+import { Route as AuthenticatedSettingsEnvelopesNewRouteImport } from './routes/_authenticated/settings.envelopes.new'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -50,11 +55,6 @@ const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
 const AuthenticatedMovementsRoute = AuthenticatedMovementsRouteImport.update({
   id: '/movements',
   path: '/movements',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAccountsAccountIdRoute =
@@ -103,6 +103,18 @@ const AuthenticatedOperationsNewRoute =
     path: '/operations/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsCatalogRoute =
+  AuthenticatedSettingsCatalogRouteImport.update({
+    id: '/settings/catalog',
+    path: '/settings/catalog',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedBudgetMonthPlanRoute =
   AuthenticatedBudgetMonthPlanRouteImport.update({
     id: '/budget/$month/plan',
@@ -127,44 +139,78 @@ const AuthenticatedOperationsReceiveIncomeIdRoute =
     path: '/operations/receive/$incomeId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsAccountsAccountIdRoute =
+  AuthenticatedSettingsAccountsAccountIdRouteImport.update({
+    id: '/settings/accounts/$accountId',
+    path: '/settings/accounts/$accountId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsAccountsNewRoute =
+  AuthenticatedSettingsAccountsNewRouteImport.update({
+    id: '/settings/accounts/new',
+    path: '/settings/accounts/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsEnvelopesEnvelopeIdRoute =
+  AuthenticatedSettingsEnvelopesEnvelopeIdRouteImport.update({
+    id: '/settings/envelopes/$envelopeId',
+    path: '/settings/envelopes/$envelopeId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsEnvelopesNewRoute =
+  AuthenticatedSettingsEnvelopesNewRouteImport.update({
+    id: '/settings/envelopes/new',
+    path: '/settings/envelopes/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/movements': typeof AuthenticatedMovementsRoute
-  '/settings': typeof AuthenticatedSettingsRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
   '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/settings/catalog': typeof AuthenticatedSettingsCatalogRoute
   '/budget/': typeof AuthenticatedBudgetIndexRoute
   '/debts/': typeof AuthenticatedDebtsIndexRoute
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
+  '/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
+  '/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
+  '/settings/envelopes/$envelopeId': typeof AuthenticatedSettingsEnvelopesEnvelopeIdRoute
+  '/settings/envelopes/new': typeof AuthenticatedSettingsEnvelopesNewRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/movements': typeof AuthenticatedMovementsRoute
-  '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
   '/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
   '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/settings/catalog': typeof AuthenticatedSettingsCatalogRoute
   '/budget': typeof AuthenticatedBudgetIndexRoute
   '/debts': typeof AuthenticatedDebtsIndexRoute
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
   '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
+  '/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
+  '/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
+  '/settings/envelopes/$envelopeId': typeof AuthenticatedSettingsEnvelopesEnvelopeIdRoute
+  '/settings/envelopes/new': typeof AuthenticatedSettingsEnvelopesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -172,20 +218,25 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
   '/_authenticated/movements': typeof AuthenticatedMovementsRoute
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/accounts/$accountId': typeof AuthenticatedAccountsAccountIdRoute
   '/_authenticated/currencies/$currency': typeof AuthenticatedCurrenciesCurrencyRoute
   '/_authenticated/debts/new': typeof AuthenticatedDebtsNewRoute
   '/_authenticated/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/_authenticated/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/_authenticated/settings/catalog': typeof AuthenticatedSettingsCatalogRoute
   '/_authenticated/budget/': typeof AuthenticatedBudgetIndexRoute
   '/_authenticated/debts/': typeof AuthenticatedDebtsIndexRoute
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/_authenticated/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/_authenticated/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
+  '/_authenticated/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
+  '/_authenticated/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
+  '/_authenticated/settings/envelopes/$envelopeId': typeof AuthenticatedSettingsEnvelopesEnvelopeIdRoute
+  '/_authenticated/settings/envelopes/new': typeof AuthenticatedSettingsEnvelopesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -194,58 +245,73 @@ export interface FileRouteTypes {
     | '/login'
     | '/gallery'
     | '/movements'
-    | '/settings'
     | '/accounts/$accountId'
     | '/currencies/$currency'
     | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/settings/catalog'
     | '/budget/'
     | '/debts/'
     | '/envelopes/'
+    | '/settings/'
     | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
     | '/operations/receive/$incomeId'
+    | '/settings/accounts/$accountId'
+    | '/settings/accounts/new'
+    | '/settings/envelopes/$envelopeId'
+    | '/settings/envelopes/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/gallery'
     | '/movements'
-    | '/settings'
     | '/'
     | '/accounts/$accountId'
     | '/currencies/$currency'
     | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/settings/catalog'
     | '/budget'
     | '/debts'
     | '/envelopes'
+    | '/settings'
     | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
     | '/operations/receive/$incomeId'
+    | '/settings/accounts/$accountId'
+    | '/settings/accounts/new'
+    | '/settings/envelopes/$envelopeId'
+    | '/settings/envelopes/new'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/gallery'
     | '/_authenticated/movements'
-    | '/_authenticated/settings'
     | '/_authenticated/'
     | '/_authenticated/accounts/$accountId'
     | '/_authenticated/currencies/$currency'
     | '/_authenticated/debts/new'
     | '/_authenticated/envelopes/$envelopeId'
     | '/_authenticated/operations/new'
+    | '/_authenticated/settings/catalog'
     | '/_authenticated/budget/'
     | '/_authenticated/debts/'
     | '/_authenticated/envelopes/'
+    | '/_authenticated/settings/'
     | '/_authenticated/budget/$month/plan'
     | '/_authenticated/debts/$debtId/edit'
     | '/_authenticated/operations/$operationId/edit'
     | '/_authenticated/operations/receive/$incomeId'
+    | '/_authenticated/settings/accounts/$accountId'
+    | '/_authenticated/settings/accounts/new'
+    | '/_authenticated/settings/envelopes/$envelopeId'
+    | '/_authenticated/settings/envelopes/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -288,13 +354,6 @@ declare module '@tanstack/react-router' {
       path: '/movements'
       fullPath: '/movements'
       preLoaderRoute: typeof AuthenticatedMovementsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/accounts/$accountId': {
@@ -353,6 +412,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/catalog': {
+      id: '/_authenticated/settings/catalog'
+      path: '/settings/catalog'
+      fullPath: '/settings/catalog'
+      preLoaderRoute: typeof AuthenticatedSettingsCatalogRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/budget/$month/plan': {
       id: '/_authenticated/budget/$month/plan'
       path: '/budget/$month/plan'
@@ -381,47 +454,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsReceiveIncomeIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/accounts/$accountId': {
+      id: '/_authenticated/settings/accounts/$accountId'
+      path: '/settings/accounts/$accountId'
+      fullPath: '/settings/accounts/$accountId'
+      preLoaderRoute: typeof AuthenticatedSettingsAccountsAccountIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/accounts/new': {
+      id: '/_authenticated/settings/accounts/new'
+      path: '/settings/accounts/new'
+      fullPath: '/settings/accounts/new'
+      preLoaderRoute: typeof AuthenticatedSettingsAccountsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/envelopes/$envelopeId': {
+      id: '/_authenticated/settings/envelopes/$envelopeId'
+      path: '/settings/envelopes/$envelopeId'
+      fullPath: '/settings/envelopes/$envelopeId'
+      preLoaderRoute: typeof AuthenticatedSettingsEnvelopesEnvelopeIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/envelopes/new': {
+      id: '/_authenticated/settings/envelopes/new'
+      path: '/settings/envelopes/new'
+      fullPath: '/settings/envelopes/new'
+      preLoaderRoute: typeof AuthenticatedSettingsEnvelopesNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
   AuthenticatedMovementsRoute: typeof AuthenticatedMovementsRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAccountsAccountIdRoute: typeof AuthenticatedAccountsAccountIdRoute
   AuthenticatedCurrenciesCurrencyRoute: typeof AuthenticatedCurrenciesCurrencyRoute
   AuthenticatedDebtsNewRoute: typeof AuthenticatedDebtsNewRoute
   AuthenticatedEnvelopesEnvelopeIdRoute: typeof AuthenticatedEnvelopesEnvelopeIdRoute
   AuthenticatedOperationsNewRoute: typeof AuthenticatedOperationsNewRoute
+  AuthenticatedSettingsCatalogRoute: typeof AuthenticatedSettingsCatalogRoute
   AuthenticatedBudgetIndexRoute: typeof AuthenticatedBudgetIndexRoute
   AuthenticatedDebtsIndexRoute: typeof AuthenticatedDebtsIndexRoute
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedBudgetMonthPlanRoute: typeof AuthenticatedBudgetMonthPlanRoute
   AuthenticatedDebtsDebtIdEditRoute: typeof AuthenticatedDebtsDebtIdEditRoute
   AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
   AuthenticatedOperationsReceiveIncomeIdRoute: typeof AuthenticatedOperationsReceiveIncomeIdRoute
+  AuthenticatedSettingsAccountsAccountIdRoute: typeof AuthenticatedSettingsAccountsAccountIdRoute
+  AuthenticatedSettingsAccountsNewRoute: typeof AuthenticatedSettingsAccountsNewRoute
+  AuthenticatedSettingsEnvelopesEnvelopeIdRoute: typeof AuthenticatedSettingsEnvelopesEnvelopeIdRoute
+  AuthenticatedSettingsEnvelopesNewRoute: typeof AuthenticatedSettingsEnvelopesNewRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
   AuthenticatedMovementsRoute: AuthenticatedMovementsRoute,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAccountsAccountIdRoute: AuthenticatedAccountsAccountIdRoute,
   AuthenticatedCurrenciesCurrencyRoute: AuthenticatedCurrenciesCurrencyRoute,
   AuthenticatedDebtsNewRoute: AuthenticatedDebtsNewRoute,
   AuthenticatedEnvelopesEnvelopeIdRoute: AuthenticatedEnvelopesEnvelopeIdRoute,
   AuthenticatedOperationsNewRoute: AuthenticatedOperationsNewRoute,
+  AuthenticatedSettingsCatalogRoute: AuthenticatedSettingsCatalogRoute,
   AuthenticatedBudgetIndexRoute: AuthenticatedBudgetIndexRoute,
   AuthenticatedDebtsIndexRoute: AuthenticatedDebtsIndexRoute,
   AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedBudgetMonthPlanRoute: AuthenticatedBudgetMonthPlanRoute,
   AuthenticatedDebtsDebtIdEditRoute: AuthenticatedDebtsDebtIdEditRoute,
   AuthenticatedOperationsOperationIdEditRoute:
     AuthenticatedOperationsOperationIdEditRoute,
   AuthenticatedOperationsReceiveIncomeIdRoute:
     AuthenticatedOperationsReceiveIncomeIdRoute,
+  AuthenticatedSettingsAccountsAccountIdRoute:
+    AuthenticatedSettingsAccountsAccountIdRoute,
+  AuthenticatedSettingsAccountsNewRoute: AuthenticatedSettingsAccountsNewRoute,
+  AuthenticatedSettingsEnvelopesEnvelopeIdRoute:
+    AuthenticatedSettingsEnvelopesEnvelopeIdRoute,
+  AuthenticatedSettingsEnvelopesNewRoute:
+    AuthenticatedSettingsEnvelopesNewRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

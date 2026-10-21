@@ -15,6 +15,7 @@ const envelope = (id: string, name: string, emoji: string | null, position: numb
   emoji,
   isThirdParty: emoji === null,
   position,
+  archived: false,
 });
 
 export const SAMPLE_ENVELOPES: Envelope[] = [

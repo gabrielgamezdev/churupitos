@@ -12,15 +12,18 @@ export type Envelope = {
   emoji: string | null;
   isThirdParty: boolean;
   position: number;
+  // Ya no se usa (M11, R20): sale de las listas, pero sus movimientos lo siguen nombrando.
+  archived: boolean;
 };
 
-// Todos los sobres, en el orden del presupuesto del Excel.
+// Todos los sobres, en el orden del presupuesto del Excel, también los archivados: la
+// historia los nombra. Cada lista esconde los archivados.
 export const envelopesQuery = queryOptions({
   queryKey: ["envelopes"],
   queryFn: async (): Promise<Envelope[]> => {
     const { data, error } = await supabase
       .from("envelopes")
-      .select("id, name, emoji, is_third_party, position")
+      .select("id, name, emoji, is_third_party, position, archived_at")
       .order("position");
     if (error) throw error;
     return data.map((row) => ({
@@ -29,6 +32,7 @@ export const envelopesQuery = queryOptions({
       emoji: row.emoji,
       isThirdParty: row.is_third_party,
       position: row.position,
+      archived: row.archived_at !== null,
     }));
   },
 });

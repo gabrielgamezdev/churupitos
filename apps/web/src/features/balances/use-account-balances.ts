@@ -10,6 +10,8 @@ export type AccountBalance = {
   balanceCents: number;
   // Cuánto de ese saldo es de «Otro» (R11).
   thirdPartyCents: number;
+  // Ya no se usa (M11, R20): está en cero y sale de las listas.
+  archived: boolean;
 };
 
 // El saldo de hoy de cada cuenta, en el orden de las hojas del Excel. La suma la hace
@@ -27,6 +29,7 @@ export const accountBalancesQuery = queryOptions({
         currency: row.currency as Currency,
         balanceCents: row.balance_cents,
         thirdPartyCents: row.third_party_cents,
+        archived: row.archived,
       }));
   },
 });
