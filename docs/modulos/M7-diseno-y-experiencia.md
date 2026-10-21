@@ -88,7 +88,7 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 7. [x] **Registrar, segunda parte** (2026-10-20, la base también en la nube): los
    sobres como botones ordenados por uso (`envelope_usage`), lo que queda en la celda en
    una línea, y repartir el monto de arriba con «Resto aquí» y «Falta por repartir».
-8. [ ] **El color y las pastillas.**
+8. [x] **El color y las pastillas** (2026-10-20): `money-out` pasa a ser `danger`.
 9. [ ] **Inicio:** los descubiertos y las deudas próximas.
 10. [ ] **Las barras del Presupuesto.**
 11. [ ] **Movimientos**, con quién registró cada uno también en los libros.

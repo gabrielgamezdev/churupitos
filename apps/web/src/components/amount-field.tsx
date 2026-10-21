@@ -37,7 +37,8 @@ export function AmountInput({
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none text-ink-muted",
+            "pointer-events-none",
+            currency === "VES" ? "text-ves" : "text-usd",
             hero ? "text-title" : "absolute top-1/2 left-3 -translate-y-1/2",
           )}
         >

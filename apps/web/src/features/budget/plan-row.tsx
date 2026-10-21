@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { StatusBadge } from "@/components/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -41,17 +42,17 @@ export function PlanRow({ line, envelope }: PlanRowData) {
                 className="text-amount-small text-ink-muted"
               />
             )}
-            <span className="text-caption whitespace-nowrap text-ink-muted">
+            <StatusBadge done={line.isDelivered}>
               {line.isDelivered ? (
-                "✅ Entregado"
+                "Entregado"
               ) : partial ? (
                 <>
-                  ⏳ Le llegaron <Money cents={line.allocatedUsdCents} currency="USD" />
+                  Le llegaron <Money cents={line.allocatedUsdCents} currency="USD" />
                 </>
               ) : (
-                "⏳ Pendiente"
+                "Pendiente"
               )}
-            </span>
+            </StatusBadge>
           </span>
           <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />
         </span>

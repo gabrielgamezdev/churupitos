@@ -5,10 +5,12 @@ export type MoneyKind = "movement" | "balance";
 type Tone = "in" | "out" | "overdrawn" | "neutral";
 
 // Lo neutro no pone color: hereda el del texto que lo rodea (una cuenta en cero va
-// en `ink-muted`; la parte de «Otro», en `third-party`).
+// en `ink-muted`; la parte de «Otro», en `third-party`). Lo que sale tampoco (M7):
+// va con su «−» y en el color del texto, para que el rojo quede para los errores y el
+// ámbar del descubierto destaque.
 const TONE_CLASSES: Record<Tone, string> = {
   in: "text-money-in",
-  out: "text-money-out",
+  out: "",
   overdrawn: "text-overdrawn",
   neutral: "",
 };
@@ -16,7 +18,7 @@ const TONE_CLASSES: Record<Tone, string> = {
 interface MoneyProps extends Omit<React.ComponentProps<"span">, "children"> {
   cents: number;
   currency: Currency;
-  // Un movimiento lleva signo y el color de lo que entra o sale. Un saldo va sin
+  // Un movimiento lleva signo, y lo que entra, además, su verde. Un saldo va sin
   // color, salvo por debajo de cero: un descubierto (R6), que no es un error.
   kind?: MoneyKind;
 }

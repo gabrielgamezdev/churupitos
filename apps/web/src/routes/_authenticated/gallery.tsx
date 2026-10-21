@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
+import { StatusBadge } from "@/components/status-badge";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { formatMoney } from "@/lib/money";
@@ -85,10 +86,12 @@ const COLOR_GROUPS: { title: string; tokens: [token: string, use: string][] }[] 
   {
     title: "Marca y monedas",
     tokens: [
-      ["brand", "Acciones, enlaces, foco y los bolívares"],
+      ["brand", "Acciones, enlaces, foco y lo hecho (✅)"],
       ["on-brand", "Texto sobre un relleno verde"],
-      ["brand-soft", "Fondo de la etiqueta «Bs»"],
-      ["usd", "Los dólares"],
+      ["brand-soft", "Fondo de lo elegido y de la pastilla ✅"],
+      ["ves", "Los bolívares: su etiqueta, su símbolo y su borde"],
+      ["ves-soft", "Fondo de la etiqueta «Bs»"],
+      ["usd", "Los dólares: su etiqueta, su símbolo y su borde"],
       ["usd-soft", "Fondo de la etiqueta «$»"],
       ["coin", "El dorado del icono, nunca texto"],
     ],
@@ -96,8 +99,8 @@ const COLOR_GROUPS: { title: string; tokens: [token: string, use: string][] }[] 
   {
     title: "Importes y estados",
     tokens: [
-      ["money-in", "Lo que entra, con su «+»"],
-      ["money-out", "Lo que sale, con su «−»"],
+      ["money-in", "Lo que entra, con su «+»; lo que sale va en el color del texto"],
+      ["danger", "Errores y deudas vencidas"],
       ["overdrawn", "Un saldo por debajo de cero"],
       ["overdrawn-soft", "Fondo de la etiqueta «Descubierto»"],
     ],
@@ -194,7 +197,10 @@ function GalleryPage() {
           </List>
         </Section>
 
-        <Section title="Importes" description="El signo manda; el color acompaña.">
+        <Section
+          title="Importes"
+          description="El signo manda. Lo que sale va en el color del texto; solo lo que entra lleva verde."
+        >
           <List>
             <ListRow>
               <span className="text-body">Movimiento que entra</span>
@@ -234,10 +240,12 @@ function GalleryPage() {
             <Badge variant="overdrawn">Descubierto</Badge>
             <Badge>Comisión</Badge>
             <Badge>≈ fecha</Badge>
+            <StatusBadge done>Cobrado</StatusBadge>
+            <StatusBadge done={false}>Pendiente</StatusBadge>
           </div>
         </Section>
 
-        <Section title="Sobres" description="«Otro» va sin emoji y en su color.">
+        <Section title="Sobres" description="«Otro» va sin emoji, en gris y con borde punteado.">
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-body">
             <EnvelopeChip emoji="🏦" name="Ahorro" />
             <EnvelopeChip emoji="🍱" name="Comida" />

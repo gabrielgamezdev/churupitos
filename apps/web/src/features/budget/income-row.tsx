@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 
 import { ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { StatusBadge } from "@/components/status-badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dayMonthLabel } from "@/lib/months";
@@ -46,9 +47,7 @@ export function IncomeRow({ income, accountName, detail }: IncomeRowProps) {
       <span className="flex shrink-0 items-center gap-1">
         <span className="flex flex-col items-end gap-0.5">
           <Money cents={income.expectedUsdCents} currency="USD" className="text-amount" />
-          <span className="text-caption text-ink-muted">
-            {receipt ? "✅ Cobrado" : "⏳ Pendiente"}
-          </span>
+          <StatusBadge done={Boolean(receipt)}>{receipt ? "Cobrado" : "Pendiente"}</StatusBadge>
         </span>
         {receipt ? (
           <ChevronDown

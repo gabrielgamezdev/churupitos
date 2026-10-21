@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
+import { StatusBadge } from "@/components/status-badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Currency } from "@/lib/money";
@@ -21,20 +22,19 @@ interface DebtRowProps {
   actions?: React.ReactNode;
 }
 
-// Una deuda: su concepto, cuándo vence y cuánto es, en su moneda. Una pagada va con ✅ y
-// en `ink-muted`; una vencida sin pagar dice desde cuándo, en `overdrawn`.
+// Una deuda: su concepto, cuándo vence y cuánto es, en su moneda. Una pagada lleva su
+// pastilla «Pagada» y va en `ink-muted`; una vencida sin pagar dice desde cuándo, en
+// `danger` (M7).
 export function DebtRow({ debt, today, actions }: DebtRowProps) {
   const paid = debt.paidOn !== null;
   const due = debt.dueOn && !paid ? dueLabel(debt.dueOn, today) : null;
   const content = (
     <>
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-body">
-          {paid && <span aria-label="Pagada">✅ </span>}
-          {debt.description}
-        </span>
+        <span className="text-body">{debt.description}</span>
+        {paid && <StatusBadge done>Pagada</StatusBadge>}
         {debt.dueOn && (
-          <span className={cn("text-caption", due?.overdue ? "text-overdrawn" : "text-ink-muted")}>
+          <span className={cn("text-caption", due?.overdue ? "text-danger" : "text-ink-muted")}>
             {dayMonthLabel(debt.dueOn)}
             {due && ` · ${due.text}`}
           </span>

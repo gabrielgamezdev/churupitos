@@ -55,8 +55,6 @@ export function EnvelopePicker({
               className={cn(
                 "flex min-h-tap min-w-0 flex-col items-start justify-center gap-0.5 rounded-md border px-3 py-2 text-left",
                 checked ? "border-brand bg-brand-soft" : "border-line-strong bg-surface-raised",
-                // «Otro» se distingue también por el borde, no solo por el color (R11).
-                envelope.isThirdParty && "border-dashed",
               )}
             >
               <EnvelopeChip

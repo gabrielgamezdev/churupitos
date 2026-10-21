@@ -33,7 +33,12 @@ export function CurrencyCard({
   return (
     <article
       aria-label={CURRENCY_NAMES[currency]}
-      className={cn("flex flex-col gap-2 rounded-lg bg-surface-raised p-4 shadow-card", className)}
+      className={cn(
+        "flex flex-col gap-2 rounded-lg border-l-4 bg-surface-raised p-4 shadow-card",
+        // La moneda se reconoce por su color en el borde y la etiqueta, nunca en la cifra.
+        currency === "VES" ? "border-ves" : "border-usd",
+        className,
+      )}
     >
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-heading">{CURRENCY_NAMES[currency]}</h2>

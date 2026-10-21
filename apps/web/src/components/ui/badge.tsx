@@ -13,7 +13,11 @@ const badgeVariants = cva(
         plain: "bg-surface-sunken text-ink-muted",
         ves: "bg-ves-soft text-ves",
         usd: "bg-usd-soft text-usd",
-        thirdParty: "bg-third-party-soft text-third-party",
+        // «Otro» se distingue también por el borde, no solo por el color (R11).
+        thirdParty: "border border-dashed border-third-party bg-third-party-soft text-third-party",
+        // ✅ y ⏳ del Excel: lo cobrado o entregado, y lo pendiente (`StatusBadge`).
+        done: "bg-brand-soft text-brand",
+        pending: "bg-surface-sunken text-ink-muted",
         overdrawn: "bg-overdrawn-soft text-overdrawn",
       },
     },

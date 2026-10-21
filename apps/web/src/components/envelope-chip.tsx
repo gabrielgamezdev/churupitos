@@ -15,7 +15,10 @@ export function EnvelopeChip({ name, emoji, isThirdParty = false, className }: E
     <span
       className={cn(
         "inline-flex max-w-full min-w-0 items-center gap-1 whitespace-nowrap",
-        isThirdParty ? "text-third-party" : "text-ink-muted",
+        // «Otro», sin emoji y con borde punteado: se distingue sin depender del color.
+        isThirdParty
+          ? "rounded-sm border border-dashed border-third-party px-1 text-third-party"
+          : "text-ink-muted",
         className,
       )}
     >

@@ -37,15 +37,15 @@
   --brand-soft: light-dark(#d7f0e3, #0f3628);
   --coin: #fbbf24;
   --money-in: light-dark(#11743a, #4ade80);
-  --money-out: light-dark(#b42318, #f87171);
+  --danger: light-dark(#b42318, #f87171);
   --overdrawn: light-dark(#a14a07, #fbbf24);
   --overdrawn-soft: light-dark(#fdebd5, #3a2a07);
-  --third-party: light-dark(#46597a, #a9bddf);
-  --third-party-soft: light-dark(#e5ebf4, #1d2636);
-  --ves: var(--brand);
-  --ves-soft: var(--brand-soft);
-  --usd: light-dark(#855300, #f9cf55);
-  --usd-soft: light-dark(#fbefcf, #3a2c08);
+  --third-party: light-dark(#5c6470, #a7adb8);
+  --third-party-soft: light-dark(#eceef1, #22262d);
+  --ves: light-dark(#2e5aac, #8fa8f5);
+  --ves-soft: light-dark(#e7edf8, #1e2a45);
+  --usd: light-dark(#6e46b0, #c3a6f2);
+  --usd-soft: light-dark(#efe9f8, #2c2342);
   --focus-ring: var(--brand);
   --scrim: light-dark(rgb(19 32 26 / 0.45), rgb(0 0 0 / 0.6));
 }
@@ -66,7 +66,7 @@
   --color-brand-soft: var(--brand-soft);
   --color-coin: var(--coin);
   --color-money-in: var(--money-in);
-  --color-money-out: var(--money-out);
+  --color-danger: var(--danger);
   --color-overdrawn: var(--overdrawn);
   --color-overdrawn-soft: var(--overdrawn-soft);
   --color-third-party: var(--third-party);
@@ -94,7 +94,7 @@
   --color-muted-foreground: var(--ink-muted);
   --color-accent: var(--surface-sunken);
   --color-accent-foreground: var(--ink);
-  --color-destructive: var(--money-out);
+  --color-destructive: var(--danger);
   --color-border: var(--hairline);
   --color-input: var(--line-strong);
   --color-ring: var(--focus-ring);

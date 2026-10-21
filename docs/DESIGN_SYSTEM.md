@@ -26,7 +26,9 @@ Los ejemplos son inventados: «Banco A», sobres genéricos y cifras redondas (r
 - Formato venezolano: punto para los miles, coma para los céntimos, siempre dos
   decimales, y el símbolo delante con un espacio: `Bs 12.500,00`, `$ 340,00`. barrido:permitido (cifra inventada)
 - **Movimiento:** con signo siempre, el menos tipográfico (`−`, no `-`) y delante del
-  símbolo: `+Bs 400,00`, `−Bs 320,00`. Lo que entra en `money-in`; lo que sale en `money-out`.
+  símbolo: `+Bs 400,00`, `−Bs 320,00`. Lo que entra, en `money-in`; lo que sale, en el color
+  del texto: el signo ya lo dice, el rojo queda para los errores y el ámbar del descubierto
+  destaca más (M7).
 - **Saldo:** sin signo y en `ink`. Por debajo de cero, en `overdrawn`, con su `−` y la
   etiqueta «Descubierto» donde quepa.
 - Toda cifra va con números tabulares, para que los céntimos queden en columna.
@@ -52,26 +54,30 @@ tokens, así que nunca preguntan en qué tema están.
 | `brand-soft` | `#d7f0e3` | `#0f3628` | Fondo tintado detrás de texto `brand` |
 | `coin` | `#fbbf24` | `#fbbf24` | El dorado de la moneda del icono. Solo el icono y la portada |
 | `money-in` | `#11743a` | `#4ade80` | Importe de lo que entra, con su `+` |
-| `money-out` | `#b42318` | `#f87171` | Importe de lo que sale, con su `−` |
+| `danger` | `#b42318` | `#f87171` | Errores y deudas vencidas. Nunca un importe que sale |
 | `overdrawn` | `#a14a07` | `#fbbf24` | Saldo por debajo de cero |
 | `overdrawn-soft` | `#fdebd5` | `#3a2a07` | Fondo de la etiqueta «Descubierto» |
-| `third-party` | `#46597a` | `#a9bddf` | El dinero de «Otro», que no es del hogar (`R11`) |
-| `third-party-soft` | `#e5ebf4` | `#1d2636` | Fondo de la etiqueta de «Otro» |
-| `ves` | = `brand` | = `brand` | Identidad de los bolívares: la etiqueta «Bs» |
-| `ves-soft` | = `brand-soft` | = `brand-soft` | Fondo de la etiqueta «Bs» |
-| `usd` | `#855300` | `#f9cf55` | Identidad de los dólares: la etiqueta «$», el dorado oscurecido para leerse |
-| `usd-soft` | `#fbefcf` | `#3a2c08` | Fondo de la etiqueta «$» |
+| `third-party` | `#5c6470` | `#a7adb8` | El dinero de «Otro», que no es del hogar (`R11`): un gris neutro, siempre con su borde punteado |
+| `third-party-soft` | `#eceef1` | `#22262d` | Fondo de la etiqueta de «Otro» |
+| `ves` | `#2e5aac` | `#8fa8f5` | Identidad de los bolívares: la etiqueta «Bs», el símbolo del monto y el borde de su tarjeta |
+| `ves-soft` | `#e7edf8` | `#1e2a45` | Fondo de la etiqueta «Bs» |
+| `usd` | `#6e46b0` | `#c3a6f2` | Identidad de los dólares: la etiqueta «$», el símbolo del monto y el borde de su tarjeta |
+| `usd-soft` | `#efe9f8` | `#2c2342` | Fondo de la etiqueta «$» |
 | `focus-ring` | = `brand` | = `brand` | Anillo de foco: 2px sólidos, separados 2px del control |
 | `scrim` | `ink` al 45 % | negro al 60 % | El velo que oscurece la pantalla detrás de una hoja |
 
-- Entre los importes, `money-in` y `money-out` son **solo para movimientos**: un saldo
-  positivo nunca lleva color.
+- Entre los importes, `money-in` es **solo para lo que entra**: un saldo positivo y lo
+  que sale nunca llevan color.
+- **Bs en azul y $ en violeta** (M7), solo en su etiqueta, el símbolo del monto y el
+  borde de su tarjeta: nunca en la cifra. Así la moneda se reconoce de un vistazo y ni
+  se confunde con la marca (antes Bs era `brand`) ni el $ con el ámbar del descubierto
+  (antes era dorado). Medidos: dan al menos 5,5:1 sobre sus fondos en los dos temas.
 - Sobre un relleno `brand`, el texto es `on-brand`, nunca un blanco escrito a mano.
 - `coin` nunca es texto ni un estado.
 - En el código, cada token es una clase de Tailwind: `bg-surface`, `text-ink-muted`,
   `border-hairline`… Los componentes de shadcn usan sus propios nombres (`primary`,
   `muted-foreground`…), que apuntan a estos; el código propio usa los de esta tabla.
-  `destructive` es `money-out`: el rojo de los errores de un formulario.
+  `destructive` es `danger`: el rojo de los errores.
 
 ## Temas
 
@@ -128,7 +134,7 @@ estirar y recargar), `ScreenHeader`, `Toaster` (el aviso de abajo), `Field` y `A
 formularios; el monto, escrito como en un cajero) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
-`money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
+`danger`, solo para lo que no se deshace; hoy nada lo usa: borrar se deshace), `Badge` (las etiquetas), `Skeleton`,
 `Collapsible`, `Input`, `Label`, `NativeSelect` (una lista del sistema con el aspecto de
 `Input`), `Segmented` (una de pocas opciones a la vista, como Gasto o Ingreso) y `Sheet`
 (una hoja que sube desde abajo). Los de cada pantalla viven con ella en `features/` (`CurrencyCard` y
@@ -144,10 +150,11 @@ se entró directo por la dirección, va a la pantalla de arriba.
 
 | Componente | Qué es |
 |---|---|
-| **Money** | Pinta un importe: movimiento con signo, saldo o descubierto |
-| **CurrencyCard** | Una moneda en el inicio: lo del hogar (sin «Otro») en grande; debajo, el total con «Otro» si lo hay y cuántas cuentas |
+| **Money** | Pinta un importe: movimiento con signo (lo que entra, en `money-in`), saldo o descubierto |
+| **StatusBadge** | Los ✅ y ⏳ del Excel en una pastilla que además lo dice con palabras: «✅ Cobrado», «⏳ Pendiente». Lo hecho, en `brand` sobre `brand-soft`; lo pendiente, en `ink-muted` sobre `surface-sunken` |
+| **CurrencyCard** | Una moneda en el inicio, con el borde izquierdo en su color (`ves` o `usd`): lo del hogar (sin «Otro») en grande; debajo, el total con «Otro» si lo hay y cuántas cuentas |
 | **AccountRow** | Una cuenta en la lista de su moneda, con su parte de «Otro» si la tiene. Las cuentas en cero siguen, en `ink-muted` |
-| **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji y en `third-party` |
+| **EnvelopeChip** | El sobre de un movimiento: su emoji y su nombre. «Otro», sin emoji, en `third-party` y dentro de un borde punteado |
 | **EnvelopeSplit** | Los sobres de una cuenta, con los descubiertos marcados; suman el saldo de la cuenta |
 | **EnvelopeRow** | Un sobre en la lista de sobres: lo que tiene en cada moneda, una debajo de la otra y sin sumarlas. Los sobres en cero van aparte, plegados |
 | **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`). Al tocar una fila, su operación se abre en un `OperationSheet` |
@@ -157,11 +164,11 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
-| **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y ✅ cobrado o ⏳ pendiente. Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |
-| **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y ✅ entregado, ⏳ con lo que le llegó o ⏳ pendiente (`R18`); debajo, la fuente de fondos y la acción. Lleva al sobre. Los de $0 van aparte, plegados |
+| **IncomeRow** | Un ingreso esperado: su emoji, lo esperado en $ y su `StatusBadge`, «Cobrado» o «Pendiente». Uno cobrado dice cuándo, en qué cuenta y, en Bs, a qué tasa (`R8`); al tocarlo se despliega su reparto |
+| **PlanRow** | Un sobre en el plan del mes: lo planeado en $, lo que le llegó en Bs (`R10`) y su `StatusBadge`: «Entregado», «Le llegaron $ X» o «Pendiente» (`R18`); debajo, la fuente de fondos y la acción. Lleva al sobre. Los de $0 van aparte, plegados |
 | **DebtTotals** | Lo pendiente: lo que deben y lo que les deben, cada moneda por su lado y sin las pagadas |
 | **DebtGroupList** | Lo que deben en un mes de vencimiento (o sin fecha): su nombre y lo que suma arriba, y sus cuotas |
-| **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
+| **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `danger`) e importe en su moneda. Una pagada lleva su pastilla «✅ Pagada» y va en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
 | **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que no pregunta: deja «Deshacer» en el aviso. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
 | **DebtForm** | Agregar o corregir una deuda: quién debe, concepto, moneda, monto y fecha límite. Al agregar, «Agregar en cuotas»: cuántas y cada cuánto, con la lista de las cuotas y sus fechas |
 | **OperationForm** | Registrar: Gasto o Ingreso; el monto, protagonista en `display-amount` y ya con el teclado abierto; la cuenta (la de la pantalla de la que se viene o, si no, la última que usó esa persona en ese teléfono); el sobre (`EnvelopePicker`) y, debajo, cómo queda en una línea («🍔 Comida queda en Bs X»), con «Descubierto» si pasa de cero, que se guarda igual (`R6`); el concepto; la fecha (`DayField`), y «Agregar comisión» plegada como enlace. «Repartir entre varios sobres» da a cada sobre su parte del monto de arriba, con «Resto aquí» en cada uno y «Falta por repartir» debajo: hasta que no falte nada, no se guarda. «Guardar gasto · Bs X» va pegado abajo, también encima del teclado. Sin red, se apaga y lo dice |
@@ -213,6 +220,7 @@ provisional desde M0.
 
 - Cada texto da al menos **4,5:1** sobre los fondos en los que se usa, en los dos temas;
   los bordes de control y el foco, **3:1**.
-- `money-in` y `money-out` no se distinguen solo por el color: el signo lo dice.
+- Lo que entra y lo que sale no se distinguen solo por el color: el signo lo dice. Las
+  monedas, tampoco: su símbolo. Ni «Otro»: va sin emoji y con borde punteado.
 - Todo lo que se toca mide al menos `tap`, y el foco de teclado siempre se ve.
 - Las animaciones se apagan con `prefers-reduced-motion`.
