@@ -1,6 +1,12 @@
 # M6 · Gastos, ingresos y deudas
 
-- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
+- **Estado:** cerrado el 2026-10-20 (empezó el mismo día). Congelado: lo que siga
+  vigente vive en `docs/DOMINIO.md`, `docs/DESIGN_SYSTEM.md`, el ADR 0008, el código de
+  `apps/web` y las migraciones.
+- **Resultado:** gastos, ingresos y deudas se registran, se corrigen y se borran desde
+  la app, en paralelo con el Excel. Se cerró sin completar los días de prueba, por
+  decisión del autor: lo que encontraron al usarlo (un formulario más bonito, corregir
+  sin buscar) es de diseño, y el módulo siguiente, M7, rehace justo esas pantallas.
 - **Objetivo:** registrar desde el teléfono un gasto o un ingreso suelto, con su
   comisión si la tiene, y corregirlo o borrarlo, con las reglas del Excel: se puede
   quedar en descubierto (`R6`) y la comisión se apunta a mano (`R16`). Y agregar,
@@ -29,7 +35,7 @@
 - **Antes de guardar se ve lo que queda** en cada sobre de esa cuenta. Si alguno queda
   en descubierto, lo dice, y se guarda igual (`R6`).
 - **Un ingreso, aquí, es uno suelto**: un reintegro, un regalo. Cobrar un ingreso
-  esperado del presupuesto y repartirlo es de M8.
+  esperado del presupuesto y repartirlo es de M9.
 - **Corregir y borrar**, desde el detalle de la operación en el libro, y solo lo
   registrado en la app. Lo importado no se toca hasta el corte: viene del Excel, y la
   siguiente recarga lo devolvería como estaba.
@@ -114,7 +120,8 @@ probar a medias. Se adelanta aquí lo que era M10, y se prueba todo junto.
    borrar, con sus pruebas; el candado del corte con las deudas; el importador.
 8. [x] **Agregar y corregir deudas** (2026-10-20), con las cuotas en lote.
 9. [x] **Marcar pagada y borrar** (2026-10-20), con «Registrar el pago».
-10. [ ] **En los teléfonos**: lo usan unos días.
+10. [x] **En los teléfonos** (2026-10-20): lo usaron un día en paralelo con el Excel.
+    Funciona; lo que dijeron pasa a M7 · Diseño y experiencia.
 
 Cada paso termina con su commit; los pasos 9 y 10 terminan además con un push.
 
@@ -126,8 +133,8 @@ Cada paso termina con su commit; los pasos 9 y 10 terminan además con un push.
 
 ## Fuera de M6
 
-- Cobrar un ingreso esperado y repartirlo (M8).
-- Traspasos entre cuentas, préstamos entre sobres y cambios de divisa (M7), y con
+- Cobrar un ingreso esperado y repartirlo (M9).
+- Traspasos entre cuentas, préstamos entre sobres y cambios de divisa (M8), y con
   ellos cubrir un descubierto en el momento.
 - Comisiones automáticas (`D4`) y el motivo de cada comisión.
 - Registrar sin conexión, y corregir lo importado antes del corte.

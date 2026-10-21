@@ -72,12 +72,12 @@ Cada paso termina con su commit; los pasos 3 y 4 terminan además con un push.
 
 - **Pantallas:** 1 (Deudas), que sustituye a la de «en construcción».
 - **Nada se escribe**: ni un formulario. Crear una deuda, pagar una cuota y quitarla es
-  de M10.
+  de M6 (se adelantó desde el M10 de entonces).
 - **Datos:** una columna nueva; ninguna tabla nueva.
 
 ## Fuera de M5
 
-- Crear, pagar y quitar deudas (M10).
+- Crear, pagar y quitar deudas (M6, adelantado desde el M10 de entonces).
 - Abonos parciales y una ficha por deuda, como en la v2: aquí una cuota se paga entera.
 - Las pagadas de meses anteriores: el Excel las borraba hasta septiembre.
 - Avisos de vencimiento y deudas en el inicio.

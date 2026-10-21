@@ -30,7 +30,7 @@ cobro), `budget_summary` (el plan de cada sobre con lo que recibió, `R10`, `R18
 
 La v2 tenía una pantalla del mes con dos tarjetas (lo que se espera y ha entrado; lo
 planeado y lo que ya les llegó a los sobres), los ingresos y el plan por sobre. Lo que
-escribía (cobrar, editar el plan, abrir y cerrar el mes) es de M8 y M9.
+escribía (cobrar, editar el plan, abrir y cerrar el mes) es de M9 y M10.
 
 ## Decisiones (2026-10-19)
 
@@ -40,7 +40,7 @@ escribía (cobrar, editar el plan, abrir y cerrar el mes) es de M8 y M9.
 - **Una sola pantalla, la del mes.** Abre en el mes en curso y se recorre hacia atrás
   hasta el primer mes importado. **Hacia delante llega al mes siguiente si ya tiene
   presupuesto**, porque se planifica antes de que empiece (`docs/DOMINIO.md` §2); ese
-  mes dice que todavía es planificación. Escribir el plan llega en M8.
+  mes dice que todavía es planificación. Escribir el plan llega en M9.
 - **Primero los ingresos del mes**: lo que se espera, lo cobrado y lo que falta, en $,
   con las mismas cuentas que el Excel (lo cobrado es la suma de los ✅; lo que falta, la
   de los ⏳). Debajo, cada ingreso con su emoji, lo esperado y ✅/⏳. Uno cobrado dice
@@ -99,7 +99,7 @@ la pantalla llegue entera a los teléfonos.
 
 ## Fuera de M4
 
-- Cobrar un ingreso, repartirlo y editar el plan (M8), y abrir el mes siguiente (M9).
+- Cobrar un ingreso, repartirlo y editar el plan (M9), y abrir el mes siguiente (M10).
 - Las deudas y los deudores (M5): en M4 su sección solo dice que está en construcción.
 - El restante de cada sobre en la fila del plan: está a un toque, en su pantalla.
 - La tasa del día o del mes: solo existe la de cada cobro (`R8`).
