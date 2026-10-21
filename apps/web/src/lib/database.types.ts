@@ -585,7 +585,10 @@ export type Database = {
         };
         Returns: string;
       };
-      set_debt_paid: { Args: { debt_id: string; paid: boolean }; Returns: undefined };
+      set_debt_paid: {
+        Args: { debt_id: string; paid: boolean; paid_day?: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;

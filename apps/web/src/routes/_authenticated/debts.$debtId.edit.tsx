@@ -7,7 +7,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DebtForm } from "@/features/debts/debt-form";
-import { debtFormValues } from "@/features/debts/debt-form-schema";
+import { debtFormValues, type DebtInput } from "@/features/debts/debt-form-schema";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 
 export const Route = createFileRoute("/_authenticated/debts/$debtId/edit")({
@@ -54,6 +54,15 @@ function EditDebtForm({ debt }: { debt: Debt }) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const [initial] = useState(() => debtFormValues(debt));
+  // Como estaba al abrir: lo que «Deshacer» vuelve a guardar.
+  const [previous] = useState((): DebtInput => ({
+    id: debt.id,
+    direction: debt.direction,
+    description: debt.description,
+    amount_cents: debt.amountCents,
+    currency: debt.currency,
+    due_on: debt.dueOn,
+  }));
 
   const close = () => {
     if (canGoBack) router.history.back();
@@ -63,7 +72,13 @@ function EditDebtForm({ debt }: { debt: Debt }) {
   return (
     <Screen>
       <ScreenHeader {...HEADER} />
-      <DebtForm ids={[debt.id]} initial={initial} allowInstallments={false} onSaved={close} />
+      <DebtForm
+        ids={[debt.id]}
+        initial={initial}
+        allowInstallments={false}
+        previous={previous}
+        onSaved={close}
+      />
     </Screen>
   );
 }

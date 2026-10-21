@@ -150,6 +150,15 @@ nada» y se busca el fallo en el almacén.
 **`gcTime` y `maxAge` comparten constante, de menos de 24 días**
 (`apps/web/src/lib/query-client.ts`).
 
+### Una prueba en el navegador que escribe deprisa dispara el freno de consultas
+Cada escritura vuelve a pedir todo lo que hay en pantalla, y el freno (ADR 0007) corta
+**todas** las consultas al pasar de 60 en un minuto, hasta recargar. Una prueba con
+Puppeteer que guarda, deshace y corrige seguido lo pasa: la siguiente escritura falla
+con «Inténtalo de nuevo» y se busca el fallo en la función de la base. Peor: si falla
+un «Deshacer», la base local queda a medias.
+**Recargar la página entre bloques de escrituras, comparar la base antes y después, y
+si algo quedó a medias, `npm run import:load`.**
+
 ### Sin red y con la sesión caducada, la app se queda en blanco o va al login
 La sesión de Supabase caduca cada hora. Sin red, `getSession` intenta renovarla, se
 queda segundos reintentando y acaba diciendo que no hay sesión. Y TanStack Query

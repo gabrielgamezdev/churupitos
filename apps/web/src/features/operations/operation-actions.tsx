@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
+import { writeErrorMessage } from "@/lib/write-error";
 
-import { useDeleteOperation, writeErrorMessage } from "./save";
+import { useDeleteOperation } from "./save";
 
 interface OperationActionsProps {
   operationId: string;

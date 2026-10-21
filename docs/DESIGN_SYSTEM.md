@@ -113,7 +113,7 @@ tabulares.
   selector de mes; `radius-lg` 16 px en tarjetas y bloques de lista; `radius-pill` en
   el aviso de sin conexión. En el código, `rounded-sm`, `-md`, `-lg` y `-full`.
 - **Sombra:** solo llevan `shadow-card` las tarjetas de moneda del inicio, el círculo
-  del ＋ de la barra y la opción elegida entre Gasto e Ingreso. Nada flota sobre la
+  del ＋ de la barra, el aviso de abajo y la opción elegida entre Gasto e Ingreso. Nada flota sobre la
   pantalla: un botón flotante tapa la columna de los importes. En
   oscuro es un filo claro, no una sombra. Lo demás son listas: filas separadas por `hairline`
   dentro de un bloque `surface-raised`.
@@ -124,7 +124,7 @@ Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
-estirar y recargar), `ScreenHeader`, `Field` y `AmountInput` (los campos de los
+estirar y recargar), `ScreenHeader`, `Toaster` (el aviso de abajo), `Field` y `AmountInput` (los campos de los
 formularios) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
@@ -153,6 +153,7 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **LedgerList** | El libro del mes, por días y con lo más nuevo arriba: concepto, el sobre (en una cuenta) o la cuenta (en un sobre), importe y restante, cada uno en su moneda. Marca las comisiones (`R16`) y las fechas aproximadas (`R15`). Al tocar una fila, su operación se abre en un `OperationSheet` |
 | **Sheet** | Una hoja que sube desde abajo sobre un velo `scrim`, en `surface-raised` y con las esquinas de arriba en `radius-lg`, hasta el 90 % del alto. Siempre con título, y encima, si hace falta, qué es en `label`. Se cierra con la X, tocando fuera o con el atrás de Android (`CloseWatcher`). Ningún campo se enfoca solo, y con la hoja abierta estirar no recarga. Es para mirar algo y actuar sobre ello; un formulario va a pantalla completa |
 | **OperationSheet** | Un movimiento entero, desde cualquier lista: qué es y el día, el concepto como título, el total en `display-amount` (en un gasto o un ingreso), sus asientos con cuenta y sobre (en un cobro, también su valor en $, `R9`) y quién lo registró y cuándo. Uno de la app lleva «Corregir» y «Borrar», que se confirma ahí mismo con el botón `destructive`; uno importado dice que, hasta el corte, se corrige en el Excel |
+| **Toaster** | El aviso de abajo, después de guardar: qué pasó, debajo lo que cambió por ello («🍔 Comida queda en Bs X») y, si se puede, «Deshacer» en `brand`. En `surface-raised` con `shadow-card`, justo encima de la barra (en un formulario, pegado al borde). Uno a la vez: el nuevo reemplaza al anterior. Con «Deshacer» dura 10 s, y si no, 5; tocarlo detiene la cuenta, y la X lo cierra. Deshacer deja el aviso «Deshecho», o dice por qué no se pudo |
 | **RecentOperations** | «Últimos registrados» en Inicio: las cinco últimas operaciones registradas en la app, por cuándo se registraron. Cada una con su concepto, su sobre (o cuántos) y su cuenta, y a la derecha el importe, el día y quién. Al tocarla se abre su `OperationSheet` |
 | **MonthPicker** | El mes del libro, con el saldo al empezar (`R7`) y al cerrar: una línea por moneda. En el presupuesto va sin saldos, y sus flechas se apagan donde no hay más meses |
 | **BudgetTotals** | Las filas «Total» de un bloque del presupuesto, en $ y una al lado de la otra: se espera, cobrado y falta |
@@ -191,12 +192,15 @@ se entró directo por la dirección, va a la pantalla de arriba.
   cobrado o entregado y lo pendiente, también como en el Excel. Nunca de adorno en
   títulos, botones ni avisos.
 - «Otro» va entre comillas latinas dentro de una frase.
+- Un aviso dice qué pasó, corto y en pasado («Gasto guardado», «Marcada como pagada»), y
+  lo que se acaba de guardar se arregla con su «Deshacer», no preguntando antes.
 
 ## Iconos
 
 Lucide (`lucide-react`), con trazo de 2 px, en 20 o 24 px y del color del texto que
-acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw` y los de la barra
-(`mail`, `hand-coins`, `house`, `chart-pie` y `settings`). Un aviso del cuadre lleva
+acompañan: flecha atrás, chevrones del mes, `wifi-off`, `refresh-cw`, los de la barra
+(`house`, `mail`, `plus`, `chart-pie` y `hand-coins`), el engranaje de Ajustes
+(`settings`) y la `x` que cierra una hoja o un aviso. Un aviso del cuadre lleva
 `triangle-alert` en `overdrawn`. El logotipo es el icono de la app
 (`apps/web/public/favicon.svg`): un sobre sobre `brand` con la moneda en `coin`. Es
 provisional desde M0.

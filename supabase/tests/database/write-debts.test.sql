@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(14);
+select plan(16);
 
 -- La base local puede tener una carga real del importador: se vacía aquí, y el
 -- rollback del final la deja como estaba.
@@ -90,6 +90,17 @@ select is(
   (select paid_on from public.debts where id = '00000000-0000-4000-d000-0000000000d0'),
   null,
   'desmarcada, vuelve a deberse'
+);
+
+select lives_ok(
+  $$ select public.set_debt_paid('00000000-0000-4000-d000-0000000000d0', true, '2026-10-03') $$,
+  'deshacer el desmarcado la vuelve a marcar pagada'
+);
+
+select is(
+  (select paid_on from public.debts where id = '00000000-0000-4000-d000-0000000000d0'),
+  '2026-10-03'::date,
+  'con el día en que se pagó, no con el de hoy'
 );
 
 select throws_ok(

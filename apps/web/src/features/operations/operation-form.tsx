@@ -17,7 +17,9 @@ import { accountCellsQuery } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
+import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
+import { writeErrorMessage } from "@/lib/write-error";
 
 import { parseAmountInput } from "./amount-input";
 import { draftEntries, projectCells, type EntryInput, type OperationKind } from "./operation-draft";
@@ -27,7 +29,8 @@ import {
   operationFormSchema,
   type OperationFormValues,
 } from "./operation-form-schema";
-import { useSaveOperation, writeErrorMessage } from "./save";
+import { undoSavedOperation, useSaveOperation, type SaveOperationArgs } from "./save";
+import { savedDetail } from "./saved-detail";
 
 const KINDS: { value: OperationKind; label: string }[] = [
   { value: "expense", label: "Gasto" },
@@ -41,8 +44,9 @@ interface OperationFormProps {
   // en vez de duplicar (ADR 0008).
   operationId: string;
   initial: OperationFormValues;
-  // Al corregir, los asientos que la operación ya tenía: no cuentan en lo de antes.
-  previousEntries?: EntryInput[];
+  // Al corregir, la operación como estaba: sus asientos no cuentan en lo de antes, y
+  // «Deshacer» la deja así otra vez.
+  previous?: SaveOperationArgs;
   // Solo las cuentas de una moneda: al registrar el pago de una deuda, la suya.
   onlyCurrency?: Currency;
   onSaved: () => void;
@@ -54,7 +58,7 @@ interface OperationFormProps {
 export function OperationForm({
   operationId,
   initial,
-  previousEntries = [],
+  previous,
   onlyCurrency,
   onSaved,
 }: OperationFormProps) {
@@ -82,9 +86,11 @@ export function OperationForm({
     enabled: values.accountId !== "",
   });
   const cellByEnvelope = new Map(cells.data?.map((cell) => [cell.envelopeId, cell.balanceCents]));
-  const previous = previousEntries.filter((entry) => entry.account_id === values.accountId);
+  // Los asientos de antes en la cuenta elegida: los de otra cuenta no tocan estos sobres.
+  const previousEntries = (accountId: string): EntryInput[] =>
+    (previous?.entries ?? []).filter((entry) => entry.account_id === accountId);
   const changes = cells.data
-    ? projectCells(draftEntries(formDraft(values)), cells.data, previous)
+    ? projectCells(draftEntries(formDraft(values)), cells.data, previousEntries(values.accountId))
     : [];
   const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
   // En el orden del presupuesto, y «Otro» al final (R11).
@@ -93,13 +99,34 @@ export function OperationForm({
   );
 
   const submit = handleSubmit(async (submitted) => {
+    const entries = draftEntries(formDraft(submitted));
     try {
       await save.mutateAsync({
         id: operationId,
         kind: submitted.kind,
         day: submitted.day,
         description: submitted.description.trim(),
-        entries: draftEntries(formDraft(submitted)),
+        entries,
+      });
+      // Cómo quedó, con los saldos de antes de guardar: los de después aún no llegaron.
+      const savedAccount = accounts.data?.find((row) => row.accountId === submitted.accountId);
+      const detail =
+        cells.data && savedAccount
+          ? savedDetail(
+              entries,
+              projectCells(entries, cells.data, previousEntries(submitted.accountId)),
+              (id) => envelopeById.get(id),
+              savedAccount.currency,
+            )
+          : undefined;
+      showToast({
+        message: previous
+          ? "Corrección guardada"
+          : submitted.kind === "expense"
+            ? "Gasto guardado"
+            : "Ingreso guardado",
+        detail,
+        action: { label: "Deshacer", run: undoSavedOperation(operationId, previous) },
       });
       onSaved();
     } catch {

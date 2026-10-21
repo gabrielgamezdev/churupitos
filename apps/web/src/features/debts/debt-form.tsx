@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Segmented } from "@/components/ui/segmented";
 import { parseAmountInput } from "@/features/operations/amount-input";
-import { writeErrorMessage } from "@/features/operations/save";
 import type { Currency } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
+import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
+import { writeErrorMessage } from "@/lib/write-error";
 
 import {
   debtFormSchema,
@@ -20,10 +21,11 @@ import {
   installmentDates,
   MAX_INSTALLMENTS,
   type DebtFormValues,
+  type DebtInput,
   type Every,
 } from "./debt-form-schema";
 import type { DebtDirection } from "./queries";
-import { useSaveDebts } from "./write";
+import { undoSavedDebts, useSaveDebts } from "./write";
 
 const DIRECTIONS: { value: DebtDirection; label: string }[] = [
   { value: "payable", label: "Lo que deben" },
@@ -47,13 +49,15 @@ interface DebtFormProps {
   initial: DebtFormValues;
   // Al corregir no hay cuotas: se corrige cada una por su lado.
   allowInstallments: boolean;
+  // Al corregir, la deuda como estaba: lo que «Deshacer» vuelve a guardar.
+  previous?: DebtInput;
   onSaved: () => void;
 }
 
 // Agregar o corregir una deuda: lo que deben o lo que les deben, concepto, monto con su
 // moneda y fecha límite. Al agregar, puede ir en cuotas: una deuda por cuota, cada una
 // con su fecha, como las compras a cuotas del Excel.
-export function DebtForm({ ids, initial, allowInstallments, onSaved }: DebtFormProps) {
+export function DebtForm({ ids, initial, allowInstallments, previous, onSaved }: DebtFormProps) {
   const online = useOnline();
   const save = useSaveDebts();
   const {
@@ -73,8 +77,18 @@ export function DebtForm({ ids, initial, allowInstallments, onSaved }: DebtFormP
   const amountCents = parseAmountInput(values.amount);
 
   const submit = handleSubmit(async (submitted) => {
+    const rows = debtRows(submitted, ids);
     try {
-      await save.mutateAsync(debtRows(submitted, ids));
+      await save.mutateAsync(rows);
+      showToast({
+        message: previous
+          ? "Deuda corregida"
+          : rows.length > 1
+            ? `${rows.length} cuotas agregadas`
+            : "Deuda agregada",
+        detail: rows[0]?.description,
+        action: { label: "Deshacer", run: undoSavedDebts(rows, previous) },
+      });
       onSaved();
     } catch {
       // `save.error` lo dice debajo del botón.

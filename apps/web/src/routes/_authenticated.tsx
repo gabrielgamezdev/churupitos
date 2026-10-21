@@ -2,6 +2,7 @@ import { isAuthRetryableFetchError } from "@supabase/supabase-js";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 import { TabBar } from "@/components/tab-bar";
+import { Toaster } from "@/components/toaster";
 import { readStoredSession, supabase } from "@/lib/supabase";
 
 // Todo lo que cuelga de aquí exige sesión. Sin ella, al login, recordando adónde
@@ -28,11 +29,13 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
 });
 
-// Con sesión, cada pantalla lleva debajo la barra de secciones.
+// Con sesión, cada pantalla lleva debajo la barra de secciones, y encima de ella el
+// aviso de lo que se acaba de guardar.
 function AuthenticatedLayout() {
   return (
     <>
       <Outlet />
+      <Toaster />
       <TabBar />
     </>
   );

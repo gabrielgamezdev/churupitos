@@ -2,12 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import { writeErrorMessage } from "@/features/operations/save";
+import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
+import { writeErrorMessage } from "@/lib/write-error";
 
 import type { Debt } from "./queries";
-import { useDeleteDebt, useSetDebtPaid } from "./write";
+import { undoDebtPaid, useDeleteDebt, useSetDebtPaid } from "./write";
 
 // Lo que se hace con una deuda desde su fila: marcarla pagada (o desmarcarla), corregirla
 // y borrarla. Pagar es un gasto aparte (R17): una pagada ofrece registrarlo, con el monto
@@ -55,7 +56,19 @@ export function DebtActions({ debt }: { debt: Debt }) {
       <Button
         variant={paid ? "outline" : "default"}
         disabled={!online || setPaid.isPending}
-        onClick={() => setPaid.mutate({ id: debt.id, paid: !paid })}
+        onClick={() =>
+          setPaid.mutate(
+            { id: debt.id, paid: !paid },
+            {
+              onSuccess: () =>
+                showToast({
+                  message: paid ? "Vuelve a estar pendiente" : "Marcada como pagada",
+                  detail: debt.description,
+                  action: { label: "Deshacer", run: undoDebtPaid(debt) },
+                }),
+            },
+          )
+        }
       >
         {paid ? "No está pagada" : "Marcar pagada"}
       </Button>

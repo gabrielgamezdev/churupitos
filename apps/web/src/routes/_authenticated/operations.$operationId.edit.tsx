@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { operationQuery, type OperationDetail } from "@/features/ledger/queries";
 import { OperationForm } from "@/features/operations/operation-form";
 import { operationFormValues } from "@/features/operations/operation-form-schema";
+import type { SaveOperationArgs } from "@/features/operations/save";
 
 export const Route = createFileRoute("/_authenticated/operations/$operationId/edit")({
   component: EditOperationPage,
@@ -55,15 +56,21 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
   const canGoBack = useCanGoBack();
   // Una vez, al abrir: lo que llegue después de la base no pisa lo que se está escribiendo.
   const [initial] = useState(() => operationFormValues(operation));
-  const [previousEntries] = useState(() =>
-    operation.entries.map((entry) => ({
+  // Como estaba al abrir: lo que «Deshacer» vuelve a guardar.
+  const [previous] = useState((): SaveOperationArgs => ({
+    id: operationId,
+    // La página ya comprobó que es un gasto o un ingreso.
+    kind: operation.kind === "income" ? "income" : "expense",
+    day: operation.day,
+    description: operation.description,
+    entries: operation.entries.map((entry) => ({
       account_id: entry.accountId,
       envelope_id: entry.envelopeId,
       amount_cents: entry.amountCents,
       is_fee: entry.isFee,
       description: entry.description,
     })),
-  );
+  }));
 
   const close = () => {
     if (canGoBack) router.history.back();
@@ -76,7 +83,7 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
       <OperationForm
         operationId={operationId}
         initial={initial}
-        previousEntries={previousEntries}
+        previous={previous}
         onSaved={close}
       />
     </Screen>

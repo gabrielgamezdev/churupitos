@@ -76,7 +76,9 @@ Cada uno se prueba en los teléfonos antes del siguiente.
    desde Inicio y sin botones flotantes.
 3. [x] **La hoja de un movimiento** desde los libros, y **«Últimos registrados»** en Inicio
    (2026-10-20). El ingreso cobrado del Presupuesto sigue desplegando su reparto en la fila.
-4. [ ] **El aviso con «Deshacer»** al guardar, corregir y marcar o desmarcar una deuda.
+4. [x] **El aviso con «Deshacer»** al guardar, corregir y marcar o desmarcar una deuda
+   (2026-10-20, la base también en la nube), y al agregar o corregir una deuda.
+   Deshacer un «No está pagada» la vuelve a pagada con el día que tenía.
 5. [ ] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con
    «Deshacer». En local y en la nube.
 6. [ ] **Registrar, primera parte:** el monto como cajero con el teclado numérico,

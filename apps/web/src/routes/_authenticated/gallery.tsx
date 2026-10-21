@@ -5,6 +5,7 @@ import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { formatMoney } from "@/lib/money";
+import { showToast } from "@/lib/toast";
 import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, ErrorState, OfflineBanner } from "@/components/states";
 import { Badge } from "@/components/ui/badge";
@@ -314,6 +315,27 @@ function GalleryPage() {
             ]}
             onChange={setMonth}
           />
+        </Section>
+
+        <Section
+          title="Aviso"
+          description="Abajo, después de guardar, con «Deshacer». Este no toca la base."
+        >
+          <Button
+            variant="outline"
+            onClick={() =>
+              showToast({
+                message: "Gasto guardado",
+                detail: `🍔 Comida queda en ${formatMoney(120000, "VES")}`,
+                action: {
+                  label: "Deshacer",
+                  run: () => new Promise((resolve) => setTimeout(resolve, 600)),
+                },
+              })
+            }
+          >
+            Enseñar el aviso
+          </Button>
         </Section>
 
         <Section
