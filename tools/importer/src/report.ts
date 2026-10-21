@@ -5,7 +5,7 @@
 import type { ImportPackage } from "./build-package.ts";
 import type { DraftOperation, GroupingRule } from "./draft.ts";
 import type { Issue } from "./issues.ts";
-import type { AppData, LoadOutcome } from "./load.ts";
+import type { AppData, Archived, LoadOutcome } from "./load.ts";
 import type { Currency } from "./money.ts";
 import type { MonthData } from "./read-workbook.ts";
 
@@ -306,8 +306,21 @@ function describeOutcome(outcome: LoadOutcome): string {
     (outcome.dryRun ? " Era en seco: no quedó nada escrito." : "") +
     (appDataLabel(outcome.appData)
       ? ` ${outcome.dryRun ? "Habría borrado" : "Borró"} ${appDataLabel(outcome.appData)}, que el Excel ya tiene.`
+      : "") +
+    (archivedLabel(outcome.archived)
+      ? ` ${outcome.dryRun ? "Habría archivado" : "Archivó"} ${archivedLabel(outcome.archived)}, que el Excel ya no usa.`
       : "")
   );
+}
+
+// «4 sobres y 1 cuenta»; vacío si no archivó nada.
+export function archivedLabel({ envelopes, accounts }: Archived): string {
+  return [
+    envelopes === 1 ? "1 sobre" : envelopes > 1 ? `${envelopes} sobres` : "",
+    accounts === 1 ? "1 cuenta" : accounts > 1 ? `${accounts} cuentas` : "",
+  ]
+    .filter(Boolean)
+    .join(" y ");
 }
 
 // «1 operación y 2 deudas registradas en la app», «1 mes del presupuesto registrado en la

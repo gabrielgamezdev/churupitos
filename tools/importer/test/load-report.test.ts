@@ -147,6 +147,7 @@ describe("el informe", () => {
     counts,
     oracle,
     appData: { operations: 0, debts: 0, months: 0, catalog: 0 },
+    archived: { envelopes: 0, accounts: 0 },
   });
 
   it("dice qué aceptó la base y que en seco no quedó nada escrito", () => {
@@ -162,6 +163,7 @@ describe("el informe", () => {
       counts,
       oracle,
       appData: { operations: 2, debts: 1, months: 0, catalog: 0 },
+      archived: { envelopes: 0, accounts: 0 },
     });
     expect(discarded).toContain(
       "Borró 2 operaciones y 1 deuda registradas en la app, que el Excel ya tiene.",
@@ -175,6 +177,7 @@ describe("el informe", () => {
       counts,
       oracle,
       appData: { operations: 3, debts: 1, months: 1, catalog: 0 },
+      archived: { envelopes: 0, accounts: 0 },
     });
     expect(discarded).toContain(
       "Habría borrado 3 operaciones, 1 deuda y 1 mes del presupuesto registrados en la app, que el Excel ya tiene.",
@@ -188,10 +191,28 @@ describe("el informe", () => {
       counts,
       oracle,
       appData: { operations: 0, debts: 0, months: 0, catalog: 2 },
+      archived: { envelopes: 0, accounts: 0 },
     });
     expect(discarded).toContain(
       "Borró 2 sobres o cuentas registrados en la app, que el Excel ya tiene.",
     );
+  });
+
+  it("dice qué archivó porque el Excel ya no lo usa (R20)", () => {
+    const archived = buildReport(pkg, [month], {
+      status: "ok",
+      dryRun: false,
+      counts,
+      oracle,
+      appData: { operations: 0, debts: 0, months: 0, catalog: 0 },
+      archived: { envelopes: 4, accounts: 1 },
+    });
+    expect(archived).toContain("Archivó 4 sobres y 1 cuenta, que el Excel ya no usa.");
+  });
+
+  it("el mes en curso es el último libro que no es solo planificación", () => {
+    expect(pkg.currentMonth).toBe("2026-01");
+    expect(planRows(pkg, catalog).currentMonth).toBe("2026-01");
   });
 
   it("lista el arrastre, los cobros y las deudas con sus importes", () => {
@@ -212,6 +233,7 @@ describe("el informe", () => {
       dryRun: true,
       counts,
       appData: { operations: 0, debts: 0, months: 0, catalog: 0 },
+      archived: { envelopes: 0, accounts: 0 },
       oracle: {
         checks: 5,
         differences: [

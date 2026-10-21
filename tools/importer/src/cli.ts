@@ -26,7 +26,7 @@ import type { LoadOutcome } from "./load.ts";
 import { readWorkbook } from "./read-workbook.ts";
 import type { MonthData } from "./read-workbook.ts";
 import { compareWithExcel } from "./oracle.ts";
-import { appDataLabel, buildReport } from "./report.ts";
+import { appDataLabel, archivedLabel, buildReport } from "./report.ts";
 
 const ROOT = resolve(import.meta.dirname, "../../..");
 const EXCELS_DIR = join(ROOT, "privado/excels");
@@ -155,6 +155,11 @@ async function load(dryRun: boolean, cloud: boolean, discardAppData: boolean): P
         outcome.dryRun
           ? `Cargarla de verdad borraría ${appDataLabel(outcome.appData)}: hay que pedirlo con --discard-app-data.`
           : `Borró ${appDataLabel(outcome.appData)}: el Excel ya lo tiene.`,
+      );
+    }
+    if (archivedLabel(outcome.archived)) {
+      console.log(
+        `${outcome.dryRun ? "Habría archivado" : "Archivó"} ${archivedLabel(outcome.archived)}: en cero y sin usar desde ${pkg.currentMonth}.`,
       );
     }
     console.log(

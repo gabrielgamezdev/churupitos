@@ -70,7 +70,9 @@
 2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar, archivar y
    borrar sobres y cuentas, con sus pruebas (en cero para archivar, nada para borrar, «Otro»
    intocable, nada nuevo en lo archivado, el candado de la recarga, `R20`).
-3. [ ] **El importador:** archiva lo que no está en el Excel del mes en curso.
+3. [x] **El importador** (2026-10-21): archiva lo que está en cero y no se usó ni se
+   planeó desde el mes en curso del Excel, y lo dice. En local archivó los 4 sobres; en la
+   nube lo hará la próxima recarga.
 4. [ ] **Sobres y cuentas:** la lista, crear, cambiar, archivar y borrar, con «Deshacer».
 5. [ ] **Lo archivado fuera de las listas:** Registrar, Mover, Cobrar, Planear, Sobres,
    cada moneda e Inicio.

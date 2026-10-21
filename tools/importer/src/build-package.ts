@@ -27,6 +27,8 @@ export type BudgetLineDraft = {
 
 export type ImportPackage = {
   months: string[];
+  // El mes en curso: el último libro que no es solo planificación (DOMINIO §2).
+  currentMonth: string | null;
   currencies: Record<string, Currency>;
   operations: DraftOperation[];
   expectedIncomes: ExpectedIncomeDraft[];
@@ -46,6 +48,7 @@ export function buildPackage(months: MonthData[], catalog: Catalog): ImportPacka
   const allIncomes = sorted.flatMap((data) => data.budget?.incomes ?? []);
   const result: ImportPackage = {
     months: sorted.map((data) => data.month),
+    currentMonth: sorted.findLast((data) => !isPlanningOnly(data))?.month ?? null,
     currencies: Object.fromEntries(currencies),
     operations: [],
     expectedIncomes: [],

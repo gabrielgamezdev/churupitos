@@ -22,10 +22,18 @@ export type Rows = {
   debts: Record<string, unknown>[];
 };
 
-export type Plan = { rows: Rows; operationById: Map<string, DraftOperation> };
+// `currentMonth`: desde cuándo cuenta lo que se sigue usando, para archivar lo demás (R20).
+export type Plan = {
+  rows: Rows;
+  operationById: Map<string, DraftOperation>;
+  currentMonth: string | null;
+};
 
 // Lo registrado en la app que la recarga borró (o habría borrado, en seco).
 export type AppData = { operations: number; debts: number; months: number; catalog: number };
+
+// Lo que la recarga archivó porque el Excel ya no lo usa (R20).
+export type Archived = { envelopes: number; accounts: number };
 
 export type LoadOutcome =
   | { status: "not_run"; reason: string }
@@ -34,6 +42,7 @@ export type LoadOutcome =
       dryRun: boolean;
       counts: Record<keyof Rows, number>;
       appData: AppData;
+      archived: Archived;
       oracle: OracleResult | null;
     }
   | { status: "rejected"; message: string; operation: DraftOperation | null };
@@ -55,6 +64,7 @@ export function planRows(pkg: ImportPackage, catalog: Catalog): Plan {
 
   return {
     operationById,
+    currentMonth: pkg.currentMonth,
     rows: {
       accounts: catalog.accounts.map((account) => ({
         id: accountIds.get(account.name),
@@ -142,6 +152,7 @@ export async function writeRows(
   let oracle: OracleResult | null = null;
   let written = !dryRun;
   let appData: AppData = { operations: 0, debts: 0, months: 0, catalog: 0 };
+  let archived: Archived = { envelopes: 0, accounts: 0 };
   try {
     await sql.begin(async (tx) => {
       const [registered] = await tx<AppData[]>`
@@ -174,6 +185,17 @@ export async function writeRows(
       // (R14).
       await tx`select setval(pg_get_serial_sequence('public.entries', 'position'),
         (select coalesce(max(position), 0) + 1 from public.entries), false)`;
+      // Lo que está en cero y no se usó ni se planeó desde el mes en curso se archiva: así
+      // la recarga no devuelve a las listas lo que el Excel dejó de usar (R20).
+      if (plan.currentMonth) {
+        const [counts] = await tx<{ envelope_count: number; account_count: number }[]>`
+          select envelope_count, account_count
+          from public.archive_unused(${`${plan.currentMonth}-01`}::date)`;
+        archived = {
+          envelopes: counts?.envelope_count ?? 0,
+          accounts: counts?.account_count ?? 0,
+        };
+      }
       // Las comprobaciones de forma son diferidas: esto las hace correr ya, y no al
       // confirmar, para que también corran en seco.
       await tx`set constraints all immediate`;
@@ -191,6 +213,7 @@ export async function writeRows(
     counts: counts as Record<keyof Rows, number>,
     oracle,
     appData,
+    archived,
   };
 }
 
