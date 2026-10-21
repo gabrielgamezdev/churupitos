@@ -310,15 +310,20 @@ function describeOutcome(outcome: LoadOutcome): string {
   );
 }
 
-// «1 operación y 2 deudas registradas en la app»; vacío si no hay nada.
-export function appDataLabel({ operations, debts }: AppData): string {
+// «1 operación y 2 deudas registradas en la app», «1 mes del presupuesto registrado en la
+// app»; vacío si no hay nada.
+export function appDataLabel({ operations, debts, months }: AppData): string {
   const parts = [
     operations === 1 ? "1 operación" : operations > 1 ? `${operations} operaciones` : "",
     debts === 1 ? "1 deuda" : debts > 1 ? `${debts} deudas` : "",
+    months === 1 ? "1 mes del presupuesto" : months > 1 ? `${months} meses del presupuesto` : "",
   ].filter(Boolean);
   if (parts.length === 0) return "";
-  const one = operations + debts === 1;
-  return `${parts.join(" y ")} ${one ? "registrada" : "registradas"} en la app`;
+  const list = parts.length > 1 ? `${parts.slice(0, -1).join(", ")} y ${parts.at(-1)}` : parts[0];
+  // Concuerda como en español: en masculino en cuanto entra un mes.
+  const plural = operations + debts + months > 1;
+  const ending = months > 0 ? (plural ? "os" : "o") : plural ? "as" : "a";
+  return `${list} registrad${ending} en la app`;
 }
 
 const where = (issue: Issue) => (issue.ref ? ` ${issue.ref}` : "");

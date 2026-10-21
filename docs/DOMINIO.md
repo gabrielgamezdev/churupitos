@@ -156,6 +156,10 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 - **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
   cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
   mes, en dólares, cubre lo planeado.
+- **R19 — Los meses del presupuesto van seguidos.** Uno nuevo es el siguiente al último
+  que tiene presupuesto, y se prepara copiando ese. Lo cobrado no se quita: un ingreso
+  esperado con su cobro sigue en la lista, y un sobre que ya recibió de un cobro del mes
+  se deja en $0. El plan puede no sumar lo esperado mientras se prepara (`R12`).
 
 ---
 

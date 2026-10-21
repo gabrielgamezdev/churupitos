@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(9);
 
 -- La base puede tener una carga real y, en la nube, lo registrado de verdad en la app:
 -- se vacía todo para empezar sin nada, y el rollback del final lo deja como estaba.
@@ -36,7 +36,7 @@ insert into public.operations (kind, occurred_on, description, created_by) value
 select throws_ok(
   'select public.reset_imported_data()',
   'P0001',
-  'Hay operaciones o deudas registradas desde la app: recargar desde los Excels las borraría',
+  'Hay movimientos, deudas o presupuesto escritos desde la app: recargar desde los Excels los borraría',
   'el candado: con operaciones de la app, la recarga se niega'
 );
 select lives_ok(
@@ -52,6 +52,21 @@ select throws_ok(
   'P0001',
   null,
   'el candado: con deudas agregadas en la app, la recarga también se niega'
+);
+select lives_ok(
+  'select public.reset_imported_data(include_app_data => true)',
+  'pidiéndolo expresamente, también se recarga'
+);
+
+-- Un ingreso esperado importado que se cambió en la app (M10): también es de la app.
+insert into public.expected_incomes (month_start, name, expected_usd_cents, updated_by) values
+  ('2026-10-01', 'Bono', 10000, '00000000-0000-4000-8000-00000000000a');
+
+select throws_ok(
+  'select public.reset_imported_data()',
+  'P0001',
+  null,
+  'el candado: con el presupuesto cambiado en la app, la recarga también se niega'
 );
 select lives_ok(
   'select public.reset_imported_data(include_app_data => true)',

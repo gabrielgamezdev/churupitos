@@ -52,38 +52,58 @@ export type Database = {
         Row: {
           action_note: string;
           created_at: string;
+          created_by: string | null;
           envelope_id: string;
           funding_note: string;
           id: string;
           month_start: string;
           planned_usd_cents: number;
+          updated_by: string | null;
         };
         ComputedFields: never;
         Insert: {
           action_note?: string;
           created_at?: string;
+          created_by?: string | null;
           envelope_id: string;
           funding_note?: string;
           id?: string;
           month_start: string;
           planned_usd_cents: number;
+          updated_by?: string | null;
         };
         Update: {
           action_note?: string;
           created_at?: string;
+          created_by?: string | null;
           envelope_id?: string;
           funding_note?: string;
           id?: string;
           month_start?: string;
           planned_usd_cents?: number;
+          updated_by?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "budget_lines_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
           {
             foreignKeyName: "budget_lines_envelope_id_fkey";
             columns: ["envelope_id"];
             isOneToOne: false;
             referencedRelation: "envelopes";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "budget_lines_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
           },
         ];
       };
@@ -235,33 +255,54 @@ export type Database = {
       expected_incomes: {
         Row: {
           created_at: string;
+          created_by: string | null;
           emoji: string | null;
           expected_usd_cents: number;
           id: string;
           month_start: string;
           name: string;
           position: number;
+          updated_by: string | null;
         };
         ComputedFields: never;
         Insert: {
           created_at?: string;
+          created_by?: string | null;
           emoji?: string | null;
           expected_usd_cents: number;
           id?: string;
           month_start: string;
           name: string;
           position?: number;
+          updated_by?: string | null;
         };
         Update: {
           created_at?: string;
+          created_by?: string | null;
           emoji?: string | null;
           expected_usd_cents?: number;
           id?: string;
           month_start?: string;
           name?: string;
           position?: number;
+          updated_by?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "expected_incomes_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "expected_incomes_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       household_members: {
         Row: {
@@ -590,6 +631,7 @@ export type Database = {
         }[];
       };
       delete_debt: { Args: { debt_id: string }; Returns: Json };
+      delete_month: { Args: { target_month: string }; Returns: undefined };
       delete_operation: { Args: { op_id: string }; Returns: Json };
       envelope_balances: {
         Args: { as_of?: string };
@@ -612,6 +654,10 @@ export type Database = {
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };
       restore_operation: { Args: { snapshot: Json }; Returns: undefined };
       save_debts: { Args: { debt_rows: Json }; Returns: undefined };
+      save_month: {
+        Args: { income_rows: Json; line_rows: Json; target_month: string };
+        Returns: undefined;
+      };
       save_operation: {
         Args: {
           op_date: string;

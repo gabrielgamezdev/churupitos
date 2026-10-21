@@ -78,8 +78,9 @@ Y en Presupuesto, «Preparar diciembre» o «Editar»; en Inicio, el mes sin pre
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-10-21).
-2. [ ] **Escribir en la base:** guardar un mes y borrar uno preparado, con sus pruebas
-   (sin meses saltados, un ingreso cobrado no se quita, el candado de la recarga).
+2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar un mes y borrar
+   uno preparado, con sus pruebas (sin meses saltados, un ingreso cobrado no se quita, el
+   candado de la recarga, `R19`).
 3. [ ] **Planear:** los ingresos, el plan y el cuadre, y guardar.
 4. [ ] **Preparar y editar** desde Presupuesto, con «Deshacer».
 5. [ ] **Inicio:** el mes siguiente sin preparar.
