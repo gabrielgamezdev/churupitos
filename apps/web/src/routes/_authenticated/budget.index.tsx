@@ -29,7 +29,7 @@ import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationDetail } from "@/features/ledger/operation-detail";
 import { isMonth, monthName, monthOf, today } from "@/lib/months";
 
-export const Route = createFileRoute("/_authenticated/budget")({
+export const Route = createFileRoute("/_authenticated/budget/")({
   // Una función y no un esquema, como en las cuentas (TRAMPAS). Sin mes, o con uno sin
   // presupuesto, el mes en curso.
   validateSearch: (search: Record<string, unknown>): { month?: string } => ({

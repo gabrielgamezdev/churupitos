@@ -81,7 +81,9 @@ Y en Presupuesto, «Preparar diciembre» o «Editar»; en Inicio, el mes sin pre
 2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar un mes y borrar
    uno preparado, con sus pruebas (sin meses saltados, un ingreso cobrado no se quita, el
    candado de la recarga, `R19`).
-3. [ ] **Planear:** los ingresos, el plan y el cuadre, y guardar.
+3. [x] **Planear** (2026-10-21): los ingresos, el plan y el cuadre, y guardar, con
+   «Deshacer». Tocar un ingreso en la fuente solo añade o quita su nombre: hay fuentes con
+   abreviaturas y emojis que no son el nombre de ningún ingreso.
 4. [ ] **Preparar y editar** desde Presupuesto, con «Deshacer».
 5. [ ] **Inicio:** el mes siguiente sin preparar.
 6. [ ] **En los teléfonos:** preparan el mes siguiente.

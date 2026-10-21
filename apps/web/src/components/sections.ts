@@ -25,7 +25,7 @@ export const SECTIONS_BEFORE_REGISTER = 2;
 export function sectionOf(pathname: string): SectionId {
   if (pathname === "/envelopes" || pathname.startsWith("/envelopes/")) return "envelopes";
   if (pathname === "/debts" || pathname.startsWith("/debts/")) return "debts";
-  if (pathname === "/budget") return "budget";
+  if (pathname === "/budget" || pathname.startsWith("/budget/")) return "budget";
   return "home";
 }
 
@@ -34,7 +34,8 @@ export function isFormScreen(pathname: string): boolean {
   return (
     pathname.startsWith("/operations/") ||
     pathname === "/debts/new" ||
-    (pathname.startsWith("/debts/") && pathname.endsWith("/edit"))
+    (pathname.startsWith("/debts/") && pathname.endsWith("/edit")) ||
+    (pathname.startsWith("/budget/") && pathname.endsWith("/plan"))
   );
 }
 

@@ -19,6 +19,7 @@ describe("las secciones de la barra", () => {
     expect(sectionOf("/debts")).toBe("debts");
     expect(sectionOf("/debts/new")).toBe("debts");
     expect(sectionOf("/budget")).toBe("budget");
+    expect(sectionOf("/budget/2026-12/plan")).toBe("budget");
     expect(sectionOf("/settings")).toBe("home");
     expect(sectionOf("/gallery")).toBe("home");
   });
@@ -48,6 +49,7 @@ describe("las secciones de la barra", () => {
     expect(isFormScreen("/operations/new")).toBe(true);
     expect(isFormScreen("/operations/abc/edit")).toBe(true);
     expect(isFormScreen("/debts/new")).toBe(true);
+    expect(isFormScreen("/budget/2026-12/plan")).toBe(true);
     expect(isFormScreen("/debts/abc/edit")).toBe(true);
     expect(isFormScreen("/debts")).toBe(false);
     expect(isFormScreen("/envelopes/abc")).toBe(false);

@@ -12,17 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedBudgetRouteImport } from './routes/_authenticated/budget'
 import { Route as AuthenticatedGalleryRouteImport } from './routes/_authenticated/gallery'
 import { Route as AuthenticatedMovementsRouteImport } from './routes/_authenticated/movements'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedAccountsAccountIdRouteImport } from './routes/_authenticated/accounts.$accountId'
+import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget.index'
 import { Route as AuthenticatedCurrenciesCurrencyRouteImport } from './routes/_authenticated/currencies.$currency'
 import { Route as AuthenticatedDebtsIndexRouteImport } from './routes/_authenticated/debts.index'
 import { Route as AuthenticatedDebtsNewRouteImport } from './routes/_authenticated/debts.new'
 import { Route as AuthenticatedEnvelopesIndexRouteImport } from './routes/_authenticated/envelopes.index'
 import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_authenticated/envelopes.$envelopeId'
 import { Route as AuthenticatedOperationsNewRouteImport } from './routes/_authenticated/operations.new'
+import { Route as AuthenticatedBudgetMonthPlanRouteImport } from './routes/_authenticated/budget.$month.plan'
 import { Route as AuthenticatedDebtsDebtIdEditRouteImport } from './routes/_authenticated/debts.$debtId.edit'
 import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
 import { Route as AuthenticatedOperationsReceiveIncomeIdRouteImport } from './routes/_authenticated/operations.receive.$incomeId'
@@ -39,11 +40,6 @@ const LoginRoute = LoginRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedBudgetRoute = AuthenticatedBudgetRouteImport.update({
-  id: '/budget',
-  path: '/budget',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedGalleryRoute = AuthenticatedGalleryRouteImport.update({
@@ -65,6 +61,12 @@ const AuthenticatedAccountsAccountIdRoute =
   AuthenticatedAccountsAccountIdRouteImport.update({
     id: '/accounts/$accountId',
     path: '/accounts/$accountId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedBudgetIndexRoute =
+  AuthenticatedBudgetIndexRouteImport.update({
+    id: '/budget/',
+    path: '/budget/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedCurrenciesCurrencyRoute =
@@ -101,6 +103,12 @@ const AuthenticatedOperationsNewRoute =
     path: '/operations/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedBudgetMonthPlanRoute =
+  AuthenticatedBudgetMonthPlanRouteImport.update({
+    id: '/budget/$month/plan',
+    path: '/budget/$month/plan',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDebtsDebtIdEditRoute =
   AuthenticatedDebtsDebtIdEditRouteImport.update({
     id: '/debts/$debtId/edit',
@@ -123,7 +131,6 @@ const AuthenticatedOperationsReceiveIncomeIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
-  '/budget': typeof AuthenticatedBudgetRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/movements': typeof AuthenticatedMovementsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -132,15 +139,16 @@ export interface FileRoutesByFullPath {
   '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/budget/': typeof AuthenticatedBudgetIndexRoute
   '/debts/': typeof AuthenticatedDebtsIndexRoute
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/budget': typeof AuthenticatedBudgetRoute
   '/gallery': typeof AuthenticatedGalleryRoute
   '/movements': typeof AuthenticatedMovementsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -150,8 +158,10 @@ export interface FileRoutesByTo {
   '/debts/new': typeof AuthenticatedDebtsNewRoute
   '/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/budget': typeof AuthenticatedBudgetIndexRoute
   '/debts': typeof AuthenticatedDebtsIndexRoute
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
+  '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
@@ -160,7 +170,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/_authenticated/budget': typeof AuthenticatedBudgetRoute
   '/_authenticated/gallery': typeof AuthenticatedGalleryRoute
   '/_authenticated/movements': typeof AuthenticatedMovementsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -170,8 +179,10 @@ export interface FileRoutesById {
   '/_authenticated/debts/new': typeof AuthenticatedDebtsNewRoute
   '/_authenticated/envelopes/$envelopeId': typeof AuthenticatedEnvelopesEnvelopeIdRoute
   '/_authenticated/operations/new': typeof AuthenticatedOperationsNewRoute
+  '/_authenticated/budget/': typeof AuthenticatedBudgetIndexRoute
   '/_authenticated/debts/': typeof AuthenticatedDebtsIndexRoute
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
+  '/_authenticated/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/_authenticated/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
   '/_authenticated/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
@@ -181,7 +192,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/budget'
     | '/gallery'
     | '/movements'
     | '/settings'
@@ -190,15 +200,16 @@ export interface FileRouteTypes {
     | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/budget/'
     | '/debts/'
     | '/envelopes/'
+    | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
     | '/operations/receive/$incomeId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/budget'
     | '/gallery'
     | '/movements'
     | '/settings'
@@ -208,8 +219,10 @@ export interface FileRouteTypes {
     | '/debts/new'
     | '/envelopes/$envelopeId'
     | '/operations/new'
+    | '/budget'
     | '/debts'
     | '/envelopes'
+    | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
     | '/operations/receive/$incomeId'
@@ -217,7 +230,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/login'
-    | '/_authenticated/budget'
     | '/_authenticated/gallery'
     | '/_authenticated/movements'
     | '/_authenticated/settings'
@@ -227,8 +239,10 @@ export interface FileRouteTypes {
     | '/_authenticated/debts/new'
     | '/_authenticated/envelopes/$envelopeId'
     | '/_authenticated/operations/new'
+    | '/_authenticated/budget/'
     | '/_authenticated/debts/'
     | '/_authenticated/envelopes/'
+    | '/_authenticated/budget/$month/plan'
     | '/_authenticated/debts/$debtId/edit'
     | '/_authenticated/operations/$operationId/edit'
     | '/_authenticated/operations/receive/$incomeId'
@@ -262,13 +276,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/budget': {
-      id: '/_authenticated/budget'
-      path: '/budget'
-      fullPath: '/budget'
-      preLoaderRoute: typeof AuthenticatedBudgetRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/gallery': {
       id: '/_authenticated/gallery'
       path: '/gallery'
@@ -295,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/accounts/$accountId'
       fullPath: '/accounts/$accountId'
       preLoaderRoute: typeof AuthenticatedAccountsAccountIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/budget/': {
+      id: '/_authenticated/budget/'
+      path: '/budget'
+      fullPath: '/budget/'
+      preLoaderRoute: typeof AuthenticatedBudgetIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/currencies/$currency': {
@@ -339,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/budget/$month/plan': {
+      id: '/_authenticated/budget/$month/plan'
+      path: '/budget/$month/plan'
+      fullPath: '/budget/$month/plan'
+      preLoaderRoute: typeof AuthenticatedBudgetMonthPlanRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/debts/$debtId/edit': {
       id: '/_authenticated/debts/$debtId/edit'
       path: '/debts/$debtId/edit'
@@ -364,7 +385,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedBudgetRoute: typeof AuthenticatedBudgetRoute
   AuthenticatedGalleryRoute: typeof AuthenticatedGalleryRoute
   AuthenticatedMovementsRoute: typeof AuthenticatedMovementsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -374,15 +394,16 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDebtsNewRoute: typeof AuthenticatedDebtsNewRoute
   AuthenticatedEnvelopesEnvelopeIdRoute: typeof AuthenticatedEnvelopesEnvelopeIdRoute
   AuthenticatedOperationsNewRoute: typeof AuthenticatedOperationsNewRoute
+  AuthenticatedBudgetIndexRoute: typeof AuthenticatedBudgetIndexRoute
   AuthenticatedDebtsIndexRoute: typeof AuthenticatedDebtsIndexRoute
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
+  AuthenticatedBudgetMonthPlanRoute: typeof AuthenticatedBudgetMonthPlanRoute
   AuthenticatedDebtsDebtIdEditRoute: typeof AuthenticatedDebtsDebtIdEditRoute
   AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
   AuthenticatedOperationsReceiveIncomeIdRoute: typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedBudgetRoute: AuthenticatedBudgetRoute,
   AuthenticatedGalleryRoute: AuthenticatedGalleryRoute,
   AuthenticatedMovementsRoute: AuthenticatedMovementsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -392,8 +413,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDebtsNewRoute: AuthenticatedDebtsNewRoute,
   AuthenticatedEnvelopesEnvelopeIdRoute: AuthenticatedEnvelopesEnvelopeIdRoute,
   AuthenticatedOperationsNewRoute: AuthenticatedOperationsNewRoute,
+  AuthenticatedBudgetIndexRoute: AuthenticatedBudgetIndexRoute,
   AuthenticatedDebtsIndexRoute: AuthenticatedDebtsIndexRoute,
   AuthenticatedEnvelopesIndexRoute: AuthenticatedEnvelopesIndexRoute,
+  AuthenticatedBudgetMonthPlanRoute: AuthenticatedBudgetMonthPlanRoute,
   AuthenticatedDebtsDebtIdEditRoute: AuthenticatedDebtsDebtIdEditRoute,
   AuthenticatedOperationsOperationIdEditRoute:
     AuthenticatedOperationsOperationIdEditRoute,
