@@ -1,6 +1,11 @@
 # M7 · Diseño y experiencia
 
-- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
+- **Estado:** cerrado el 2026-10-21 (empezó el 2026-10-20). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/DOMINIO.md`, el código de `apps/web` y
+  las migraciones.
+- **Resultado:** lo usaron un día en los teléfonos, registrando de verdad, y a los dos
+  les gusta más, sobre todo el diseño nuevo y el formulario. Lo que comentaron, de
+  poca prioridad, está en «Más adelante» de `docs/ESTADO.md`.
 - **Objetivo:** que registrar sea rápido y agradable, que corregir o borrar algo no
   obligue a buscarlo, y que la app se sienta cuidada y no una herramienta interna. Es lo
   que pidieron al usar M6: «un formulario más bonito» y «poder borrar y editar alguna
@@ -97,7 +102,7 @@ Cada uno se prueba en los teléfonos antes del siguiente.
    movimiento también en los libros.
 12. [x] **Sugerencias de concepto** al registrar, con su sobre (2026-10-20, la base también
     en la nube: `concept_usage`).
-13. [ ] **En los teléfonos:** lo usan unos días y cuentan los toques de un gasto típico.
+13. [x] **En los teléfonos** (2026-10-21): lo usaron registrando de verdad; les gusta.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 

@@ -1,11 +1,10 @@
 # Estado
 
-## Ahora: M7 · Diseño y experiencia (en curso)
+## Ahora: M8 · Entre sobres y cuentas (en planificación)
 
-Lo que pidieron al usar M6: registrar más rápido y con un formulario más bonito, y
-corregir o borrar sin buscar. Sale de una investigación de diseño (sus notas, fuera de
-git, en `privado/investigacion/diseno/`); el plan, aprobado, está en
-`docs/modulos/M7-diseno-y-experiencia.md`.
+Mover entre sobres, traspasar entre cuentas, cambiar de divisa y cubrir un descubierto
+desde la app. El plan, con las decisiones propuestas y por aprobar, está en
+`docs/modulos/M8-entre-sobres-y-cuentas.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
 
@@ -18,8 +17,9 @@ Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuenta
 2026-10-15 (`docs/modulos/M2-inicio-y-cuentas.md`), M3 · Sobres el 2026-10-19
 (`docs/modulos/M3-sobres.md`), M4 · Presupuesto el 2026-10-20
 (`docs/modulos/M4-presupuesto.md`), M5 · Deudas el 2026-10-20
-(`docs/modulos/M5-deudas.md`) y M6 · Gastos, ingresos y deudas el 2026-10-20
-(`docs/modulos/M6-gastos-ingresos-y-deudas.md`).
+(`docs/modulos/M5-deudas.md`), M6 · Gastos, ingresos y deudas el 2026-10-20
+(`docs/modulos/M6-gastos-ingresos-y-deudas.md`) y M7 · Diseño y experiencia el
+2026-10-21 (`docs/modulos/M7-diseno-y-experiencia.md`).
 
 ## Cómo se publica
 
@@ -85,3 +85,14 @@ pierden:
 
 - **Ajustes**: elegir el tema (claro, oscuro o el del teléfono).
 - **Temas propios** después: un oscuro con otros colores, por ejemplo.
+- **El selector de cuenta de Registrar** (2026-10-21): a una de las dos personas le
+  abrumó la lista del sistema, con las cuentas agrupadas por moneda. Opciones: botones
+  como los de los sobres, con las más usadas primero, o solo las de la moneda de siempre.
+- **Cuotas de montos distintos** (2026-10-21). Hoy cada cuota es una deuda aparte, así
+  que una se corrige sola después de agregarlas; faltaría poder cambiar el monto de cada
+  una en la lista, antes de guardar. Junto con «3 de 6» (fuera de M7).
+- **Rellenar Registrar desde una foto** (2026-10-21, del autor): de un capture, una
+  factura o una nota de entrega, sacar la fecha, el monto y el concepto, sin guardar
+  solo. Leer texto de una imagen con un servicio de pago choca con la regla 7: tendría
+  que ser en el propio teléfono o gratis de verdad, y con su ADR.
+- **Vibración al guardar**, con un interruptor en Ajustes (fuera de M7).
