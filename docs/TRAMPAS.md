@@ -40,6 +40,13 @@ En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `
 dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
 `replace(a, () => b)`.**
 
+### Parar `npm run preview` deja vivo el servidor de Vite
+En Windows, cerrar el `npm` que se lanzó en segundo plano no cierra el `node` de
+`vite preview` que arrancó: sigue sirviendo, y la siguiente vista previa toma otro
+puerto o, peor, las pruebas hablan con la vieja. En una tarde de pruebas se juntaron diez.
+**Al terminar, cerrar también los `node` cuya línea de órdenes tenga `vite.js" preview`**
+(PowerShell: `Get-CimInstance Win32_Process` filtrando por `CommandLine`).
+
 ## El importador
 
 ### Un mes preparado antes de tiempo rompe la carga
