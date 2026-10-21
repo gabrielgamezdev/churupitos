@@ -1,7 +1,7 @@
 # M9 · Cobros y reparto
 
-- **Estado:** en planificación (desde 2026-10-21), mientras M8 se prueba en los teléfonos.
-  Falta que el autor apruebe las decisiones.
+- **Estado:** en curso (desde 2026-10-21). El plan está aprobado; se construye mientras
+  M8 se prueba en los teléfonos, por decisión del autor.
 - **Objetivo:** cobrar desde la app un ingreso esperado del presupuesto, en la cuenta
   donde llegó y con su tasa, y repartirlo entre sobres en dólares, como la
   «Distribución» del Excel, con el plan del mes como propuesta. Presupuesto se pone al
@@ -27,7 +27,7 @@
 - **La v2** tenía una etiqueta de texto para la tasa («BCV», «paralelo»). Aquí no hace
   falta: la tasa sale de los dos montos.
 
-## Decisiones (propuestas)
+## Decisiones (2026-10-21)
 
 1. **«Cobrar» en Presupuesto:** cada ingreso ⏳ lo ofrece, en el mes que se mire, también
    el siguiente si el dinero llega antes. Abre la pantalla Cobrar.
@@ -72,9 +72,9 @@ Y «Cobrar» en Presupuesto y la línea de lo que falta por cobrar en Inicio.
 
 ## Pasos
 
-1. [ ] **Plan aprobado** por el autor.
-2. [ ] **Escribir en la base:** guardar y restaurar un cobro, con sus pruebas (`R8`, `R9`,
-   un cobro por ingreso, lo importado intocable). En local y en la nube.
+1. [x] **Plan aprobado** por el autor (2026-10-21).
+2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar y restaurar un
+   cobro, con sus pruebas (`R8`, `R9`, un cobro por ingreso, lo importado intocable).
 3. [ ] **Cobrar:** la cuenta, lo que llegó, los dólares y la tasa.
 4. [ ] **El reparto:** propuesto desde el plan, con lo que falta y los Bs de cada línea.
 5. [ ] **Corregir, borrar y deshacer** un cobro.

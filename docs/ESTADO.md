@@ -1,13 +1,14 @@
 # Estado
 
-## Ahora: M8 · Entre sobres y cuentas (en curso)
+## Ahora: M9 · Cobros y reparto (en curso), y M8 en los teléfonos
 
-Mover entre sobres, traspasar entre cuentas, cambiar de divisa y cubrir un descubierto
-desde la app. El plan, aprobado, está en
-`docs/modulos/M8-entre-sobres-y-cuentas.md`.
+Cobrar desde la app un ingreso esperado del presupuesto, con su tasa, y repartirlo en
+dólares entre los sobres, con el plan del mes como propuesta. El plan, aprobado, está en
+`docs/modulos/M9-cobros-y-reparto.md`.
 
-Mientras M8 se prueba en los teléfonos, el plan de M9 · Cobros y reparto, por aprobar,
-está en `docs/modulos/M9-cobros-y-reparto.md`.
+M8 · Entre sobres y cuentas (mover entre sobres, traspasar, cambiar de divisa y cubrir un
+descubierto) está construido; falta probarlo en los teléfonos, su paso 7, y por decisión
+del autor M9 se construye mientras. Su plan: `docs/modulos/M8-entre-sobres-y-cuentas.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
 

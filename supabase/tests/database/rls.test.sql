@@ -77,7 +77,7 @@ select results_eq(
   $$,
   $$ values ('delete_debt'), ('delete_operation'), ('is_household_member'),
             ('restore_debt'), ('restore_operation'), ('save_debts'),
-            ('save_operation'), ('set_debt_paid') $$,
+            ('save_operation'), ('save_receipt'), ('set_debt_paid') $$,
   'solo saltan el RLS la función que dice si eres del hogar y las que escribe la app'
 );
 
