@@ -84,7 +84,8 @@ Y en Presupuesto, «Preparar diciembre» o «Editar»; en Inicio, el mes sin pre
 3. [x] **Planear** (2026-10-21): los ingresos, el plan y el cuadre, y guardar, con
    «Deshacer». Tocar un ingreso en la fuente solo añade o quita su nombre: hay fuentes con
    abreviaturas y emojis que no son el nombre de ningún ingreso.
-4. [ ] **Preparar y editar** desde Presupuesto, con «Deshacer».
+4. [x] **Preparar y editar** desde Presupuesto (2026-10-21): «Editar» en cada mes y, al
+   final del último, «Preparar diciembre».
 5. [ ] **Inicio:** el mes siguiente sin preparar.
 6. [ ] **En los teléfonos:** preparan el mes siguiente.
 

@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Pencil } from "lucide-react";
 import { useMemo } from "react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
@@ -8,6 +8,7 @@ import { List, ListRow } from "@/components/list";
 import { Screen } from "@/components/screen";
 import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
+import { buttonVariants } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
@@ -27,7 +28,7 @@ import {
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationDetail } from "@/features/ledger/operation-detail";
-import { isMonth, monthName, monthOf, today } from "@/lib/months";
+import { addMonths, isMonth, monthLabel, monthName, monthOf, today } from "@/lib/months";
 
 export const Route = createFileRoute("/_authenticated/budget/")({
   // Una función y no un esquema, como en las cuentas (TRAMPAS). Sin mes, o con uno sin
@@ -52,6 +53,14 @@ function BudgetPage() {
     : undefined;
   const month = budgetMonth(Route.useSearch().month, currentMonth, range);
   const monthChecks = checks.data?.find((row) => row.month === month);
+  // El último mes con presupuesto y el que toca preparar después (R19). Sin ninguno, el
+  // de hoy.
+  const lastBudgetMonth = checks.data?.at(-1)?.month;
+  const nextToPrepare = checks.data
+    ? lastBudgetMonth
+      ? addMonths(lastBudgetMonth, 1)
+      : currentMonth
+    : undefined;
 
   // Se piden a la vez que el cuadre, sin esperar a saber si el mes tiene presupuesto:
   // casi siempre lo tiene, y si no, llegan vacías.
@@ -78,7 +87,7 @@ function BudgetPage() {
 
   return (
     <Screen>
-      <ScreenHeader title="Presupuesto" />
+      <ScreenHeader title="Presupuesto" action={monthChecks && <EditMonthLink month={month} />} />
       <StaleDataBanner queries={[checks, incomes, lines, accounts, envelopes]} />
 
       <section aria-labelledby="month-title" className="flex flex-col gap-2">
@@ -113,11 +122,17 @@ function BudgetPage() {
               </h2>
               <BudgetCheckList checks={monthChecks} />
             </section>
+            {month === lastBudgetMonth && nextToPrepare && (
+              <PrepareMonth month={nextToPrepare} from={month} />
+            )}
           </>
         ) : (
-          <EmptyState className="rounded-lg bg-surface-raised">
-            Sin presupuesto en {monthName(month)}
-          </EmptyState>
+          <div className="flex flex-col gap-3 rounded-lg bg-surface-raised pb-4">
+            <EmptyState>Sin presupuesto en {monthName(month)}</EmptyState>
+            {month === nextToPrepare && lastBudgetMonth && (
+              <PrepareLink month={month} className="mx-4" />
+            )}
+          </div>
         )
       ) : (
         <MissingData
@@ -290,5 +305,47 @@ function PlanSection({ month, lines, envelopes }: PlanSectionProps) {
         />
       )}
     </section>
+  );
+}
+
+// «Editar» el mes que se mira: abre Planear con él (M10). También uno que trae el Excel.
+function EditMonthLink({ month }: { month: string }) {
+  return (
+    <Link
+      to="/budget/$month/plan"
+      params={{ month }}
+      aria-label={`Editar el presupuesto de ${monthName(month)}`}
+      className={buttonVariants({ variant: "outline" })}
+    >
+      <Pencil aria-hidden="true" />
+      Editar
+    </Link>
+  );
+}
+
+// Al final del último mes con presupuesto, el siguiente: se prepara copiándolo (R19).
+function PrepareMonth({ month, from }: { month: string; from: string }) {
+  return (
+    <section
+      aria-labelledby="prepare-title"
+      className="flex flex-col gap-3 rounded-lg bg-surface-raised p-4"
+    >
+      <h2 id="prepare-title" className="text-heading">
+        {monthLabel(month)}
+      </h2>
+      <p className="text-body text-ink-muted">
+        Todavía no tiene presupuesto. Se prepara copiando el de {monthName(from)}, y se cambia lo
+        que haga falta antes de guardar.
+      </p>
+      <PrepareLink month={month} />
+    </section>
+  );
+}
+
+function PrepareLink({ month, className }: { month: string; className?: string }) {
+  return (
+    <Link to="/budget/$month/plan" params={{ month }} className={buttonVariants({ className })}>
+      Preparar {monthName(month)}
+    </Link>
   );
 }
