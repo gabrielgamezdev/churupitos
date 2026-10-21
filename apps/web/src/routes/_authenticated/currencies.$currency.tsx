@@ -37,7 +37,8 @@ function CurrencyAccounts({ currency }: { currency: Currency }) {
   const queries = [totals, accounts];
 
   const total = totals.data?.find((row) => row.currency === currency);
-  const rows = accounts.data?.filter((row) => row.currency === currency);
+  // Las archivadas están en cero y ya no se usan: no salen (R20).
+  const rows = accounts.data?.filter((row) => row.currency === currency && !row.archived);
   const loaded = totals.data !== undefined && accounts.data !== undefined;
 
   return (

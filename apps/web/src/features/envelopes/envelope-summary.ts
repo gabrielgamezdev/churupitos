@@ -31,7 +31,8 @@ export function summarizeEnvelopes(
   for (const envelope of ordered) {
     const amounts = byEnvelope.get(envelope.id);
     if (amounts) withMoney.push({ envelope, balances: amounts });
-    else empty.push(envelope);
+    // Los archivados están en cero y ya no se usan: no salen (R20).
+    else if (!envelope.archived) empty.push(envelope);
   }
   return { withMoney, empty };
 }

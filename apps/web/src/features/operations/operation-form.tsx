@@ -31,6 +31,7 @@ import { writeErrorMessage } from "@/lib/write-error";
 import { conceptSuggestions, type ConceptSuggestion } from "./concept-suggestions";
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
+import { usableAccounts, usableEnvelopes } from "./usable";
 import { EnvelopePicker } from "./envelope-picker";
 import { EnvelopeSelect } from "./envelope-select";
 import { rememberAccount, rememberedAccount } from "./last-account";
@@ -112,7 +113,9 @@ export function OperationForm({
     if (remembered.current || !rememberFor || !accounts.data) return;
     remembered.current = true;
     if (getValues("accountId")) return;
-    const usable = accounts.data.filter((row) => !onlyCurrency || row.currency === onlyCurrency);
+    const usable = usableAccounts(accounts.data).filter(
+      (row) => !onlyCurrency || row.currency === onlyCurrency,
+    );
     const accountId = rememberedAccount(
       rememberFor,
       usable.map((row) => row.accountId),
@@ -135,13 +138,18 @@ export function OperationForm({
     ? projectCells(draftEntries(formDraft(values)), cells.data, previousEntries(values.accountId))
     : [];
   const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
-  const envelopeOptions = budgetOrder(envelopes.data ?? []);
+  // Sin lo archivado, salvo lo que ya estaba elegido (R20).
+  const choosable = usableEnvelopes(envelopes.data ?? [], [
+    ...values.lines.map((line) => line.envelopeId),
+    values.fee.envelopeId,
+  ]);
+  const envelopeOptions = budgetOrder(choosable);
   // Cuánto se usa cada sobre, fijado al abrir: que no salten mientras se elige (M7).
   const [since] = useState(() => addDays(today(), -USAGE_DAYS));
   const usage = useQuery(envelopeUsageQuery(since));
   const [frozenUsage, setFrozenUsage] = useState<EnvelopeUsage[] | null>(null);
   if (frozenUsage === null && usage.data) setFrozenUsage(usage.data);
-  const order = envelopeOrder(envelopes.data ?? [], frozenUsage ?? [], values.accountId);
+  const order = envelopeOrder(choosable, frozenUsage ?? [], values.accountId);
   // Los conceptos de antes, para proponerlos al escribir con su sobre (M7).
   const [conceptsSince] = useState(() => addDays(today(), -CONCEPT_DAYS));
   const concepts = useQuery(conceptUsageQuery(conceptsSince));
@@ -278,7 +286,7 @@ export function OperationForm({
           {CURRENCIES.filter((currency) => !onlyCurrency || currency === onlyCurrency).map(
             (currency) => (
               <optgroup key={currency} label={CURRENCY_NAMES[currency]}>
-                {(accounts.data ?? [])
+                {usableAccounts(accounts.data ?? [], [values.accountId])
                   .filter((row) => row.currency === currency)
                   .map((row) => (
                     <option key={row.accountId} value={row.accountId}>

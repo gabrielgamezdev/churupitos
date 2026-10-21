@@ -125,6 +125,8 @@ function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
         <p className="text-caption text-ink-muted">
           {amounts && amounts.length === 0 ? "Hoy está en cero" : "Lo que tiene hoy"}
           {envelope.isThirdParty && " · no es del hogar"}
+          {/* Ya no se usa (R20): su historia sigue aquí; se reactiva en Ajustes. */}
+          {envelope.archived && " · archivado"}
         </p>
       </ScreenHeader>
 

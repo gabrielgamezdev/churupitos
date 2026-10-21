@@ -17,6 +17,7 @@ import { envelopesQuery } from "@/features/envelopes/queries";
 import { AccountSelect } from "@/features/operations/account-select";
 import { DayField } from "@/features/operations/day-field";
 import { budgetOrder } from "@/features/operations/envelope-order";
+import { usableAccounts, usableEnvelopes } from "@/features/operations/usable";
 import { EnvelopeSelect } from "@/features/operations/envelope-select";
 import { rememberAccount, rememberedAccount } from "@/features/operations/last-account";
 import { projectCells } from "@/features/operations/operation-draft";
@@ -105,7 +106,7 @@ export function ReceiveForm({
     if (getValues("accountId")) return;
     const accountId = rememberedAccount(
       rememberFor,
-      accounts.data.map((row) => row.accountId),
+      usableAccounts(accounts.data).map((row) => row.accountId),
     );
     if (accountId) setValue("accountId", accountId);
   }, [accounts.data, getValues, rememberFor, setValue]);
@@ -127,7 +128,13 @@ export function ReceiveForm({
     const usd = entry.usd_value_cents ?? entry.amount_cents;
     alreadyGiven.set(entry.envelope_id, (alreadyGiven.get(entry.envelope_id) ?? 0) + usd);
   }
-  const envelopeOptions = budgetOrder(envelopes.data ?? []);
+  // Sin lo archivado, salvo lo que ya estaba elegido (R20).
+  const envelopeOptions = budgetOrder(
+    usableEnvelopes(envelopes.data ?? [], [
+      ...values.lines.map((line) => line.envelopeId),
+      values.fee.envelopeId,
+    ]),
+  );
 
   const usd = recognizedUsd(values, currency);
   const pending = receivePending(values, currency);
@@ -203,7 +210,7 @@ export function ReceiveForm({
       <Field label="Cuenta donde llegó" htmlFor="account" error={errors.accountId?.message}>
         <AccountSelect
           id="account"
-          accounts={accounts.data ?? []}
+          accounts={usableAccounts(accounts.data ?? [], [values.accountId])}
           invalid={Boolean(errors.accountId)}
           {...register("accountId")}
         />

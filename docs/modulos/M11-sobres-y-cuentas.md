@@ -75,8 +75,10 @@
    nube lo hará la próxima recarga.
 4. [x] **Sobres y cuentas** (2026-10-21): la lista, crear, cambiar, archivar y borrar, con
    «Deshacer», y por qué no se puede cuando todavía no se puede.
-5. [ ] **Lo archivado fuera de las listas:** Registrar, Mover, Cobrar, Planear, Sobres,
-   cada moneda e Inicio.
+5. [x] **Lo archivado fuera de las listas** (2026-10-21): Registrar, Mover, Cobrar,
+   Planear (ni para agregar ni al copiar el mes), Sobres, cada moneda e Inicio. Al corregir
+   algo de antes de archivar, lo ya elegido se sigue viendo. La pantalla de un sobre
+   archivado lo dice.
 6. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

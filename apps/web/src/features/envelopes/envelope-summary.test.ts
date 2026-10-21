@@ -36,3 +36,11 @@ describe("summarizeEnvelopes", () => {
     expect(empty.map((e) => e.id)).toEqual(["Viejo"]);
   });
 });
+
+it("un sobre archivado no sale entre los vacíos (R20)", () => {
+  const { empty } = summarizeEnvelopes(
+    [{ ...envelope("Viejo", 1), archived: true }, envelope("Comida", 2)],
+    [],
+  );
+  expect(empty.map((e) => e.id)).toEqual(["Comida"]);
+});

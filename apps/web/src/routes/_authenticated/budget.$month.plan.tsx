@@ -143,13 +143,16 @@ function EditMonth({ month, incomes, lines, envelopes }: MonthProps) {
   );
 }
 
-// Un mes nuevo, copiado del anterior (R19): nada se guarda hasta «Guardar».
+// Un mes nuevo, copiado del anterior (R19): nada se guarda hasta «Guardar». Los sobres
+// archivados no se copian (R20).
 function NewMonth({ month, incomes, lines, envelopes }: MonthProps) {
   const done = useDone(month);
   const [initial] = useState(() =>
     planFromPrevious(
       incomes,
-      lines,
+      lines.filter(
+        (line) => !envelopes.find((envelope) => envelope.id === line.envelopeId)?.archived,
+      ),
       budgetOrder(envelopes).map((envelope) => envelope.id),
       () => crypto.randomUUID(),
     ),

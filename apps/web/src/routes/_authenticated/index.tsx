@@ -96,7 +96,9 @@ function TodayByCurrency() {
             ownCents={total.ownCents}
             totalCents={total.totalCents}
             thirdPartyCents={total.thirdPartyCents}
-            accountCount={accounts.data.filter((a) => a.currency === total.currency).length}
+            accountCount={
+              accounts.data.filter((a) => a.currency === total.currency && !a.archived).length
+            }
             tappable
           />
         </Link>

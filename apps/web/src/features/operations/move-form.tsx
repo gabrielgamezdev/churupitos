@@ -25,6 +25,7 @@ import { writeErrorMessage } from "@/lib/write-error";
 
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
+import { usableAccounts, usableEnvelopes } from "./usable";
 import { EnvelopePicker } from "./envelope-picker";
 import { EnvelopeSelect } from "./envelope-select";
 import { rememberAccount, rememberedAccount } from "./last-account";
@@ -123,7 +124,7 @@ export function MoveForm({
     if (getValues("fromAccount")) return;
     const accountId = rememberedAccount(
       rememberFor,
-      accounts.data.map((row) => row.accountId),
+      usableAccounts(accounts.data).map((row) => row.accountId),
     );
     if (!accountId) return;
     setValue("fromAccount", accountId);
@@ -149,8 +150,14 @@ export function MoveForm({
   const usage = useQuery(envelopeUsageQuery(since));
   const [frozenUsage, setFrozenUsage] = useState<EnvelopeUsage[] | null>(null);
   if (frozenUsage === null && usage.data) setFrozenUsage(usage.data);
-  const fromOrder = envelopeOrder(envelopes.data ?? [], frozenUsage ?? [], values.fromAccount);
-  const toOrder = envelopeOrder(envelopes.data ?? [], frozenUsage ?? [], values.toAccount);
+  // Sin lo archivado, salvo lo que ya estaba elegido (R20).
+  const choosable = usableEnvelopes(envelopes.data ?? [], [
+    values.fromEnvelope,
+    values.toEnvelope,
+    values.fee.envelopeId,
+  ]);
+  const fromOrder = envelopeOrder(choosable, frozenUsage ?? [], values.fromAccount);
+  const toOrder = envelopeOrder(choosable, frozenUsage ?? [], values.toAccount);
 
   const kind = formMoveKind(values, currencyOf);
   const draft = moveDraft(values, currencyOf);
@@ -238,7 +245,7 @@ export function MoveForm({
         ? formatRate(arrivedCents, amountCents)
         : formatRate(amountCents, arrivedCents)
       : null;
-  const envelopeOptions = budgetOrder(envelopes.data ?? []);
+  const envelopeOptions = budgetOrder(choosable);
   const accountOptions = (props: React.ComponentProps<"select"> & { invalid: boolean }) => {
     const { invalid, ...rest } = props;
     return (
@@ -246,7 +253,7 @@ export function MoveForm({
         <option value="">Elige la cuenta</option>
         {CURRENCIES.map((currency) => (
           <optgroup key={currency} label={CURRENCY_NAMES[currency]}>
-            {(accounts.data ?? [])
+            {usableAccounts(accounts.data ?? [], [values.fromAccount, values.toAccount])
               .filter((row) => row.currency === currency)
               .map((row) => (
                 <option key={row.accountId} value={row.accountId}>

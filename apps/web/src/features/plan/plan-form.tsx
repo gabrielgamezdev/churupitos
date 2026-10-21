@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import type { Envelope } from "@/features/envelopes/queries";
 import { budgetOrder } from "@/features/operations/envelope-order";
+import { usableEnvelopes } from "@/features/operations/usable";
 import { formatMoney } from "@/lib/money";
 import { monthName } from "@/lib/months";
 import { showToast } from "@/lib/toast";
@@ -65,7 +66,9 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
 
   const envelopeById = new Map(envelopes.map((envelope) => [envelope.id, envelope]));
   const planned = new Set(values.lines.map((line) => line.envelopeId));
-  const missing = budgetOrder(envelopes).filter((envelope) => !planned.has(envelope.id));
+  const missing = budgetOrder(usableEnvelopes(envelopes)).filter(
+    (envelope) => !planned.has(envelope.id),
+  );
   // Los nombres de los ingresos del mes, una vez cada uno: los botones de la fuente.
   const names = [...new Set(values.incomes.map((income) => income.name.trim()).filter(Boolean))];
   // Con su emoji, como se escriben en la fuente del Excel («💰 Bono»).
