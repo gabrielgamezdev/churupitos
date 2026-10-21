@@ -622,6 +622,16 @@ export type Database = {
         };
         Returns: string;
       };
+      save_receipt: {
+        Args: {
+          op_date: string;
+          op_description: string;
+          op_entries: Json;
+          op_id: string;
+          op_income_id: string;
+        };
+        Returns: string;
+      };
       set_debt_paid: {
         Args: { debt_id: string; paid: boolean; paid_day?: string };
         Returns: undefined;

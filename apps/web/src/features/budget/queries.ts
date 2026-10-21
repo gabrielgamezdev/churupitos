@@ -56,6 +56,43 @@ export type ExpectedIncome = {
   } | null;
 };
 
+const INCOME_COLUMNS =
+  "expected_income_id, month_start, name, emoji, expected_usd_cents, operation_id, received_on, account_id, currency, received_cents, received_usd_cents";
+
+type IncomeRow = {
+  expected_income_id: string | null;
+  month_start: string | null;
+  name: string | null;
+  emoji: string | null;
+  expected_usd_cents: number | null;
+  operation_id: string | null;
+  received_on: string | null;
+  account_id: string | null;
+  currency: string | null;
+  received_cents: number | null;
+  received_usd_cents: number | null;
+};
+
+function toExpectedIncome(row: IncomeRow): ExpectedIncome {
+  return {
+    id: required(row.expected_income_id, "expected_income_id"),
+    name: required(row.name, "name"),
+    emoji: row.emoji,
+    expectedUsdCents: required(row.expected_usd_cents, "expected_usd_cents"),
+    receipt:
+      row.operation_id === null
+        ? null
+        : {
+            operationId: row.operation_id,
+            day: required(row.received_on, "received_on"),
+            accountId: required(row.account_id, "account_id"),
+            currency: required(row.currency, "currency") as Currency,
+            amountCents: required(row.received_cents, "received_cents"),
+            usdCents: required(row.received_usd_cents, "received_usd_cents"),
+          },
+  };
+}
+
 // Los ingresos esperados de un mes, en el orden del Excel.
 export function expectedIncomesQuery(month: string) {
   return queryOptions({
@@ -63,29 +100,30 @@ export function expectedIncomesQuery(month: string) {
     queryFn: async (): Promise<ExpectedIncome[]> => {
       const { data, error } = await supabase
         .from("expected_income_summary")
-        .select(
-          "expected_income_id, name, emoji, expected_usd_cents, operation_id, received_on, account_id, currency, received_cents, received_usd_cents",
-        )
+        .select(INCOME_COLUMNS)
         .eq("month_start", firstDay(month))
         .order("position");
       if (error) throw error;
-      return data.map((row) => ({
-        id: required(row.expected_income_id, "expected_income_id"),
-        name: required(row.name, "name"),
-        emoji: row.emoji,
-        expectedUsdCents: required(row.expected_usd_cents, "expected_usd_cents"),
-        receipt:
-          row.operation_id === null
-            ? null
-            : {
-                operationId: row.operation_id,
-                day: required(row.received_on, "received_on"),
-                accountId: required(row.account_id, "account_id"),
-                currency: required(row.currency, "currency") as Currency,
-                amountCents: required(row.received_cents, "received_cents"),
-                usdCents: required(row.received_usd_cents, "received_usd_cents"),
-              },
-      }));
+      return data.map(toExpectedIncome);
+    },
+  });
+}
+
+// Un ingreso esperado por sí solo, con su mes: lo que abre Cobrar (M9).
+export function expectedIncomeQuery(id: string) {
+  return queryOptions({
+    queryKey: ["expected-income", id],
+    queryFn: async (): Promise<ExpectedIncome & { month: string }> => {
+      const { data, error } = await supabase
+        .from("expected_income_summary")
+        .select(INCOME_COLUMNS)
+        .eq("expected_income_id", id)
+        .single();
+      if (error) throw error;
+      return {
+        ...toExpectedIncome(data),
+        month: monthOf(required(data.month_start, "month_start")),
+      };
     },
   });
 }

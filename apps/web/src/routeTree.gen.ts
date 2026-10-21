@@ -25,6 +25,7 @@ import { Route as AuthenticatedEnvelopesEnvelopeIdRouteImport } from './routes/_
 import { Route as AuthenticatedOperationsNewRouteImport } from './routes/_authenticated/operations.new'
 import { Route as AuthenticatedDebtsDebtIdEditRouteImport } from './routes/_authenticated/debts.$debtId.edit'
 import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
+import { Route as AuthenticatedOperationsReceiveIncomeIdRouteImport } from './routes/_authenticated/operations.receive.$incomeId'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -112,6 +113,12 @@ const AuthenticatedOperationsOperationIdEditRoute =
     path: '/operations/$operationId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOperationsReceiveIncomeIdRoute =
+  AuthenticatedOperationsReceiveIncomeIdRouteImport.update({
+    id: '/operations/receive/$incomeId',
+    path: '/operations/receive/$incomeId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -146,6 +154,7 @@ export interface FileRoutesByTo {
   '/envelopes': typeof AuthenticatedEnvelopesIndexRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -165,6 +174,7 @@ export interface FileRoutesById {
   '/_authenticated/envelopes/': typeof AuthenticatedEnvelopesIndexRoute
   '/_authenticated/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/_authenticated/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/envelopes/'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
+    | '/operations/receive/$incomeId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/envelopes'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
+    | '/operations/receive/$incomeId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -219,6 +231,7 @@ export interface FileRouteTypes {
     | '/_authenticated/envelopes/'
     | '/_authenticated/debts/$debtId/edit'
     | '/_authenticated/operations/$operationId/edit'
+    | '/_authenticated/operations/receive/$incomeId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsOperationIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/operations/receive/$incomeId': {
+      id: '/_authenticated/operations/receive/$incomeId'
+      path: '/operations/receive/$incomeId'
+      fullPath: '/operations/receive/$incomeId'
+      preLoaderRoute: typeof AuthenticatedOperationsReceiveIncomeIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -358,6 +378,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedEnvelopesIndexRoute: typeof AuthenticatedEnvelopesIndexRoute
   AuthenticatedDebtsDebtIdEditRoute: typeof AuthenticatedDebtsDebtIdEditRoute
   AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
+  AuthenticatedOperationsReceiveIncomeIdRoute: typeof AuthenticatedOperationsReceiveIncomeIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -376,6 +397,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDebtsDebtIdEditRoute: AuthenticatedDebtsDebtIdEditRoute,
   AuthenticatedOperationsOperationIdEditRoute:
     AuthenticatedOperationsOperationIdEditRoute,
+  AuthenticatedOperationsReceiveIncomeIdRoute:
+    AuthenticatedOperationsReceiveIncomeIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

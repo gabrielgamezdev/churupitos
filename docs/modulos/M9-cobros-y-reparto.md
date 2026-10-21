@@ -36,9 +36,12 @@
    esperado ya puesto, como fue en todos los cobros importados. La app enseña la tasa que
    resulta y no la guarda (`R8`). En una cuenta en dólares no hay tasa: lo que llegó ya
    son dólares. Fecha y comisión, como en Registrar.
-3. **El reparto, propuesto desde el plan:** arriba, los sobres cuya fuente de fondos nombra
-   ese ingreso, cada uno con lo que le falta de lo planeado, sin pasar de lo que queda por
-   repartir. Se cambia lo que haga falta; «Agregar otro sobre» para los demás; «Falta por
+3. **El reparto, propuesto desde el plan:** los sobres cuya fuente de fondos nombra ese
+   ingreso, cada uno con lo que le falta de lo planeado, sin pasar de lo que queda por
+   repartir. Primero los que solo dependen de este ingreso y, con lo que sobre, los que
+   comparte con otros: en noviembre, dos sobres compartidos y grandes se comían el cobro y
+   dejaban sin nada a sobres que no tienen otra fuente. Se enseñan en el orden del
+   presupuesto. Se cambia lo que haga falta; «Agregar otro sobre» para los demás; «Falta por
    repartir» y «Resto aquí», como en Registrar. Se reparte en dólares (`R9`).
 4. **Los Bs de cada línea** salen de sus dólares a la tasa del cobro, redondeados; la
    última absorbe la diferencia, para que sumen justo lo que llegó (`R9`). Se ven antes
@@ -75,8 +78,9 @@ Y «Cobrar» en Presupuesto y la línea de lo que falta por cobrar en Inicio.
 1. [x] **Plan aprobado** por el autor (2026-10-21).
 2. [x] **Escribir en la base** (2026-10-21, también en la nube): guardar y restaurar un
    cobro, con sus pruebas (`R8`, `R9`, un cobro por ingreso, lo importado intocable).
-3. [ ] **Cobrar:** la cuenta, lo que llegó, los dólares y la tasa.
-4. [ ] **El reparto:** propuesto desde el plan, con lo que falta y los Bs de cada línea.
+3. [x] **Cobrar** (2026-10-21): la cuenta, lo que llegó, los dólares y la tasa.
+4. [x] **El reparto** (2026-10-21, con el paso 3): propuesto desde el plan, con lo que
+   falta y los Bs de cada línea.
 5. [ ] **Corregir, borrar y deshacer** un cobro.
 6. [ ] **«Cobrar» en Presupuesto** y lo que falta por cobrar en Inicio.
 7. [ ] **En los teléfonos:** lo usan unos días.
