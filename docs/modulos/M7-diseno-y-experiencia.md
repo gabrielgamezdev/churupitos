@@ -112,8 +112,9 @@ Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 ## Tope de complejidad
 
 - **Pantallas:** 1 nueva (Movimientos), más la hoja de un movimiento y el aviso.
-- **Datos:** funciones para restaurar operaciones y deudas, una para el uso de los sobres
-  y sus conceptos, y quién registró en las vistas del libro. Ninguna tabla nueva.
+- **Datos:** funciones para restaurar operaciones y deudas, dos para el uso de los sobres
+  y de los conceptos, el día de pago en `set_debt_paid` y quién registró en las vistas del
+  libro. Ninguna tabla nueva.
 
 ## Fuera de M7
 
