@@ -1,27 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Settings } from "lucide-react";
 
 import { Screen } from "@/components/screen";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CurrencyCard, CurrencyCardSkeleton } from "@/features/balances/currency-card";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import { useCurrencyTotals } from "@/features/balances/use-currency-totals";
 import { useCurrentMember } from "@/features/household/use-current-member";
-import { RegisterButton } from "@/features/operations/register-button";
 import { currencySlug } from "@/lib/money";
 
 export const Route = createFileRoute("/_authenticated/")({
   component: HomePage,
 });
 
-// El inicio: el saludo y lo que hay hoy en cada moneda. Sin cabecera de pantalla:
-// es la primera, y no hay adónde volver.
+// El inicio: el saludo, Ajustes y lo que hay hoy en cada moneda. Sin cabecera de
+// pantalla: es la primera, y no hay adónde volver.
 function HomePage() {
   return (
     <Screen className="pt-[max(1.5rem,env(safe-area-inset-top))]">
       <Greeting />
       <TodayByCurrency />
-      <RegisterButton />
     </Screen>
   );
 }
@@ -35,7 +35,19 @@ function Greeting() {
     return <p className="text-body">Tu cuenta no pertenece a este hogar.</p>;
   }
   // Sin el nombre (no cargó), el saludo se queda en «Hola».
-  return <h1 className="text-title">Hola{member.data ? `, ${member.data.display_name}` : ""}</h1>;
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <h1 className="text-title">Hola{member.data ? `, ${member.data.display_name}` : ""}</h1>
+      {/* Ajustes no tiene pestaña: se usa poco, y la barra es para lo de cada día. */}
+      <Link
+        to="/settings"
+        aria-label="Ajustes"
+        className={buttonVariants({ variant: "ghost", size: "icon" })}
+      >
+        <Settings aria-hidden="true" />
+      </Link>
+    </div>
+  );
 }
 
 // Una tarjeta por moneda, que lleva a sus cuentas: lo del hogar, el total con «Otro»

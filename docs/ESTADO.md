@@ -1,11 +1,11 @@
 # Estado
 
-## Ahora: M7 · Diseño y experiencia (en planificación)
+## Ahora: M7 · Diseño y experiencia (en curso)
 
 Lo que pidieron al usar M6: registrar más rápido y con un formulario más bonito, y
 corregir o borrar sin buscar. Sale de una investigación de diseño (sus notas, fuera de
-git, en `privado/investigacion/diseno/`); las decisiones ya están tomadas y el plan, por
-aprobar, está en `docs/modulos/M7-diseno-y-experiencia.md`.
+git, en `privado/investigacion/diseno/`); el plan, aprobado, está en
+`docs/modulos/M7-diseno-y-experiencia.md`.
 
 Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
 

@@ -22,7 +22,7 @@ function SettingsPage() {
 
   return (
     <Screen>
-      <ScreenHeader title="Ajustes" />
+      <ScreenHeader title="Ajustes" back={{ to: "/" }} backLabel="Volver a Inicio" />
 
       <section aria-labelledby="session-title" className="flex flex-col gap-3">
         <h2 id="session-title" className="text-heading">

@@ -24,7 +24,6 @@ import {
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationDetail } from "@/features/ledger/operation-detail";
-import { RegisterButton } from "@/features/operations/register-button";
 import { envelopeLedgerQuery } from "@/features/ledger/queries";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
@@ -188,7 +187,6 @@ function EnvelopeScreen({ envelope, envelopes }: { envelope: Envelope; envelopes
           />
         )}
       </section>
-      <RegisterButton envelope={envelope.id} />
     </Screen>
   );
 }

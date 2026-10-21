@@ -18,7 +18,6 @@ import { envelopesQuery } from "@/features/envelopes/queries";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationDetail } from "@/features/ledger/operation-detail";
-import { RegisterButton } from "@/features/operations/register-button";
 import { accountLedgerQuery } from "@/features/ledger/queries";
 import { CURRENCY_NAMES, currencySlug, formatMoney } from "@/lib/money";
 import { addMonths, isMonth, lastDay, monthName, monthOf, today } from "@/lib/months";
@@ -189,7 +188,6 @@ function AccountScreen({ account, accounts }: AccountScreenProps) {
           />
         )}
       </section>
-      <RegisterButton account={account.accountId} />
     </Screen>
   );
 }

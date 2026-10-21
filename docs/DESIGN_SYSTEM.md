@@ -111,8 +111,9 @@ tabulares.
 - **Radios:** `radius-sm` 6 px en etiquetas; `radius-md` 10 px en botones, campos y el
   selector de mes; `radius-lg` 16 px en tarjetas y bloques de lista; `radius-pill` en
   el aviso de sin conexión. En el código, `rounded-sm`, `-md`, `-lg` y `-full`.
-- **Sombra:** solo llevan `shadow-card` las tarjetas de moneda del inicio, el botón
-  «Registrar», que flota sobre la pantalla, y la opción elegida entre Gasto e Ingreso. En
+- **Sombra:** solo llevan `shadow-card` las tarjetas de moneda del inicio, el círculo
+  del ＋ de la barra y la opción elegida entre Gasto e Ingreso. Nada flota sobre la
+  pantalla: un botón flotante tapa la columna de los importes. En
   oscuro es un filo claro, no una sombra. Lo demás son listas: filas separadas por `hairline`
   dentro de un bloque `surface-raised`.
 
@@ -123,7 +124,7 @@ Cada uno lee de la base; ninguno calcula un saldo (`R2`).
 Las piezas de base ya están en `apps/web/src/components/`: `Money`, `EnvelopeChip`,
 `List` y `ListRow`, `Screen` (el marco de cada pantalla, con `PullToRefresh` para
 estirar y recargar), `ScreenHeader`, `Field` y `AmountInput` (los campos de los
-formularios), `floatingActionClass` (el botón que flota) y los estados (`MissingData`, `StaleDataBanner` y,
+formularios) y los estados (`MissingData`, `StaleDataBanner` y,
 debajo, `EmptyState`, `ErrorState` y `OfflineBanner`). Las genéricas son de shadcn,
 adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `money-out`, solo para lo que no se deshace), `Badge` (las etiquetas), `Skeleton`,
@@ -132,7 +133,7 @@ adaptadas a este documento, en `components/ui/`: `Button` (con `destructive`, en
 `AccountRow` en `balances/`, `EnvelopeSplit` en `accounts/`, `EnvelopeRow` en
 `envelopes/`, `BudgetTotals`, `IncomeRow`, `PlanRow` y `BudgetCheckList` en `budget/`,
 `DebtTotals`, `DebtGroupList`, `DebtRow`, `DebtForm` y `DebtActions` en `debts/`, y
-`OperationForm`, `RegisterButton` y `OperationActions` en `operations/`) y los del libro, que comparten
+`OperationForm` y `OperationActions` en `operations/`) y los del libro, que comparten
 cuentas y sobres, en `features/ledger/` (`LedgerList`, `MonthPicker` y
 `OperationDetail`). Todos entran en la galería al construirse, con datos inventados.
 
@@ -157,12 +158,11 @@ se entró directo por la dirección, va a la pantalla de arriba.
 | **DebtRow** | Una deuda: concepto, fecha y cuánto falta («en 26 días»; una vencida, «venció hace 2 días» en `overdrawn») e importe en su moneda. Una pagada, con ✅ y en `ink-muted`. En Deudas, al tocarla se despliegan sus acciones |
 | **DebtActions** | «Marcar pagada» (o «No está pagada»), «Corregir» y «Borrar», que se confirma ahí mismo. Una pagada ofrece «Registrar el pago» (o «el cobro»), que abre Registrar con el monto, el concepto y solo las cuentas de su moneda |
 | **DebtForm** | Agregar o corregir una deuda: quién debe, concepto, moneda, monto y fecha límite. Al agregar, «Agregar en cuotas»: cuántas y cada cuánto, con la lista de las cuotas y sus fechas |
-| **RegisterButton** | «Registrar», en `brand` y flotando sobre la barra, en el inicio, una cuenta y un sobre: abre Registrar con esa cuenta o ese sobre elegidos |
 | **OperationForm** | Registrar: Gasto o Ingreso, monto, cuenta, sobre, concepto, fecha y la comisión si la hubo. Debajo, cómo queda cada sobre de la cuenta; un descubierto lleva su etiqueta y se guarda igual (`R6`). Sin red, «Guardar» se apaga y lo dice |
 | **AmountInput** | Un monto con el símbolo de su moneda delante y el teclado numérico; se lee en céntimos con enteros |
 | **BudgetCheckList** | El cuadre del mes (`R12`): ✅ si cuadra o, en `overdrawn` con su icono, por cuánto no. Avisa; nunca impide |
-| **ScreenHeader** | Atrás, el título y el saldo de lo que se mira. La primera pantalla de una sección va sin flecha |
-| **TabBar** | La barra de secciones, abajo y en `surface-raised`: Sobres · Deudas · Inicio · Presupuesto · Ajustes, todas del mismo ancho y con Inicio en el centro en un círculo `brand` (`brand-soft` si no es la sección activa). La sección activa va en `brand`; las demás, en `ink-muted`. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
+| **ScreenHeader** | Atrás, el título y el saldo de lo que se mira, y a la derecha la acción de la pantalla si la tiene («Agregar» en Deudas, en `outline`). La primera pantalla de una sección va sin flecha; Ajustes, que no tiene pestaña, la lleva |
+| **TabBar** | La barra de secciones, abajo y en `surface-raised`: Inicio · Sobres · ＋ Registrar · Presupuesto · Deudas, las cinco del mismo ancho. El ＋ del centro, en un círculo `brand` con `shadow-card`, no es una sección: abre Registrar con la cuenta o el sobre de la pantalla en la que se está. La sección activa va en `brand`; las demás, en `ink-muted`. Ajustes no tiene pestaña: se abre con el engranaje junto al saludo de Inicio. Cada pantalla deja abajo su hueco (`--tab-bar-height`) |
 | **States** | Cargando, vacío, error y sin conexión (abajo) |
 
 ## Estados

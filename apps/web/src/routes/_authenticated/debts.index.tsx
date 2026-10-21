@@ -2,13 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronDown, Plus } from "lucide-react";
 
-import { floatingActionClass } from "@/components/floating-action";
-
 import { List, ListRow } from "@/components/list";
 import { Screen } from "@/components/screen";
 import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData, StaleDataBanner } from "@/components/states";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DebtActions } from "@/features/debts/debt-actions";
 import { DebtGroupList, DebtRow, DebtTotals } from "@/features/debts/debt-row";
@@ -30,7 +29,7 @@ function DebtsPage() {
   if (!debts.data) {
     return (
       <Screen>
-        <ScreenHeader title="Deudas" />
+        <ScreenHeader title="Deudas" action={<AddDebtLink />} />
         <MissingData
           queries={[debts]}
           errorMessage="No se pudieron cargar las deudas."
@@ -51,7 +50,7 @@ function DebtsPage() {
   const receivable = summarizeDebts(debts.data, "receivable", currentMonth);
   return (
     <Screen>
-      <ScreenHeader title="Deudas" />
+      <ScreenHeader title="Deudas" action={<AddDebtLink />} />
       <StaleDataBanner queries={[debts, totals]} />
 
       {totals.data ? (
@@ -103,12 +102,6 @@ function DebtsPage() {
         )}
         <PaidDebts debts={receivable.paid} today={todayDay} />
       </section>
-
-      <div aria-hidden="true" className="h-tap" />
-      <Link to="/debts/new" className={floatingActionClass}>
-        <Plus aria-hidden="true" />
-        Agregar
-      </Link>
     </Screen>
   );
 }
@@ -148,5 +141,15 @@ function PaidDebts({ debts, today }: { debts: Debt[]; today: string }) {
         </List>
       </CollapsibleContent>
     </Collapsible>
+  );
+}
+
+// Agregar una deuda, en la cabecera: el ＋ de la barra es para registrar movimientos.
+function AddDebtLink() {
+  return (
+    <Link to="/debts/new" className={buttonVariants({ variant: "outline" })}>
+      <Plus aria-hidden="true" />
+      Agregar
+    </Link>
   );
 }

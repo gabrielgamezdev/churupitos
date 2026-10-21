@@ -1,7 +1,6 @@
 # M7 · Diseño y experiencia
 
-- **Estado:** en planificación (desde 2026-10-20). Las decisiones están tomadas; falta que
-  el autor apruebe los pasos.
+- **Estado:** en curso (desde 2026-10-20). El plan está aprobado.
 - **Objetivo:** que registrar sea rápido y agradable, que corregir o borrar algo no
   obligue a buscarlo, y que la app se sienta cuidada y no una herramienta interna. Es lo
   que pidieron al usar M6: «un formulario más bonito» y «poder borrar y editar alguna
@@ -72,9 +71,9 @@ del color, no sus valores.
 
 Cada uno se prueba en los teléfonos antes del siguiente.
 
-1. [ ] **Plan aprobado** por el autor.
-2. [ ] **La barra:** ＋ al centro con el contexto de la pantalla, Ajustes desde Inicio y
-   sin botones flotantes.
+1. [x] **Plan aprobado** por el autor (2026-10-20).
+2. [x] **La barra** (2026-10-20): ＋ al centro con el contexto de la pantalla, Ajustes
+   desde Inicio y sin botones flotantes.
 3. [ ] **La hoja de un movimiento** desde los libros, y **«Últimos registrados»** en Inicio.
 4. [ ] **El aviso con «Deshacer»** al guardar, corregir y marcar o desmarcar una deuda.
 5. [ ] **Restaurar en la base** (operaciones y deudas) y **borrar sin preguntar**, con

@@ -9,6 +9,9 @@ interface ScreenHeaderProps {
   // Sin él no hay flecha: es la primera pantalla de una sección.
   back?: LinkProps;
   backLabel?: string;
+  // A la derecha del título: la acción de la pantalla, como «Agregar» en Deudas o
+  // Ajustes en Inicio.
+  action?: React.ReactNode;
   // Debajo del título: el saldo de lo que se mira.
   children?: React.ReactNode;
 }
@@ -16,7 +19,7 @@ interface ScreenHeaderProps {
 // Atrás, el título y el saldo de lo que se mira. Si se llegó desde otra pantalla de la
 // app, la flecha vuelve a ella, igual que el atrás de Android; si no, va a `back` sin
 // dejar rastro en el historial.
-export function ScreenHeader({ title, back, backLabel, children }: ScreenHeaderProps) {
+export function ScreenHeader({ title, back, backLabel, action, children }: ScreenHeaderProps) {
   const router = useRouter();
   const canGoBack = useCanGoBack();
 
@@ -37,10 +40,14 @@ export function ScreenHeader({ title, back, backLabel, children }: ScreenHeaderP
           >
             <ArrowLeft aria-hidden="true" />
           </Link>
-          <h1 className="min-w-0 truncate text-title">{title}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-title">{title}</h1>
+          {action}
         </div>
       ) : (
-        <h1 className="flex min-h-tap items-center text-title">{title}</h1>
+        <div className="flex min-h-tap items-center justify-between gap-2">
+          <h1 className="min-w-0 truncate text-title">{title}</h1>
+          {action}
+        </div>
       )}
       {children}
     </header>
