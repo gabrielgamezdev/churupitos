@@ -22,10 +22,12 @@ export type LedgerEntry = {
   description: string;
   // Lo que quedó después de este asiento: en la cuenta, o en el sobre en esa moneda.
   runningBalanceCents: number;
+  // Quién lo registró en la app; lo importado no tiene autor.
+  createdBy: string | null;
 };
 
 const LEDGER_COLUMNS =
-  "entry_id, operation_id, occurred_on, date_approximate, kind, account_id, envelope_id, currency, amount_cents, is_fee, description, operation_description, running_balance_cents";
+  "entry_id, operation_id, occurred_on, date_approximate, kind, account_id, envelope_id, currency, amount_cents, is_fee, description, operation_description, running_balance_cents, created_by";
 
 type LedgerRow = {
   entry_id: string | null;
@@ -41,6 +43,7 @@ type LedgerRow = {
   description: string | null;
   operation_description: string | null;
   running_balance_cents: number | null;
+  created_by: string | null;
 };
 
 function toLedgerEntry(row: LedgerRow): LedgerEntry {
@@ -58,6 +61,7 @@ function toLedgerEntry(row: LedgerRow): LedgerEntry {
     // El concepto de la fila; si no tiene, el de la operación.
     description: row.description || row.operation_description || "",
     runningBalanceCents: required(row.running_balance_cents, "running_balance_cents"),
+    createdBy: row.created_by,
   };
 }
 
@@ -154,14 +158,64 @@ export function operationQuery(operationId: string) {
   });
 }
 
-export type RecentOperation = {
+// Una operación en una lista (Inicio, Movimientos): sin restantes, con quién la registró.
+export type OperationItem = {
   id: string;
   kind: string;
   day: string;
   description: string;
+  // Quién la registró en la app; lo importado del Excel no tiene autor.
+  createdBy: string | null;
   authorName: string | null;
-  entries: { accountId: string; envelopeId: string; amountCents: number; isFee: boolean }[];
+  // Su sitio en el día (R14): la posición de su primer asiento.
+  position: number;
+  entries: {
+    accountId: string;
+    envelopeId: string;
+    amountCents: number;
+    isFee: boolean;
+    description: string;
+  }[];
 };
+
+const OPERATION_ITEM_COLUMNS =
+  "id, kind, occurred_on, description, created_by, author:household_members(display_name), entries(account_id, envelope_id, amount_cents, is_fee, description, position)";
+
+type OperationItemRow = {
+  id: string;
+  kind: string;
+  occurred_on: string;
+  description: string;
+  created_by: string | null;
+  author: { display_name: string } | null;
+  entries: {
+    account_id: string;
+    envelope_id: string;
+    amount_cents: number;
+    is_fee: boolean;
+    description: string;
+    position: number;
+  }[];
+};
+
+function toOperationItem(row: OperationItemRow): OperationItem {
+  return {
+    id: row.id,
+    kind: row.kind,
+    day: row.occurred_on,
+    description: row.description,
+    createdBy: row.created_by,
+    authorName: row.author?.display_name ?? null,
+    position: Math.min(...row.entries.map((entry) => entry.position)),
+    entries: row.entries.map((entry) => ({
+      accountId: entry.account_id,
+      envelopeId: entry.envelope_id,
+      amountCents: entry.amount_cents,
+      isFee: entry.is_fee,
+      description: entry.description,
+    })),
+  };
+}
 
 // Cuántas enseña Inicio: las de los últimos días, para corregir lo que se acaba de apuntar.
 export const RECENT_OPERATIONS_LIMIT = 5;
@@ -170,29 +224,35 @@ export const RECENT_OPERATIONS_LIMIT = 5;
 // se acaba de apuntar sale arriba aunque sea de ayer. Lo importado del Excel no entra.
 export const recentOperationsQuery = queryOptions({
   queryKey: ["recent-operations"],
-  queryFn: async (): Promise<RecentOperation[]> => {
+  queryFn: async (): Promise<OperationItem[]> => {
     const { data, error } = await supabase
       .from("operations")
-      .select(
-        "id, kind, occurred_on, description, author:household_members(display_name), entries(account_id, envelope_id, amount_cents, is_fee, position)",
-      )
+      .select(OPERATION_ITEM_COLUMNS)
       .not("created_by", "is", null)
       .order("created_at", { ascending: false })
       .order("position", { referencedTable: "entries" })
       .limit(RECENT_OPERATIONS_LIMIT);
     if (error) throw error;
-    return data.map((row) => ({
-      id: row.id,
-      kind: row.kind,
-      day: row.occurred_on,
-      description: row.description,
-      authorName: row.author?.display_name ?? null,
-      entries: row.entries.map((entry) => ({
-        accountId: entry.account_id,
-        envelopeId: entry.envelope_id,
-        amountCents: entry.amount_cents,
-        isFee: entry.is_fee,
-      })),
-    }));
+    return data.map(toOperationItem);
   },
 });
+
+// Todas las operaciones de un mes, de todas las cuentas (Movimientos, M7): lo más nuevo
+// arriba y, dentro del día, en el orden del libro (R14).
+export function monthOperationsQuery(month: string) {
+  return queryOptions({
+    queryKey: ["month-operations", month],
+    queryFn: async (): Promise<OperationItem[]> => {
+      const { data, error } = await supabase
+        .from("operations")
+        .select(OPERATION_ITEM_COLUMNS)
+        .gte("occurred_on", firstDay(month))
+        .lte("occurred_on", lastDay(month))
+        .order("position", { referencedTable: "entries" });
+      if (error) throw error;
+      return data
+        .map(toOperationItem)
+        .sort((a, b) => b.day.localeCompare(a.day) || b.position - a.position);
+    },
+  });
+}

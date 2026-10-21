@@ -24,6 +24,7 @@ import {
   SAMPLE_ENVELOPE_ROWS,
   SAMPLE_INCOMES,
   SAMPLE_LEDGER,
+  SAMPLE_MEMBERS,
   SAMPLE_OPERATIONS,
   SAMPLE_PLAN,
   SAMPLE_RECENT,
@@ -36,7 +37,7 @@ import { BudgetTotals } from "@/features/budget/budget-totals";
 import { IncomeRow } from "@/features/budget/income-row";
 import { PlanRow } from "@/features/budget/plan-row";
 import { OperationSheetContent } from "@/features/ledger/operation-sheet";
-import { RecentRow } from "@/features/ledger/recent-operations";
+import { OperationRow } from "@/features/ledger/operation-row";
 import { attention } from "@/features/home/attention";
 import { AttentionList } from "@/features/home/attention-block";
 import { AmountInput } from "@/components/amount-field";
@@ -378,7 +379,7 @@ function GalleryPage() {
         >
           <List>
             {SAMPLE_RECENT.map((operation) => (
-              <RecentRow
+              <OperationRow
                 key={operation.id}
                 operation={operation}
                 today={SAMPLE_TODAY}
@@ -409,6 +410,7 @@ function GalleryPage() {
               ) : null;
             }}
             onOpen={(entry) => setOpenOperation(entry.operationId)}
+            memberNames={SAMPLE_MEMBERS}
           />
           <Sheet
             open={sheetOperation !== undefined}

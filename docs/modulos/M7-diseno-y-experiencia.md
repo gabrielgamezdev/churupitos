@@ -92,7 +92,9 @@ Cada uno se prueba en los teléfonos antes del siguiente.
 9. [x] **Inicio** (2026-10-20): «Para revisar», con los descubiertos y las deudas que
    vencen en 7 días o ya vencieron.
 10. [x] **Las barras del Presupuesto** (2026-10-20).
-11. [ ] **Movimientos**, con quién registró cada uno también en los libros.
+11. [x] **Movimientos** (2026-10-20, la base también en la nube): el mes de todas las
+   cuentas, con búsqueda y filtros que quedan en la dirección, y quién registró cada
+   movimiento también en los libros.
 12. [ ] **Sugerencias de concepto** al registrar, con su sobre.
 13. [ ] **En los teléfonos:** lo usan unos días y cuentan los toques de un gasto típico.
 

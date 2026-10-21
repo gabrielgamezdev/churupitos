@@ -347,6 +347,7 @@ export type Database = {
         Row: {
           account_id: string | null;
           amount_cents: number | null;
+          created_by: string | null;
           currency: string | null;
           date_approximate: boolean | null;
           description: string | null;
@@ -389,6 +390,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "operations";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "operations_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
           },
         ];
       };
@@ -457,6 +465,7 @@ export type Database = {
         Row: {
           account_id: string | null;
           amount_cents: number | null;
+          created_by: string | null;
           currency: string | null;
           date_approximate: boolean | null;
           description: string | null;
@@ -499,6 +508,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "operations";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "operations_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
           },
         ];
       };

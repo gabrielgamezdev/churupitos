@@ -16,7 +16,7 @@ describe("una operación en una fila", () => {
       ],
       currencyOf,
     );
-    expect(summary.totals).toEqual([{ currency: "VES", cents: -100500 }]);
+    expect(summary.totals).toEqual([{ currency: "VES", cents: -100500, movedCents: 0 }]);
     expect(summary.accountIds).toEqual(["bank"]);
     expect(summary.envelopeIds).toEqual(["food"]);
   });
@@ -30,7 +30,7 @@ describe("una operación en una fila", () => {
       ],
       currencyOf,
     );
-    expect(summary.totals).toEqual([{ currency: "VES", cents: -6000 }]);
+    expect(summary.totals).toEqual([{ currency: "VES", cents: -6000, movedCents: 0 }]);
     expect(summary.envelopeIds).toEqual(["food", "home"]);
   });
 
@@ -44,8 +44,19 @@ describe("una operación en una fila", () => {
       currencyOf,
     );
     expect(summary.totals).toEqual([
-      { currency: "USD", cents: -1000 },
-      { currency: "VES", cents: 400000 },
+      { currency: "USD", cents: -1000, movedCents: 0 },
+      { currency: "VES", cents: 400000, movedCents: 400000 },
     ]);
+  });
+
+  it("un traspaso entre sobres da cero, y dice cuánto pasó", () => {
+    const summary = summarizeOperation(
+      [
+        { accountId: "bank", envelopeId: "food", amountCents: -2500, isFee: false },
+        { accountId: "bank", envelopeId: "home", amountCents: 2500, isFee: false },
+      ],
+      currencyOf,
+    );
+    expect(summary.totals).toEqual([{ currency: "VES", cents: 0, movedCents: 2500 }]);
   });
 });

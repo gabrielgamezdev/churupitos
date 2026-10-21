@@ -4,7 +4,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(29);
 
 -- Sin `set constraints all immediate`: las funciones comprueban la forma (R5) ellas
 -- mismas, que es lo que se prueba aquí.
@@ -122,6 +122,15 @@ select lives_ok(
        '00000000-0000-4000-c000-0000000000c2', 'income', '2026-01-11', 'Reintegro',
        jsonb_build_array(pg_temp.line('Billetera B', 'Ahorro', 2000))) $$,
   'un miembro registra un ingreso suelto'
+);
+
+select results_eq(
+  $$ select distinct a.created_by, e.created_by
+     from public.account_ledger a
+     join public.envelope_ledger e on e.entry_id = a.entry_id
+     where a.operation_id = '00000000-0000-4000-c000-0000000000c2' $$,
+  $$ values ('00000000-0000-4000-8000-00000000000a'::uuid, '00000000-0000-4000-8000-00000000000a'::uuid) $$,
+  'los dos libros dicen quién lo registró'
 );
 
 -- ---------------------------------------------------------------------------

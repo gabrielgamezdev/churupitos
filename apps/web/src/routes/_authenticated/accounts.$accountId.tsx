@@ -15,6 +15,7 @@ import { accountCellsQuery, balancesAtQuery } from "@/features/accounts/queries"
 import { AccountRowSkeleton } from "@/features/balances/account-row";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery } from "@/features/envelopes/queries";
+import { householdMembersQuery } from "@/features/household/members";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationSheet } from "@/features/ledger/operation-sheet";
@@ -69,6 +70,7 @@ interface AccountScreenProps {
 function AccountScreen({ account }: AccountScreenProps) {
   // La operación abierta en su hoja, si hay una.
   const [openOperation, setOpenOperation] = useState<string | null>(null);
+  const members = useQuery(householdMembersQuery);
   const navigate = Route.useNavigate();
   const todayDay = today();
   const currentMonth = monthOf(todayDay);
@@ -169,6 +171,7 @@ function AccountScreen({ account }: AccountScreenProps) {
                 ) : null;
               }}
               onOpen={(entry) => setOpenOperation(entry.operationId)}
+              memberNames={members.data}
             />
           )
         ) : (

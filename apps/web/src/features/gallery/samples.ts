@@ -7,7 +7,7 @@ import type { PlanRow } from "@/features/budget/budget-view";
 import type { BudgetChecks, ExpectedIncome } from "@/features/budget/queries";
 import type { Debt, DebtTotal } from "@/features/debts/queries";
 import type { Envelope } from "@/features/envelopes/queries";
-import type { LedgerEntry, OperationDetail, RecentOperation } from "@/features/ledger/queries";
+import type { LedgerEntry, OperationDetail, OperationItem } from "@/features/ledger/queries";
 
 const envelope = (id: string, name: string, emoji: string | null, position: number) => ({
   id,
@@ -60,12 +60,16 @@ const entry = (
   amountCents,
   isFee: false,
   description,
+  createdBy: null,
   runningBalanceCents,
   ...extra,
 });
 
 export const SAMPLE_LEDGER: LedgerEntry[] = [
-  entry("mercado", "2026-10-15", "Mercado de la semana", "comida", -72000, 620000),
+  // Registrado en la app: el libro dice quién.
+  entry("mercado", "2026-10-15", "Mercado de la semana", "comida", -72000, 620000, {
+    createdBy: "ana",
+  }),
   entry("comision", "2026-10-15", "Comisión pago móvil", "comida", -3000, 692000, {
     isFee: true,
   }),
@@ -302,16 +306,30 @@ export const SAMPLE_DEBT_TOTALS: DebtTotal[] = [
 
 // Lo último registrado en la app, de los dos: un gasto repartido entre dos sobres y uno
 // en dólares de ayer.
-export const SAMPLE_RECENT: RecentOperation[] = [
+export const SAMPLE_RECENT: OperationItem[] = [
   {
     id: "reciente-mercado",
     kind: "expense",
     day: SAMPLE_TODAY,
     description: "Mercado",
+    createdBy: "ana",
     authorName: "Ana",
+    position: 2,
     entries: [
-      { accountId: "banco-a", envelopeId: "comida", amountCents: -60000, isFee: false },
-      { accountId: "banco-a", envelopeId: "transporte", amountCents: -12000, isFee: false },
+      {
+        accountId: "banco-a",
+        envelopeId: "comida",
+        amountCents: -60000,
+        isFee: false,
+        description: "",
+      },
+      {
+        accountId: "banco-a",
+        envelopeId: "transporte",
+        amountCents: -12000,
+        isFee: false,
+        description: "",
+      },
     ],
   },
   {
@@ -319,9 +337,20 @@ export const SAMPLE_RECENT: RecentOperation[] = [
     kind: "expense",
     day: "2026-10-14",
     description: "Pasaje",
+    createdBy: "beto",
     authorName: "Beto",
+    position: 1,
     entries: [
-      { accountId: "billetera-b", envelopeId: "transporte", amountCents: -500, isFee: false },
+      {
+        accountId: "billetera-b",
+        envelopeId: "transporte",
+        amountCents: -500,
+        isFee: false,
+        description: "",
+      },
     ],
   },
 ];
+
+// Los nombres de los del hogar, por usuario, como los da `householdMembersQuery`.
+export const SAMPLE_MEMBERS: Record<string, string> = { ana: "Ana", beto: "Beto" };

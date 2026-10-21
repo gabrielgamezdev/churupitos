@@ -21,6 +21,7 @@ import {
   envelopesQuery,
   type Envelope,
 } from "@/features/envelopes/queries";
+import { householdMembersQuery } from "@/features/household/members";
 import { LedgerList } from "@/features/ledger/ledger-list";
 import { MonthPicker } from "@/features/ledger/month-picker";
 import { OperationSheet } from "@/features/ledger/operation-sheet";
@@ -72,6 +73,7 @@ function EnvelopePage() {
 function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
   // La operación abierta en su hoja, si hay una.
   const [openOperation, setOpenOperation] = useState<string | null>(null);
+  const members = useQuery(householdMembersQuery);
   const navigate = Route.useNavigate();
   const todayDay = today();
   const currentMonth = monthOf(todayDay);
@@ -169,6 +171,7 @@ function EnvelopeScreen({ envelope }: { envelope: Envelope }) {
                 </span>
               )}
               onOpen={(entry) => setOpenOperation(entry.operationId)}
+              memberNames={members.data}
             />
           )
         ) : (

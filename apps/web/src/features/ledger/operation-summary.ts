@@ -4,7 +4,9 @@ type SummaryEntry = { accountId: string; envelopeId: string; amountCents: number
 
 export type OperationSummary = {
   // Lo que movió en cada moneda, en el orden en que aparece: nunca se suman entre sí (R1).
-  totals: { currency: Currency; cents: number }[];
+  // `movedCents` es lo que entró en esa moneda: en un traspaso, que da cero, lo que pasó
+  // de un sitio a otro.
+  totals: { currency: Currency; cents: number; movedCents: number }[];
   accountIds: string[];
   // Los sobres del gasto o del ingreso; el de la comisión solo si no hay otro (R16).
   envelopeIds: string[];
@@ -16,15 +18,19 @@ export function summarizeOperation(
   entries: SummaryEntry[],
   currencyOf: (accountId: string) => Currency | undefined,
 ): OperationSummary {
-  const totals = new Map<Currency, number>();
+  const totals = new Map<Currency, { cents: number; movedCents: number }>();
   for (const entry of entries) {
     const currency = currencyOf(entry.accountId);
-    if (currency) totals.set(currency, (totals.get(currency) ?? 0) + entry.amountCents);
+    if (!currency) continue;
+    const total = totals.get(currency) ?? { cents: 0, movedCents: 0 };
+    total.cents += entry.amountCents;
+    if (entry.amountCents > 0) total.movedCents += entry.amountCents;
+    totals.set(currency, total);
   }
   const unique = (ids: string[]) => [...new Set(ids)];
   const main = entries.filter((entry) => !entry.isFee);
   return {
-    totals: [...totals].map(([currency, cents]) => ({ currency, cents })),
+    totals: [...totals].map(([currency, total]) => ({ currency, ...total })),
     accountIds: unique(entries.map((entry) => entry.accountId)),
     envelopeIds: unique((main.length > 0 ? main : entries).map((entry) => entry.envelopeId)),
   };
