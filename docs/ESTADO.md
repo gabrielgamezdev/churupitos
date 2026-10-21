@@ -1,10 +1,11 @@
 # Estado
 
-## Ahora: M11 · Sobres y cuentas (en curso), y M8, M9 y M10 en los teléfonos
+## Ahora: M8, M9, M10 y M11, en los teléfonos
 
-Crear sobres y cuentas desde la app, borrar lo que no tiene nada y archivar lo que tiene
-historia y está en cero, para que la app no se llene de lo que ya no se usa. El plan,
-aprobado, está en `docs/modulos/M11-sobres-y-cuentas.md`. Después, el corte.
+M11 · Sobres y cuentas (crear sobres y cuentas, borrar lo que no tiene nada y archivar lo
+que tiene historia y está en cero) está construido; falta probarlo en los teléfonos, su
+paso 6. Su plan: `docs/modulos/M11-sobres-y-cuentas.md`. En la nube, los 4 sobres sin
+uso se archivan en la próxima recarga, o a mano desde Ajustes. Después, el corte.
 
 M10 · El mes (preparar el presupuesto del mes siguiente copiando el último, y cambiar el
 de cualquier mes, con el cuadre a la vista) está construido; falta probarlo en los
