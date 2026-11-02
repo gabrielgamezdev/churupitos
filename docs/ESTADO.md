@@ -68,8 +68,8 @@ del producto:
   noviembre se lleva solo en la app. Los Excels fueron el respaldo hasta ese día; desde
   entonces hacen falta copias de la base (M12).
 - **Hasta el corte se registró en paralelo** (del 2026-10-20 al 2026-10-31): en el Excel
-  y en la app. Lo importado no se corrige desde la app, salvo el presupuesto (M10),
-  hasta que M12 lo libere.
+  y en la app. Desde el corte, lo importado se corrige como lo demás (M12), salvo los
+  ajustes del arrastre, y los meses pasados se cierran solos (`R21`).
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Claro y oscuro, según el teléfono** (2026-10-15).

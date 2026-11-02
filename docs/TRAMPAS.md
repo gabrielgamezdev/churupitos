@@ -40,6 +40,14 @@ En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `
 dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
 `replace(a, () => b)`.**
 
+### Una segunda relación con la misma tabla rompe las consultas que la traen
+Al añadir `operations.updated_by` (otra referencia a `household_members`), la consulta que
+traía el autor con `author:household_members(display_name)` dejó de saber cuál de las dos
+seguir: PostgREST responde con un error, y la app publicada se rompería al subir la
+migración. Lo avisan los tipos regenerados (`SelectQueryError`). **Se nombra la relación**
+(`household_members!operations_created_by_fkey`), y la app con ese cambio se publica
+**antes** que la migración: funciona con las dos.
+
 ### `npm run db:start` tarda diez minutos sin decir nada
 Si Docker perdió las imágenes de Supabase (una limpieza de Docker, o la de otro proyecto),
 `db:start` las vuelve a descargar, varios GB, sin enseñar el progreso, y parece colgado.

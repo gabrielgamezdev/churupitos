@@ -129,7 +129,7 @@ export function operationQuery(operationId: string) {
       const { data, error } = await supabase
         .from("operations")
         .select(
-          "kind, adjustment_reason, occurred_on, description, income_id, created_by, created_at, author:household_members(display_name), entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
+          "kind, adjustment_reason, occurred_on, description, income_id, created_by, created_at, author:household_members!operations_created_by_fkey(display_name), entries(id, account_id, envelope_id, amount_cents, is_fee, description, usd_value_cents, position)",
         )
         .eq("id", operationId)
         .order("position", { referencedTable: "entries" })
@@ -178,8 +178,10 @@ export type OperationItem = {
   }[];
 };
 
+// El autor, por su relación con nombre: un movimiento apunta dos veces a los miembros (quién
+// lo registró y quién lo cambió, M12), y sin nombrarla la base no sabe cuál traer.
 const OPERATION_ITEM_COLUMNS =
-  "id, kind, occurred_on, description, created_by, author:household_members(display_name), entries(account_id, envelope_id, amount_cents, is_fee, description, position)";
+  "id, kind, occurred_on, description, created_by, author:household_members!operations_created_by_fkey(display_name), entries(account_id, envelope_id, amount_cents, is_fee, description, position)";
 
 type OperationItemRow = {
   id: string;

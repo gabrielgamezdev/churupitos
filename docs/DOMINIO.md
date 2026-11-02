@@ -166,6 +166,11 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   además, sin plan este mes ni en los siguientes. Archivado no recibe asientos nuevos y
   sale de las listas, pero su historia sigue y se puede reactivar. «Otro» no se archiva ni
   se borra (`R11`).
+- **R21 — Los meses pasados se cierran.** Desde el corte, un mes se cierra solo el día 5
+  del siguiente, en hora de Caracas (`R13`): en él no se registra, corrige, borra ni
+  deshace un movimiento, no se cobra y no se planea. Para corregir algo a propósito se
+  abre hasta el fin de ese día. Antes del corte ningún mes se cierra: la fuente era el
+  Excel.
 
 ---
 

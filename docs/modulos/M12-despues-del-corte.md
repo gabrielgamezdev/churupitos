@@ -62,10 +62,11 @@ de un movimiento, Registrar y Presupuesto), y los recordatorios, en «Para revis
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-11-01).
-2. [ ] **El corte en la base:** la marca, la recarga que se niega, y lo importado que se
-   corrige como lo demás, con sus pruebas.
-3. [ ] **Meses cerrados en la base** (`R21`): el cierre del día 5, abrir y cerrar, y cada
-   escritura que lo respeta, con sus pruebas.
+2. [x] **El corte en la base** (2026-11-01): la marca, la recarga que se niega, y lo
+   importado que se corrige como lo demás, con sus pruebas.
+3. [x] **Meses cerrados en la base** (2026-11-01, con el paso 2; `R21`): el cierre del día
+   5, abrir y cerrar, y cada escritura que lo respeta, con disparadores sobre los
+   movimientos y el presupuesto, que lo cumplen vengan de la función que vengan.
 4. [ ] **Meses cerrados en la app:** lo que no se puede tocar lo dice, «Abrir octubre» y
    el recordatorio en Inicio.
 5. [ ] **Copias de seguridad:** copiar, restaurar en local, el recordatorio y su ADR.

@@ -131,6 +131,25 @@ export type Database = {
           },
         ];
       };
+      cutover: {
+        Row: {
+          created_at: string;
+          cut_on: string;
+          singleton: boolean;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          cut_on: string;
+          singleton?: boolean;
+        };
+        Update: {
+          created_at?: string;
+          cut_on?: string;
+          singleton?: boolean;
+        };
+        Relationships: [];
+      };
       debts: {
         Row: {
           amount_cents: number;
@@ -371,6 +390,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      month_openings: {
+        Row: {
+          month_start: string;
+          open_until: string;
+          opened_by: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          month_start: string;
+          open_until: string;
+          opened_by: string;
+        };
+        Update: {
+          month_start?: string;
+          open_until?: string;
+          opened_by?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "month_openings_opened_by_fkey";
+            columns: ["opened_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
       operations: {
         Row: {
           adjustment_reason: string | null;
@@ -382,6 +428,7 @@ export type Database = {
           income_id: string | null;
           kind: string;
           occurred_on: string;
+          updated_by: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -394,6 +441,7 @@ export type Database = {
           income_id?: string | null;
           kind: string;
           occurred_on: string;
+          updated_by?: string | null;
         };
         Update: {
           adjustment_reason?: string | null;
@@ -405,6 +453,7 @@ export type Database = {
           income_id?: string | null;
           kind?: string;
           occurred_on?: string;
+          updated_by?: string | null;
         };
         Relationships: [
           {
@@ -427,6 +476,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "expected_incomes";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "operations_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "household_members";
+            referencedColumns: ["user_id"];
           },
         ];
       };
@@ -648,6 +704,7 @@ export type Database = {
           third_party_cents: number;
         }[];
       };
+      after_cutover: { Args: Record<PropertyKey, never>; Returns: boolean };
       archive_unused: {
         Args: { since: string };
         Returns: {
@@ -655,6 +712,7 @@ export type Database = {
           envelope_count: number;
         }[];
       };
+      assert_month_open: { Args: { target_day: string }; Returns: undefined };
       assert_operation_shape: { Args: { target: string }; Returns: undefined };
       assert_receipt_shape: { Args: { target: string }; Returns: undefined };
       cell_balances: {
@@ -666,6 +724,7 @@ export type Database = {
           envelope_id: string;
         }[];
       };
+      close_month: { Args: { target_month: string }; Returns: undefined };
       concept_usage: {
         Args: { since: string };
         Returns: {
@@ -708,6 +767,8 @@ export type Database = {
         }[];
       };
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
+      month_is_closed: { Args: { target_day: string }; Returns: boolean };
+      open_month: { Args: { target_month: string }; Returns: string };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };
       restore_operation: { Args: { snapshot: Json }; Returns: undefined };
