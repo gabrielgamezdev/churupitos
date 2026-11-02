@@ -73,7 +73,8 @@ de un movimiento, Registrar y Presupuesto), y los recordatorios, en «Para revis
 5. [x] **Copias de seguridad** (2026-11-01): copiar, restaurar en local, el recordatorio y su
    ADR (0009). La primera copia de la nube se restauró en local y cuadró: las filas de
    cada tabla y el saldo de cada cuenta.
-6. [ ] **En los teléfonos.**
+6. [ ] **En los teléfonos.** Todo está en la nube desde el 2026-11-01: las migraciones,
+   la marca del corte (`npm run db:cutover`) y una copia anotada en la base.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 

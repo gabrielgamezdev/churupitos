@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: M12 · Después del corte (en curso)
+## Ahora: M12 · Después del corte, en los teléfonos
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -8,8 +8,10 @@ saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubil
 libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
-Ahora, M12 · Después del corte: que la recarga no pueda volver a borrar nada, corregir
-también lo importado, cerrar los meses y tener copias de la base. Su plan, aprobado:
+M12 · Después del corte está construido y en la nube desde el 2026-11-01: la marca del
+corte puesta (la recarga se niega), lo importado se corrige como lo demás, los meses se
+cierran solos el día 5 del siguiente (`R21`) y hay copias de la base en
+`privado/respaldos/` (ADR 0009). Falta usarlo en los teléfonos, su paso 6. Su plan:
 `docs/modulos/M12-despues-del-corte.md`.
 
 

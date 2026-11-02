@@ -6,6 +6,10 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
+-- La nube lleva la marca del corte, que impide vaciar la base y cierra los meses pasados
+-- (M12): se quita dentro de la prueba, y el rollback del final la devuelve.
+delete from public.cutover;
+
 select plan(23);
 
 select public.reset_imported_data(include_app_data => true);
