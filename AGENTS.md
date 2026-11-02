@@ -4,7 +4,7 @@ Las leen todos los asistentes de código; Claude Code las carga desde `CLAUDE.md
 
 App de finanzas del hogar para dos personas, en Venezuela: bolívares y dólares,
 presupuesto por sobres y varias cuentas. Es una **PWA para Android** que sustituye
-unos Excels mensuales, que hasta el día del corte son la fuente de verdad.
+unos Excels mensuales, que fueron la fuente de verdad hasta el corte, el 2026-11-01.
 
 Es la tercera versión y, desde el 2026-10-20, la oficial. Las anteriores se borraron por
 crecer antes de que nadie las usara: aquí se construye **por módulos pequeños, y cada
@@ -129,8 +129,8 @@ Añadir algo que se pague por uso es decisión del autor, con su ADR. Ver ADR 00
   registrar. Un módulo está **hecho** cuando `npm run check` está en verde **y** se
   probó en los teléfonos.
 - **Los comandos están en `README.md`**. No se copian a otros documentos.
-- **Hasta el corte**, la base se puede vaciar y recargar entera desde los Excels.
-  Lo que se registre en la app antes de ese día es de prueba.
+- **Desde el corte (2026-11-01), la base es la fuente**: no se vuelve a recargar desde los
+  Excels, que quedan en `privado/` como histórico. Lo registrado en la app es real.
 
 ### Al hacer un commit
 

@@ -7,8 +7,8 @@ presupuesto por sobres y varias cuentas**. Es una PWA pensada para el teléfono,
 sustituye unos Excels mensuales donde cada sobre tiene dinero repartido entre varios
 bancos, y cada ingreso llega con su propia tasa de cambio.
 
-> **Estado:** en construcción: **M8**, **M9**, **M10** y **M11 · Sobres y cuentas**, en los
-> teléfonos; después, el corte. El plan completo está en
+> **Estado:** en uso: desde el corte (2026-11-01), la app es la fuente y el Excel se jubila.
+> Lo siguiente es **M12 · Después del corte**. El plan completo está en
 > [`docs/ESTADO.md`](docs/ESTADO.md).
 
 ## Qué la hace distinta
@@ -79,11 +79,11 @@ npm run import:dry-run  # lo carga en el Supabase local, lo compara con el Excel
 npm run import:load     # lo mismo, pero vacía la base local y se queda escrito
 ```
 
-La base solo se vacía con `reset_imported_data()`, que se niega si hay operaciones
-registradas desde la app: después del corte no estarán en ningún Excel (el candado del
-corte). Hasta el corte se registra en paralelo y el Excel ya las tiene, así que la
-recarga las borra si se le pide: `npm run import:load -- --discard-app-data`, y lo
-mismo con `import:load:cloud`. En seco no hace falta: dice cuántas borraría.
+La base solo se vacía con `reset_imported_data()`, que se niega si hay datos escritos
+desde la app (el candado del corte). En local se puede pedir igual, para desarrollar:
+`npm run import:load -- --discard-app-data`. En seco no hace falta: dice cuántos borraría.
+**La nube no se recarga desde el corte (2026-11-01)**: allí lo registrado en la app no está
+en ningún Excel.
 
 Con Supabase levantado, el panel local está en http://localhost:54323 y los correos
 que enviaría el login se ven en http://localhost:54324. Las cuentas de prueba, con

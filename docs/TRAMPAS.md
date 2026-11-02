@@ -40,6 +40,12 @@ En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `
 dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
 `replace(a, () => b)`.**
 
+### `npm run db:start` tarda diez minutos sin decir nada
+Si Docker perdió las imágenes de Supabase (una limpieza de Docker, o la de otro proyecto),
+`db:start` las vuelve a descargar, varios GB, sin enseñar el progreso, y parece colgado.
+Se ve con `docker images | grep supabase`: si falta `supabase/postgres`, está descargando.
+Pasa una vez; la base local vuelve vacía, y se llena con `npm run import:load`.
+
 ### Parar `npm run preview` deja vivo el servidor de Vite
 En Windows, cerrar el `npm` que se lanzó en segundo plano no cierra el `node` de
 `vite preview` que arrancó: sigue sirviendo, y la siguiente vista previa toma otro

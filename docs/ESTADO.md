@@ -1,27 +1,20 @@
 # Estado
 
-## Ahora: M8, M9, M10 y M11, en los teléfonos
+## Ahora: el corte está hecho, y M12 · Después del corte, en plan
 
-M11 · Sobres y cuentas (crear sobres y cuentas, borrar lo que no tiene nada y archivar lo
-que tiene historia y está en cero) está construido; falta probarlo en los teléfonos, su
-paso 6. Su plan: `docs/modulos/M11-sobres-y-cuentas.md`. En la nube, los 4 sobres sin
-uso se archivan en la próxima recarga, o a mano desde Ajustes. Después, el corte.
+El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
+última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
+saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubila: los
+libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
+ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
-M10 · El mes (preparar el presupuesto del mes siguiente copiando el último, y cambiar el
-de cualquier mes, con el cuadre a la vista) está construido; falta probarlo en los
-teléfonos, su paso 6. Su plan: `docs/modulos/M10-el-mes.md`.
+Lo siguiente es M12 · Después del corte: que la recarga no pueda volver a borrar nada,
+corregir también lo importado, cerrar los meses y tener copias de la base. Su plan:
+`docs/modulos/M12-despues-del-corte.md`.
 
-M8 · Entre sobres y cuentas (mover entre sobres, traspasar, cambiar de divisa y cubrir un
-descubierto) y M9 · Cobros y reparto (cobrar un ingreso esperado y repartirlo) están
-construidos; falta probarlos en los teléfonos, su paso 7. Por decisión del autor, M10 se
-construyó mientras. Sus planes: `docs/modulos/M8-entre-sobres-y-cuentas.md` y
-`docs/modulos/M9-cobros-y-reparto.md`.
-
-Hasta el corte se sigue registrando **en paralelo**, en el Excel y en la app.
-
-Al empezar noviembre de 2026, cuando su Excel tenga el arrastre de verdad, se recarga
-la base, borrando lo registrado en la app (`README.md`): hasta entonces noviembre es
-solo de planificación y el oráculo no lo compara (`docs/DOMINIO.md` §2).
+M8 · Entre sobres y cuentas, M9 · Cobros y reparto, M10 · El mes y M11 · Sobres y
+cuentas están construidos y en uso; se cierran cuando el autor confirme que se probaron
+en los teléfonos. Sus planes, en `docs/modulos/`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuentas el
@@ -55,7 +48,8 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M9 | Cobros y reparto | Ingreso esperado → cobro → reparto por sobre | Ídem |
 | M10 | El mes | Plan del mes y apertura del siguiente | Ídem |
 | M11 | Sobres y cuentas | Crear; borrar lo que no tiene nada; archivar lo que tiene historia y está en cero | Ídem |
-| — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | — |
+| — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | Hecho el 2026-11-01 |
+| M12 | Después del corte | La recarga fijada, corregir lo importado, meses cerrados y copias de la base | Corrigen un mes cerrado abriéndolo, y hay una copia que se restauró |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 
@@ -65,17 +59,17 @@ del producto:
 - **Churupitos es esta versión** (2026-10-20): la oficial, la que sigue creciendo. La v1
   y la v2 se borraron; de la v2 quedan su crítica de diseño y su investigación en
   `privado/investigacion/v2/`.
-- **Mobile first, Android.** Los dos usan Android. La PC sigue con el Excel mientras
-  la app madura.
+- **Mobile first, Android.** Los dos usan Android. Desde el corte, el Excel no se usa.
 - **Sin conexión = solo lectura**: se ven los últimos datos guardados, se recarga al
   volver la red o al estirar hacia abajo. No hay cola de escrituras.
-- **Un solo proyecto de Supabase.** Hasta el corte, la base se vacía y se recarga
-  desde los Excels; un candado impide hacerlo después del corte sin pedirlo.
-- **Los Excels son el respaldo hasta el corte**: si algo de la app no convence, se
-  compara, se ajusta el importador y se recarga todo.
-- **Hasta el corte se registra en paralelo** (2026-10-20): en el Excel y en la app. Al
-  recargar, lo registrado en la app se borra a propósito, porque el Excel ya lo tiene, y
-  lo importado no se corrige desde la app, salvo el presupuesto (M10, 2026-10-21).
+- **Un solo proyecto de Supabase.** Hasta el corte se vaciaba y se recargaba desde los
+  Excels; desde el corte es la fuente y no se recarga.
+- **El corte fue el 2026-11-01** (decisión del autor): octubre se cerró en el Excel y
+  noviembre se lleva solo en la app. Los Excels fueron el respaldo hasta ese día; desde
+  entonces hacen falta copias de la base (M12).
+- **Hasta el corte se registró en paralelo** (del 2026-10-20 al 2026-10-31): en el Excel
+  y en la app. Lo importado no se corrige desde la app, salvo el presupuesto (M10),
+  hasta que M12 lo libere.
 - **El inicio** sigue el de la versión anterior: una tarjeta por moneda → cuentas
   de esa moneda → libro de la cuenta.
 - **Claro y oscuro, según el teléfono** (2026-10-15).
