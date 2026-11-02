@@ -1,7 +1,10 @@
 # M10 · El mes
 
-- **Estado:** en curso (desde 2026-10-21). El plan está aprobado; se construye mientras
-  M8 y M9 se prueban en los teléfonos, por decisión del autor.
+- **Estado:** cerrado el 2026-11-01 (empezó el 2026-10-21, mientras M8 y M9 se probaban). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/DOMINIO.md`, el código de `apps/web` y
+  las migraciones.
+- **Resultado:** lo usaron unos días en los teléfonos, registrando de verdad hasta el
+  corte, y el autor lo dio por bueno; las mejoras que surjan van a módulos nuevos.
 - **Objetivo:** preparar desde la app el presupuesto del mes siguiente, a partir del
   último, y cambiar el de cualquier mes: los ingresos esperados y el plan de cada sobre,
   con el cuadre a la vista. Es el último módulo antes del corte: el primer
@@ -88,7 +91,7 @@ Y en Presupuesto, «Preparar diciembre» o «Editar»; en Inicio, el mes sin pre
    final del último, «Preparar diciembre».
 5. [x] **Inicio:** el mes siguiente sin preparar (2026-10-21), desde el 25, o enseguida si
    el mes en curso no tiene presupuesto. Lleva directo a Planear.
-6. [ ] **En los teléfonos:** preparan el mes siguiente.
+6. [x] **En los teléfonos** (2026-11-01): en uso hasta el corte.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 

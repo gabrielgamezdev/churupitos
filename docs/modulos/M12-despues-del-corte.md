@@ -1,6 +1,6 @@
 # M12 · Después del corte
 
-- **Estado:** en plan (2026-11-01). El autor aprobó las cuatro piezas y el cierre
+- **Estado:** en curso (desde 2026-11-01). El autor aprobó las cuatro piezas y el cierre
   automático en la conversación del corte; aquí quedan los detalles.
 - **Objetivo:** desde el corte la base es la fuente y no hay Excel detrás. Que nada la
   pueda vaciar por accidente, que también lo importado se pueda corregir, que los meses

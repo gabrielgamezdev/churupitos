@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: el corte está hecho, y M12 · Después del corte, en plan
+## Ahora: M12 · Después del corte (en curso)
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -8,13 +8,10 @@ saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubil
 libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
-Lo siguiente es M12 · Después del corte: que la recarga no pueda volver a borrar nada,
-corregir también lo importado, cerrar los meses y tener copias de la base. Su plan:
+Ahora, M12 · Después del corte: que la recarga no pueda volver a borrar nada, corregir
+también lo importado, cerrar los meses y tener copias de la base. Su plan, aprobado:
 `docs/modulos/M12-despues-del-corte.md`.
 
-M8 · Entre sobres y cuentas, M9 · Cobros y reparto, M10 · El mes y M11 · Sobres y
-cuentas están construidos y en uso; se cierran cuando el autor confirme que se probaron
-en los teléfonos. Sus planes, en `docs/modulos/`.
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
 Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuentas el
@@ -22,8 +19,11 @@ Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuenta
 (`docs/modulos/M3-sobres.md`), M4 · Presupuesto el 2026-10-20
 (`docs/modulos/M4-presupuesto.md`), M5 · Deudas el 2026-10-20
 (`docs/modulos/M5-deudas.md`), M6 · Gastos, ingresos y deudas el 2026-10-20
-(`docs/modulos/M6-gastos-ingresos-y-deudas.md`) y M7 · Diseño y experiencia el
-2026-10-21 (`docs/modulos/M7-diseno-y-experiencia.md`).
+(`docs/modulos/M6-gastos-ingresos-y-deudas.md`), M7 · Diseño y experiencia el
+2026-10-21 (`docs/modulos/M7-diseno-y-experiencia.md`), y M8 · Entre sobres y cuentas,
+M9 · Cobros y reparto, M10 · El mes y M11 · Sobres y cuentas el 2026-11-01
+(`docs/modulos/M8-entre-sobres-y-cuentas.md`, `M9-cobros-y-reparto.md`, `M10-el-mes.md` y
+`M11-sobres-y-cuentas.md`).
 
 ## Cómo se publica
 

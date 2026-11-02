@@ -1,7 +1,10 @@
 # M11 · Sobres y cuentas
 
-- **Estado:** en curso (desde 2026-10-21). El plan está aprobado; se construye mientras
-  M8, M9 y M10 se prueban en los teléfonos, por decisión del autor.
+- **Estado:** cerrado el 2026-11-01 (empezó el 2026-10-21, mientras M8 a M10 se probaban). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/DOMINIO.md`, el código de `apps/web` y
+  las migraciones.
+- **Resultado:** lo usaron unos días en los teléfonos, registrando de verdad hasta el
+  corte, y el autor lo dio por bueno; las mejoras que surjan van a módulos nuevos.
 - **Objetivo:** mantener la app limpia de sobres y cuentas que ya no se usan, sin perder
   su historia, y poder crear los nuevos desde la app. Es lo último antes del corte:
   después, nada llega ya del catálogo del importador.
@@ -79,7 +82,8 @@
    Planear (ni para agregar ni al copiar el mes), Sobres, cada moneda e Inicio. Al corregir
    algo de antes de archivar, lo ya elegido se sigue viendo. La pantalla de un sobre
    archivado lo dice.
-6. [ ] **En los teléfonos.**
+6. [x] **En los teléfonos** (2026-11-01): en uso hasta el corte; la recarga del corte archivó
+   los 4 sobres sin uso.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 

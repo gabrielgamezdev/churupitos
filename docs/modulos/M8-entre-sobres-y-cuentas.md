@@ -1,6 +1,10 @@
 # M8 · Entre sobres y cuentas
 
-- **Estado:** en curso (desde 2026-10-21). El plan está aprobado.
+- **Estado:** cerrado el 2026-11-01 (empezó el 2026-10-21). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/DOMINIO.md`, el código de `apps/web` y
+  las migraciones.
+- **Resultado:** lo usaron unos días en los teléfonos, registrando de verdad hasta el
+  corte, y el autor lo dio por bueno; las mejoras que surjan van a módulos nuevos.
 - **Objetivo:** registrar desde la app los tres movimientos que todavía solo se hacen en
   el Excel (mover entre sobres, traspasar entre cuentas y cambiar de divisa) y cubrir un
   descubierto en dos toques. Con esto, todo lo del día a día se registra en la app; solo
@@ -77,7 +81,7 @@ Y «Cubrir» en «Para revisar» y en la pantalla de un sobre.
 4. [x] **El cambio de divisa** (2026-10-21, con el paso 3): lo que llega y la tasa.
 5. [x] **Corregir, borrar y deshacer** los tres (2026-10-21).
 6. [x] **«Cubrir»** (2026-10-21), en «Para revisar» y en el sobre.
-7. [ ] **En los teléfonos:** lo usan unos días.
+7. [x] **En los teléfonos** (2026-11-01): lo usaron unos días, hasta el corte.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 

@@ -1,7 +1,10 @@
 # M9 · Cobros y reparto
 
-- **Estado:** en curso (desde 2026-10-21). El plan está aprobado; se construye mientras
-  M8 se prueba en los teléfonos, por decisión del autor.
+- **Estado:** cerrado el 2026-11-01 (empezó el 2026-10-21, mientras M8 se probaba). Congelado: lo que siga
+  vigente vive en `docs/DESIGN_SYSTEM.md`, `docs/DOMINIO.md`, el código de `apps/web` y
+  las migraciones.
+- **Resultado:** lo usaron unos días en los teléfonos, registrando de verdad hasta el
+  corte, y el autor lo dio por bueno; las mejoras que surjan van a módulos nuevos.
 - **Objetivo:** cobrar desde la app un ingreso esperado del presupuesto, en la cuenta
   donde llegó y con su tasa, y repartirlo entre sobres en dólares, como la
   «Distribución» del Excel, con el plan del mes como propuesta. Presupuesto se pone al
@@ -84,7 +87,7 @@ Y «Cobrar» en Presupuesto y la línea de lo que falta por cobrar en Inicio.
 5. [x] **Corregir, borrar y deshacer** un cobro (2026-10-21): corregir abre Cobrar como
    estaba, y al borrarlo el ingreso vuelve a ⏳.
 6. [x] **«Cobrar» en Presupuesto** y lo que falta por cobrar en Inicio (2026-10-21).
-7. [ ] **En los teléfonos:** lo usan unos días.
+7. [x] **En los teléfonos** (2026-11-01): lo usaron unos días, hasta el corte.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 
