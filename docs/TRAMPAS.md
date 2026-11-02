@@ -40,6 +40,12 @@ En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `
 dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
 `replace(a, () => b)`.**
 
+### Una prueba de la base que no quita la marca del corte no corre en la nube
+Desde el corte la nube lleva su marca (M12): vaciar la base se niega y los meses pasados
+están cerrados (`R21`). Una prueba que empieza vaciándola, o que escribe en un mes
+inventado, se corta allí, aunque en local pase. **Cada archivo de pruebas empieza con
+`delete from public.cutover;`** después de crear pgTAP: el `rollback` del final la devuelve.
+
 ### Una segunda relación con la misma tabla rompe las consultas que la traen
 Al añadir `operations.updated_by` (otra referencia a `household_members`), la consulta que
 traía el autor con `author:household_members(display_name)` dejó de saber cuál de las dos
