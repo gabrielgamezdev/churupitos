@@ -6,14 +6,16 @@ import { EnvelopeChip } from "@/components/envelope-chip";
 import { List, ListRow } from "@/components/list";
 import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { overdrawnCellsQuery, type OverdrawnCell } from "@/features/accounts/queries";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { budgetChecksQuery, expectedIncomesQuery } from "@/features/budget/queries";
 import { dueLabel } from "@/features/debts/debt-view";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { useCloseMonth, useMonthLocks } from "@/features/months/queries";
 import { CoverLink } from "@/features/operations/cover-link";
-import { monthLabel, monthOf, today } from "@/lib/months";
+import { monthLabel, monthName, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
 import { attention, incomesToReceive, monthToPrepare } from "./attention";
@@ -31,6 +33,8 @@ export function AttentionBlock() {
   const debts = useQuery(debtsQuery);
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
+  const locks = useMonthLocks();
+  const closeMonth = useCloseMonth();
   const accountById = useMemo(
     () => Object.fromEntries((accounts.data ?? []).map((row) => [row.accountId, row])),
     [accounts.data],
@@ -49,6 +53,8 @@ export function AttentionBlock() {
       dueSoon={dueSoon}
       toReceive={incomes.data ? incomesToReceive(incomes.data) : null}
       toPrepare={checks.data ? monthToPrepare(checks.data.at(-1)?.month, todayDay) : null}
+      openedMonths={locks.openedMonths}
+      onCloseMonth={(month) => closeMonth.mutate(month)}
       today={todayDay}
       accountById={accountById}
       envelopeById={envelopeById}
@@ -63,6 +69,9 @@ interface AttentionListProps {
   toReceive: { count: number; usdCents: number } | null;
   // El mes siguiente, si ya toca prepararlo y no está: lleva a Planear.
   toPrepare: string | null;
+  // Los meses cerrados que alguien abrió a propósito (R21): se recuerdan para cerrarlos.
+  openedMonths: string[];
+  onCloseMonth: (month: string) => void;
   today: string;
   accountById: Record<string, Pick<AccountBalance, "name">>;
   envelopeById: Record<string, Envelope>;
@@ -77,11 +86,21 @@ export function AttentionList({
   dueSoon,
   toReceive,
   toPrepare,
+  openedMonths,
+  onCloseMonth,
   today,
   accountById,
   envelopeById,
 }: AttentionListProps) {
-  if (overdrafts.length === 0 && dueSoon.length === 0 && !toReceive && !toPrepare) return null;
+  if (
+    overdrafts.length === 0 &&
+    dueSoon.length === 0 &&
+    !toReceive &&
+    !toPrepare &&
+    openedMonths.length === 0
+  ) {
+    return null;
+  }
   return (
     <section aria-labelledby="attention-title" className="flex flex-col gap-3">
       <h2 id="attention-title" className="text-heading">
@@ -176,6 +195,22 @@ export function AttentionList({
             </Link>
           </ListRow>
         )}
+        {openedMonths.map((month) => (
+          <ListRow key={month} className="py-2 pr-3">
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="text-body">{monthLabel(month)} está abierto</span>
+              <span className="text-caption text-ink-muted">Se cierra solo al terminar el día</span>
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              aria-label={`Cerrar ${monthName(month)}`}
+              onClick={() => onCloseMonth(month)}
+            >
+              Cerrar
+            </Button>
+          </ListRow>
+        ))}
       </List>
     </section>
   );

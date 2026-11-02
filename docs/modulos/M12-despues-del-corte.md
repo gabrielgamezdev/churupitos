@@ -67,8 +67,9 @@ de un movimiento, Registrar y Presupuesto), y los recordatorios, en «Para revis
 3. [x] **Meses cerrados en la base** (2026-11-01, con el paso 2; `R21`): el cierre del día
    5, abrir y cerrar, y cada escritura que lo respeta, con disparadores sobre los
    movimientos y el presupuesto, que lo cumplen vengan de la función que vengan.
-4. [ ] **Meses cerrados en la app:** lo que no se puede tocar lo dice, «Abrir octubre» y
-   el recordatorio en Inicio.
+4. [x] **Meses cerrados en la app** (2026-11-01): lo que no se puede tocar lo dice,
+   «Abrir octubre» y el recordatorio en Inicio. Desde el corte, la hoja de lo importado
+   ofrece Corregir y Borrar.
 5. [ ] **Copias de seguridad:** copiar, restaurar en local, el recordatorio y su ADR.
 6. [ ] **En los teléfonos.**
 

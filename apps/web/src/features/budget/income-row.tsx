@@ -15,6 +15,8 @@ import type { ExpectedIncome } from "./queries";
 
 interface IncomeRowProps {
   income: ExpectedIncome;
+  // En un mes cerrado (R21), uno pendiente no ofrece «Cobrar».
+  canReceive?: boolean;
   // La cuenta donde cayó el cobro.
   accountName: string | undefined;
   // Lo que se despliega al tocar un ingreso cobrado: su cobro, con el reparto por sobre.
@@ -26,7 +28,7 @@ interface IncomeRowProps {
 // espera en dólares y ✅/⏳. Uno cobrado dice cuándo, dónde y, en bolívares, a qué tasa
 // (R8, la de ese cobro); uno pendiente ofrece «Cobrar» (M9), en cualquier mes, por si
 // el dinero llega antes.
-export function IncomeRow({ income, accountName, detail }: IncomeRowProps) {
+export function IncomeRow({ income, canReceive = true, accountName, detail }: IncomeRowProps) {
   const { receipt } = income;
   const content = (
     <>
@@ -63,6 +65,7 @@ export function IncomeRow({ income, accountName, detail }: IncomeRowProps) {
     </>
   );
 
+  if (!receipt && !canReceive) return <ListRow>{content}</ListRow>;
   if (!receipt) {
     return (
       <ListRow className="py-2 pr-3">

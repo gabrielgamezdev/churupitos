@@ -27,6 +27,8 @@ import {
 } from "@/features/budget/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { MonthPicker } from "@/features/ledger/month-picker";
+import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
+import { useMonthLocks } from "@/features/months/queries";
 import { OperationDetail } from "@/features/ledger/operation-detail";
 import { addMonths, isMonth, monthLabel, monthName, monthOf, today } from "@/lib/months";
 
@@ -68,6 +70,9 @@ function BudgetPage() {
   const lines = useQuery(budgetLinesQuery(month));
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
+  // R21: un mes cerrado se ve, pero no se planea ni se cobra hasta abrirlo.
+  const locks = useMonthLocks();
+  const closed = locks.isMonthClosed(month);
 
   const accountById = useMemo(
     () => Object.fromEntries((accounts.data ?? []).map((row) => [row.accountId, row])),
@@ -87,7 +92,10 @@ function BudgetPage() {
 
   return (
     <Screen>
-      <ScreenHeader title="Presupuesto" action={monthChecks && <EditMonthLink month={month} />} />
+      <ScreenHeader
+        title="Presupuesto"
+        action={monthChecks && !closed && <EditMonthLink month={month} />}
+      />
       <StaleDataBanner queries={[checks, incomes, lines, accounts, envelopes]} />
 
       <section aria-labelledby="month-title" className="flex flex-col gap-2">
@@ -103,6 +111,9 @@ function BudgetPage() {
             Todavía no empieza: es lo que se planificó para {monthName(month)}.
           </p>
         )}
+        {monthChecks && closed && (
+          <ClosedMonthNotice month={month} purpose="para cambiar su presupuesto o cobrar en él" />
+        )}
       </section>
 
       {checks.data ? (
@@ -110,6 +121,7 @@ function BudgetPage() {
           <>
             <IncomesSection
               month={month}
+              closed={closed}
               incomes={incomes}
               accounts={accounts}
               accountById={accountById}
@@ -147,6 +159,8 @@ function BudgetPage() {
 
 interface IncomesSectionProps {
   month: string;
+  // Cerrado (R21): los pendientes no ofrecen «Cobrar».
+  closed: boolean;
   incomes: UseQueryResult<ExpectedIncome[]>;
   accounts: UseQueryResult<AccountBalance[]>;
   accountById: Record<string, AccountBalance>;
@@ -156,6 +170,7 @@ interface IncomesSectionProps {
 // «Ingresos esperados» del Excel: sus totales y cada ingreso, con su cobro desplegable.
 function IncomesSection({
   month,
+  closed,
   incomes,
   accounts,
   accountById,
@@ -194,6 +209,7 @@ function IncomesSection({
               <IncomeRow
                 key={income.id}
                 income={income}
+                canReceive={!closed}
                 accountName={
                   income.receipt ? accountById[income.receipt.accountId]?.name : undefined
                 }

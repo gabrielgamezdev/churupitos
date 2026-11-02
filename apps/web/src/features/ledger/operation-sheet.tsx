@@ -7,9 +7,11 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAccountBalances, type AccountBalance } from "@/features/balances/use-account-balances";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
+import { useMonthLocks } from "@/features/months/queries";
 import { isAppKind } from "@/features/operations/app-kinds";
 import { OperationActions } from "@/features/operations/operation-actions";
-import { dayMonthLabel, registeredAtLabel } from "@/lib/months";
+import { dayMonthLabel, monthOf, registeredAtLabel } from "@/lib/months";
 
 import { EntryLines } from "./operation-detail";
 import { operationLabel } from "./operation-label";
@@ -40,6 +42,7 @@ function LoadedOperation({ operationId, onClose }: { operationId: string; onClos
   const operation = useQuery(operationQuery(operationId));
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
+  const locks = useMonthLocks();
   const accountById = useMemo(
     () => Object.fromEntries((accounts.data ?? []).map((row) => [row.accountId, row])),
     [accounts.data],
@@ -60,15 +63,20 @@ function LoadedOperation({ operationId, onClose }: { operationId: string; onClos
       </SheetContent>
     );
   }
-  const { fromApp, kind } = operation.data;
+  const { fromApp, kind, day } = operation.data;
+  // Lo registrado en la app se corrige o se borra; lo importado, desde el corte (M12). Los
+  // ajustes del arrastre, nunca.
+  const editable = isAppKind(kind) && (fromApp || locks.afterCutover);
   return (
     <OperationSheetContent
       operation={operation.data}
       accountById={accountById}
       envelopeById={envelopeById}
-      // Lo registrado en la app se corrige o se borra; lo importado, no (ADR 0008).
+      afterCutover={locks.afterCutover}
       actions={
-        fromApp && isAppKind(kind) ? (
+        editable && locks.isDayClosed(day) ? (
+          <ClosedMonthNotice month={monthOf(day)} purpose="para corregirlo" />
+        ) : editable ? (
           <OperationActions
             operationId={operationId}
             kind={kind}
@@ -86,6 +94,8 @@ interface OperationSheetContentProps {
   operation: OperationDetail;
   accountById: Record<string, Pick<AccountBalance, "name" | "currency">>;
   envelopeById: Record<string, Envelope>;
+  // Desde el corte, lo importado ya no se corrige en el Excel (M12).
+  afterCutover?: boolean;
   actions?: React.ReactNode;
 }
 
@@ -94,6 +104,7 @@ export function OperationSheetContent({
   operation,
   accountById,
   envelopeById,
+  afterCutover = false,
   actions,
 }: OperationSheetContentProps) {
   // La cifra grande: lo que entró o salió, o, en algo que se mueve sin cambiar el total
@@ -131,7 +142,9 @@ export function OperationSheetContent({
               // Sin punto al final: la hora ya acaba en «p. m.».
               operation.registeredAt ? ` el ${registeredAtLabel(operation.registeredAt)}` : ""
             }`
-          : "Viene del Excel: hasta el corte se corrige allí."}
+          : afterCutover
+            ? "Viene del Excel."
+            : "Viene del Excel: hasta el corte se corrige allí."}
       </p>
       {actions}
     </SheetContent>

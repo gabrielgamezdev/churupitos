@@ -14,6 +14,8 @@ import {
   type ExpectedIncome,
 } from "@/features/budget/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
+import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
+import { useMonthLocks } from "@/features/months/queries";
 import { budgetOrder } from "@/features/operations/envelope-order";
 import { PlanForm } from "@/features/plan/plan-form";
 import { monthRows, planFromMonth, planFromPrevious } from "@/features/plan/plan-form-schema";
@@ -42,6 +44,7 @@ function PlanPage() {
   const sourceLines = useQuery({ ...budgetLinesQuery(previousMonth), enabled: empty });
   const checks = useQuery(budgetChecksQuery);
   const envelopes = useQuery(envelopesQuery);
+  const locks = useMonthLocks();
 
   if (!valid) {
     return (
@@ -68,6 +71,16 @@ function PlanPage() {
     </Screen>
   );
   if (!incomes.data || !lines.data || !checks.data || !envelopes.data) return loading;
+
+  // R21: un mes cerrado no se planea hasta abrirlo.
+  if (locks.isMonthClosed(month)) {
+    return (
+      <Screen>
+        <ScreenHeader {...header} />
+        <ClosedMonthNotice month={month} purpose="para planearlo" />
+      </Screen>
+    );
+  }
 
   if (!empty) {
     return (

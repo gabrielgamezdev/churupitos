@@ -8,6 +8,8 @@ import { EmptyState, MissingData } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { operationQuery, type OperationDetail } from "@/features/ledger/queries";
 import { budgetLinesQuery, expectedIncomeQuery, type BudgetLine } from "@/features/budget/queries";
+import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
+import { useMonthLocks } from "@/features/months/queries";
 import { isAppKind, isMoveKind } from "@/features/operations/app-kinds";
 import { MoveForm } from "@/features/operations/move-form";
 import { moveFormValues } from "@/features/operations/move-form-schema";
@@ -17,6 +19,7 @@ import type { SaveOperationArgs } from "@/features/operations/save";
 import { ReceiveForm, type IncomeToReceive } from "@/features/receipts/receive-form";
 import { receiveFormValues } from "@/features/receipts/receive-form-schema";
 import type { SaveReceiptArgs } from "@/features/receipts/save";
+import { monthOf } from "@/lib/months";
 
 export const Route = createFileRoute("/_authenticated/operations/$operationId/edit")({
   component: EditOperationPage,
@@ -29,6 +32,7 @@ const HEADER = { title: "Corregir", back: { to: "/" }, backLabel: "Volver sin gu
 function EditOperationPage() {
   const { operationId } = Route.useParams();
   const operation = useQuery(operationQuery(operationId));
+  const locks = useMonthLocks();
 
   if (!operation.data) {
     return (
@@ -42,8 +46,8 @@ function EditOperationPage() {
       </Screen>
     );
   }
-  const { fromApp, kind } = operation.data;
-  if (!fromApp || !isAppKind(kind)) {
+  const { fromApp, kind, day } = operation.data;
+  if (!isAppKind(kind) || (!fromApp && !locks.afterCutover)) {
     return (
       <Screen>
         <ScreenHeader {...HEADER} />
@@ -52,6 +56,14 @@ function EditOperationPage() {
             ? "Este movimiento todavía no se corrige desde la app."
             : "Lo importado del Excel no se corrige hasta el corte."}
         </EmptyState>
+      </Screen>
+    );
+  }
+  if (locks.isDayClosed(day)) {
+    return (
+      <Screen>
+        <ScreenHeader {...HEADER} />
+        <ClosedMonthNotice month={monthOf(day)} purpose="para corregirlo" />
       </Screen>
     );
   }

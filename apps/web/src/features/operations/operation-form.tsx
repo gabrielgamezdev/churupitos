@@ -22,7 +22,9 @@ import {
 } from "@/features/envelopes/queries";
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
-import { addDays, today } from "@/lib/months";
+import { addDays, monthOf, today } from "@/lib/months";
+import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
+import { useMonthLocks } from "@/features/months/queries";
 import { showToast } from "@/lib/toast";
 import { useOnline } from "@/lib/use-online";
 import { cn } from "@/lib/utils";
@@ -93,6 +95,8 @@ export function OperationForm({
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
+  // R21: en un mes cerrado no se guarda; se abre a propósito.
+  const locks = useMonthLocks();
   const accounts = useAccountBalances();
   const envelopes = useQuery(envelopesQuery);
   const save = useSaveOperation();
@@ -513,7 +517,10 @@ export function OperationForm({
             Sin conexión no se puede registrar: guárdalo cuando haya red.
           </p>
         )}
-        <Button type="submit" disabled={!online || isSubmitting}>
+        {locks.isDayClosed(values.day) && (
+          <ClosedMonthNotice month={monthOf(values.day)} purpose="para registrar en él" />
+        )}
+        <Button type="submit" disabled={!online || isSubmitting || locks.isDayClosed(values.day)}>
           {isSubmitting
             ? "Guardando…"
             : `${saveLabel}${account && total > 0 ? ` · ${formatMoney(total, account.currency)}` : ""}`}
