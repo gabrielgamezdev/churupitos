@@ -1,7 +1,7 @@
 import type { OverdrawnCell } from "@/features/accounts/queries";
 import { daysBetween } from "@/features/debts/debt-view";
 import type { ExpectedIncome } from "@/features/budget/queries";
-import { addMonths, monthOf } from "@/lib/months";
+import { addMonths, monthOf, today as caracasDay } from "@/lib/months";
 import type { Debt } from "@/features/debts/queries";
 
 // Cuántos días antes de vencer una cuota sale en Inicio.
@@ -58,4 +58,16 @@ export function monthToPrepare(lastBudgetMonth: string | undefined, today: strin
     return next;
   }
   return null;
+}
+
+// Cada cuánto pide Inicio una copia de la base (ADR 0009).
+export const BACKUP_EVERY_DAYS = 30;
+
+// Si toca copiar la base: desde el corte, cuando no hay ninguna copia o la última tiene un
+// mes. `daysAgo` es null si nunca se copió.
+export function backupDue(lastTakenAt: string | null, today: string, afterCutover: boolean) {
+  if (!afterCutover) return null;
+  if (lastTakenAt === null) return { daysAgo: null };
+  const daysAgo = daysBetween(caracasDay(new Date(lastTakenAt)), today);
+  return daysAgo >= BACKUP_EVERY_DAYS ? { daysAgo } : null;
 }

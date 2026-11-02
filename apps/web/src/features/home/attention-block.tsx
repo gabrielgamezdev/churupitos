@@ -13,12 +13,12 @@ import { budgetChecksQuery, expectedIncomesQuery } from "@/features/budget/queri
 import { dueLabel } from "@/features/debts/debt-view";
 import { debtsQuery, type Debt } from "@/features/debts/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
-import { useCloseMonth, useMonthLocks } from "@/features/months/queries";
+import { lastBackupQuery, useCloseMonth, useMonthLocks } from "@/features/months/queries";
 import { CoverLink } from "@/features/operations/cover-link";
 import { monthLabel, monthName, monthOf, today } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
-import { attention, incomesToReceive, monthToPrepare } from "./attention";
+import { attention, backupDue, incomesToReceive, monthToPrepare } from "./attention";
 
 // Cuántos de cada cosa se ven; el resto, en su pantalla.
 const MAX_ROWS = 5;
@@ -35,6 +35,7 @@ export function AttentionBlock() {
   const envelopes = useQuery(envelopesQuery);
   const locks = useMonthLocks();
   const closeMonth = useCloseMonth();
+  const lastBackup = useQuery(lastBackupQuery);
   const accountById = useMemo(
     () => Object.fromEntries((accounts.data ?? []).map((row) => [row.accountId, row])),
     [accounts.data],
@@ -54,6 +55,9 @@ export function AttentionBlock() {
       toReceive={incomes.data ? incomesToReceive(incomes.data) : null}
       toPrepare={checks.data ? monthToPrepare(checks.data.at(-1)?.month, todayDay) : null}
       openedMonths={locks.openedMonths}
+      backup={
+        lastBackup.isSuccess ? backupDue(lastBackup.data, todayDay, locks.afterCutover) : null
+      }
       onCloseMonth={(month) => closeMonth.mutate(month)}
       today={todayDay}
       accountById={accountById}
@@ -72,6 +76,8 @@ interface AttentionListProps {
   // Los meses cerrados que alguien abrió a propósito (R21): se recuerdan para cerrarlos.
   openedMonths: string[];
   onCloseMonth: (month: string) => void;
+  // Desde el corte, si toca copiar la base: hace cuántos días fue la última, o null si nunca.
+  backup: { daysAgo: number | null } | null;
   today: string;
   accountById: Record<string, Pick<AccountBalance, "name">>;
   envelopeById: Record<string, Envelope>;
@@ -88,6 +94,7 @@ export function AttentionList({
   toPrepare,
   openedMonths,
   onCloseMonth,
+  backup,
   today,
   accountById,
   envelopeById,
@@ -97,7 +104,8 @@ export function AttentionList({
     dueSoon.length === 0 &&
     !toReceive &&
     !toPrepare &&
-    openedMonths.length === 0
+    openedMonths.length === 0 &&
+    !backup
   ) {
     return null;
   }
@@ -211,6 +219,18 @@ export function AttentionList({
             </Button>
           </ListRow>
         ))}
+        {backup && (
+          // Se hace desde la computadora (npm run backup): aquí solo se recuerda.
+          <ListRow className="flex-col items-start justify-center gap-0.5">
+            <span className="text-body">Toca copiar la base</span>
+            <span className="text-caption text-ink-muted">
+              {backup.daysAgo === null
+                ? "Todavía no hay ninguna copia"
+                : `La última fue hace ${backup.daysAgo} días`}{" "}
+              · se hace desde la computadora
+            </span>
+          </ListRow>
+        )}
       </List>
     </section>
   );

@@ -70,7 +70,9 @@ de un movimiento, Registrar y Presupuesto), y los recordatorios, en «Para revis
 4. [x] **Meses cerrados en la app** (2026-11-01): lo que no se puede tocar lo dice,
    «Abrir octubre» y el recordatorio en Inicio. Desde el corte, la hoja de lo importado
    ofrece Corregir y Borrar.
-5. [ ] **Copias de seguridad:** copiar, restaurar en local, el recordatorio y su ADR.
+5. [x] **Copias de seguridad** (2026-11-01): copiar, restaurar en local, el recordatorio y su
+   ADR (0009). La primera copia de la nube se restauró en local y cuadró: las filas de
+   cada tabla y el saldo de cada cuenta.
 6. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

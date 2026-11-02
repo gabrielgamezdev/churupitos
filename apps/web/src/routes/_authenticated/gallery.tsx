@@ -371,6 +371,7 @@ function GalleryPage() {
             toPrepare="2026-11"
             openedMonths={["2026-09"]}
             onCloseMonth={() => undefined}
+            backup={{ daysAgo: 35 }}
             today={SAMPLE_TODAY}
             accountById={SAMPLE_ACCOUNT_BY_ID}
             envelopeById={SAMPLE_ENVELOPE_BY_ID}

@@ -62,3 +62,18 @@ export function useCloseMonth() {
   const queryClient = useQueryClient();
   return useMutation({ mutationFn: closeMonth, onSuccess: () => queryClient.invalidateQueries() });
 }
+
+// Cuándo se copió la base por última vez (ADR 0009); null si nunca.
+export const lastBackupQuery = queryOptions({
+  queryKey: ["last-backup"],
+  queryFn: async (): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from("backup_log")
+      .select("taken_at")
+      .order("taken_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return data?.taken_at ?? null;
+  },
+});

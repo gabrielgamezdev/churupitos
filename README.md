@@ -106,6 +106,10 @@ npm run db:push -- --dry-run   # qué migraciones se aplicarían, sin tocar nada
 npm run db:push                # las aplica en la base de la nube (pide confirmación)
 npm run db:test:cloud          # las pruebas de la base, contra la nube y sin dejar nada
 npm run db:cutover -- 2026-11-01  # la marca del corte, en la nube y una sola vez (M12)
+npm run backup                 # copia la nube en privado/respaldos/ (ADR 0009); cada mes
+npm run backup:restore -- privado/respaldos/AAAA-MM-DD_HHMM
+                               # la restaura en la base local y comprueba que cuadra;
+                               # en una emergencia, con --cloud --replace, en la nube
 ```
 
 `db:push` nunca sube `supabase/seed.sql`: las cuentas inventadas solo existen en local.

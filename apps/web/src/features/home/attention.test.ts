@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Debt } from "@/features/debts/queries";
 
-import { attention, incomesToReceive, monthToPrepare } from "./attention";
+import { attention, backupDue, incomesToReceive, monthToPrepare } from "./attention";
 
 const TODAY = "2026-10-20";
 
@@ -102,5 +102,22 @@ describe("el mes siguiente sin preparar (M10)", () => {
 
   it("sin ningún presupuesto, nada que copiar", () => {
     expect(monthToPrepare(undefined, "2026-10-28")).toBeNull();
+  });
+});
+
+describe("la copia de la base (ADR 0009)", () => {
+  it("antes del corte no se pide: la base se recarga desde los Excels", () => {
+    expect(backupDue(null, "2026-11-20", false)).toBeNull();
+  });
+
+  it("desde el corte, si nunca se copió o la última tiene un mes", () => {
+    expect(backupDue(null, "2026-11-20", true)).toEqual({ daysAgo: null });
+    expect(backupDue("2026-11-01T12:00:00Z", "2026-11-20", true)).toBeNull();
+    expect(backupDue("2026-11-01T12:00:00Z", "2026-12-01", true)).toEqual({ daysAgo: 30 });
+  });
+
+  it("el día de la copia es el de Caracas", () => {
+    // Las 2 de la madrugada en UTC son todavía el 1 de noviembre en Caracas.
+    expect(backupDue("2026-11-02T02:00:00Z", "2026-12-01", true)).toEqual({ daysAgo: 30 });
   });
 });

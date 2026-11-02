@@ -72,6 +72,22 @@ export type Database = {
           },
         ];
       };
+      backup_log: {
+        Row: {
+          row_counts: NonNullable<Json>;
+          taken_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          row_counts: NonNullable<Json>;
+          taken_at: string;
+        };
+        Update: {
+          row_counts?: NonNullable<Json>;
+          taken_at?: string;
+        };
+        Relationships: [];
+      };
       budget_lines: {
         Row: {
           action_note: string;
