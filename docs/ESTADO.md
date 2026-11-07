@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: M12 · Después del corte, en los teléfonos
+## Ahora: la app en uso, sin módulo en curso
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -8,11 +8,9 @@ saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubil
 libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
-M12 · Después del corte está construido y en la nube desde el 2026-11-01: la marca del
-corte puesta (la recarga se niega), lo importado se corrige como lo demás, los meses se
-cierran solos el día 5 del siguiente (`R21`) y hay copias de la base en
-`privado/respaldos/` (ADR 0009). Falta usarlo en los teléfonos, su paso 6. Su plan:
-`docs/modulos/M12-despues-del-corte.md`.
+Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
+lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base
+en `privado/respaldos/` (ADR 0009).
 
 
 Cerrados: M0 · Cimientos el 2026-10-14 (`docs/modulos/M0-cimientos.md`), M1 ·
@@ -25,7 +23,8 @@ Histórico el 2026-10-15 (`docs/modulos/M1-historico.md`), M2 · Inicio y cuenta
 2026-10-21 (`docs/modulos/M7-diseno-y-experiencia.md`), y M8 · Entre sobres y cuentas,
 M9 · Cobros y reparto, M10 · El mes y M11 · Sobres y cuentas el 2026-11-01
 (`docs/modulos/M8-entre-sobres-y-cuentas.md`, `M9-cobros-y-reparto.md`, `M10-el-mes.md` y
-`M11-sobres-y-cuentas.md`).
+`M11-sobres-y-cuentas.md`), y M12 · Después del corte el 2026-11-07
+(`docs/modulos/M12-despues-del-corte.md`).
 
 ## Cómo se publica
 

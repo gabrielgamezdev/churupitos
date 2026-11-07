@@ -8,7 +8,7 @@ sustituye unos Excels mensuales donde cada sobre tiene dinero repartido entre va
 bancos, y cada ingreso llega con su propia tasa de cambio.
 
 > **Estado:** en uso: desde el corte (2026-11-01), la app es la fuente y el Excel se jubila.
-> **M12 · Después del corte**, en los teléfonos. El plan completo está en
+> El plan completo está en
 > [`docs/ESTADO.md`](docs/ESTADO.md).
 
 ## Qué la hace distinta

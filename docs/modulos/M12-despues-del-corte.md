@@ -1,7 +1,11 @@
 # M12 · Después del corte
 
-- **Estado:** en curso (desde 2026-11-01). El autor aprobó las cuatro piezas y el cierre
-  automático en la conversación del corte; aquí quedan los detalles.
+- **Estado:** cerrado el 2026-11-07 (empezó el 2026-11-01). Congelado: lo que siga vigente
+  vive en `docs/DOMINIO.md`, `docs/DESIGN_SYSTEM.md`, el ADR 0009, el código y las
+  migraciones.
+- **Resultado:** está en la nube y en los teléfonos desde el corte. En su primera semana no
+  hizo falta abrir un mes ni corregir nada importado, así que eso sigue sin usarse de
+  verdad: lo que aparezca al usarlo se trata como una incidencia.
 - **Objetivo:** desde el corte la base es la fuente y no hay Excel detrás. Que nada la
   pueda vaciar por accidente, que también lo importado se pueda corregir, que los meses
   pasados no se toquen sin querer y que haya copias para recuperarla.
@@ -73,7 +77,8 @@ de un movimiento, Registrar y Presupuesto), y los recordatorios, en «Para revis
 5. [x] **Copias de seguridad** (2026-11-01): copiar, restaurar en local, el recordatorio y su
    ADR (0009). La primera copia de la nube se restauró en local y cuadró: las filas de
    cada tabla y el saldo de cada cuenta.
-6. [ ] **En los teléfonos.** Todo está en la nube desde el 2026-11-01: las migraciones,
+6. [x] **En los teléfonos** (2026-11-07, por decisión del autor). Todo está en la nube desde
+   el 2026-11-01: las migraciones,
    la marca del corte (`npm run db:cutover`) y una copia anotada en la base.
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
