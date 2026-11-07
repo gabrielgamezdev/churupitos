@@ -14,8 +14,9 @@ import type { PlanRow as PlanRowData } from "./budget-view";
 
 // Un sobre en el plan del mes, como una fila de «Distribución de los ingresos» del
 // Excel: lo planeado en dólares, lo que le llegó en bolívares (R10) y ✅/⏳ (R18);
-// debajo, la fuente de fondos y la acción tal cual se escribieron, y una barra de cuánto
-// le llegó de lo planeado (M7). Lleva a la pantalla del sobre, donde está su restante.
+// debajo, la fuente de fondos y la acción tal cual se escribieron, una barra de cuánto
+// le llegó de lo planeado (M7) y, a medias, lo que le llegó y lo que le falta (M13). Lleva
+// a la pantalla del sobre, donde está su restante.
 export function PlanRow({ line, envelope }: PlanRowData) {
   const notes = [line.fundingNote, line.actionNote]
     .map((note) => note.trim())
@@ -47,15 +48,7 @@ export function PlanRow({ line, envelope }: PlanRowData) {
                 />
               )}
               <StatusBadge done={line.isDelivered}>
-                {line.isDelivered ? (
-                  "Entregado"
-                ) : partial ? (
-                  <>
-                    Le llegaron <Money cents={line.allocatedUsdCents} currency="USD" />
-                  </>
-                ) : (
-                  "Pendiente"
-                )}
+                {line.isDelivered ? "Entregado" : "Pendiente"}
               </StatusBadge>
             </span>
             <ChevronRight aria-hidden="true" className="size-5 text-ink-muted" />
@@ -72,6 +65,16 @@ export function PlanRow({ line, envelope }: PlanRowData) {
             // a derecha.
             className="mr-6"
           />
+        )}
+        {partial && (
+          <span className="mr-6 flex justify-between gap-3 text-caption text-ink-muted">
+            <span>
+              Le llegaron <Money cents={line.allocatedUsdCents} currency="USD" />
+            </span>
+            <span>
+              Faltan <Money cents={line.plannedUsdCents - line.allocatedUsdCents} currency="USD" />
+            </span>
+          </span>
         )}
       </Link>
     </ListRow>

@@ -55,7 +55,7 @@ Ninguna nueva: cambian Presupuesto, Registrar, Corregir y Deudas.
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-11-07).
-2. [ ] **Lo que falta, en el plan.**
+2. [x] **Lo que falta, en el plan** (2026-11-07).
 3. [ ] **Comisiones sueltas y Corregir completo:** «Es una comisión», varias comisiones y
    el concepto de cada línea.
 4. [ ] **Pagar en la base:** el enlace y la función, con sus pruebas (`R17`).
