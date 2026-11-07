@@ -98,8 +98,9 @@ pierden:
 - **Cuotas de montos distintos** (2026-10-21). Hoy cada cuota es una deuda aparte, así
   que una se corrige sola después de agregarlas; faltaría poder cambiar el monto de cada
   una en la lista, antes de guardar. Junto con «3 de 6» (fuera de M7).
-- **Rellenar Registrar desde una foto** (2026-10-21, del autor): de un capture, una
-  factura o una nota de entrega, sacar la fecha, el monto y el concepto, sin guardar
-  solo. Leer texto de una imagen con un servicio de pago choca con la regla 7: tendría
-  que ser en el propio teléfono o gratis de verdad, y con su ADR.
+- **Rellenar Registrar desde una captura** (2026-10-21, del autor): sacar la fecha, el
+  monto y la cuenta, sin guardar solo. Probado el 2026-11-07 con Tesseract.js en Chrome, en
+  el propio dispositivo y sin servicios de pago (regla 7): acertó en las 5 capturas, de 4
+  bancos, pasándolas antes a grises. Falta medirlo en un teléfono y probar fotos de
+  facturas. El concepto de las capturas no sirve: casi siempre dice «pago».
 - **Vibración al guardar**, con un interruptor en Ajustes (fuera de M7).
