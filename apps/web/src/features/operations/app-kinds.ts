@@ -15,11 +15,3 @@ export function isMoveKind(kind: string): kind is MoveKind {
 export function isAppKind(kind: string): kind is AppKind {
   return kind === "expense" || kind === "income" || isMoveKind(kind);
 }
-
-// Si un movimiento cabe en los formularios de corregir, que llevan líneas y una sola
-// comisión. Lo importado trae algunos con varias, o solo con comisiones: guardarlos desde
-// el formulario perdería las demás, y el saldo cambiaría sin avisar.
-export function fitsCorrectionForm(entries: { isFee: boolean }[]): boolean {
-  const fees = entries.filter((entry) => entry.isFee).length;
-  return fees <= 1 && fees < entries.length;
-}

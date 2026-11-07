@@ -17,6 +17,7 @@ import { envelopesQuery } from "@/features/envelopes/queries";
 import { AccountSelect } from "@/features/operations/account-select";
 import { DayField } from "@/features/operations/day-field";
 import { budgetOrder } from "@/features/operations/envelope-order";
+import { KeptFeesNote } from "@/features/operations/kept-fees-note";
 import { usableAccounts, usableEnvelopes } from "@/features/operations/usable";
 import { EnvelopeSelect } from "@/features/operations/envelope-select";
 import { rememberAccount, rememberedAccount } from "@/features/operations/last-account";
@@ -413,6 +414,7 @@ export function ReceiveForm({
           Agregar comisión
         </Button>
       )}
+      <KeptFeesNote count={values.keptFees?.length ?? 0} />
 
       {/* Pegado abajo, y encima del teclado cuando está abierto, como en Registrar. */}
       <div className="sticky bottom-0 -mx-4 mt-auto flex flex-col gap-2 border-t border-hairline bg-surface px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]">

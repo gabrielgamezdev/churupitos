@@ -3,8 +3,8 @@ import { z } from "zod";
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 
-import type { EntryInput } from "@/features/operations/operation-draft";
-import { FEE_DESCRIPTION } from "@/features/operations/operation-form-schema";
+import { keptFeeEntry, type EntryInput, type KeptFee } from "@/features/operations/operation-draft";
+import { FEE_DESCRIPTION, keptFee } from "@/features/operations/operation-form-schema";
 
 import { allocationInBs, type AllocationLine } from "./allocation";
 
@@ -33,11 +33,14 @@ export function receiveFormSchema(currencyOf: CurrencyOf) {
           z.object({
             envelopeId: z.string().min(1, "Elige el sobre."),
             usd: amount("Escribe cuántos dólares van a este sobre."),
+            // El concepto propio de la línea, si lo trae: no se ve, pero se conserva.
+            description: z.string().optional(),
           }),
         )
         .min(1),
       hasFee: z.boolean(),
       fee: z.object({ envelopeId: z.string(), amount: z.string(), description: z.string() }),
+      keptFees: z.custom<KeptFee[]>().optional(),
     })
     .superRefine((values, context) => {
       const currency = currencyOf(values.accountId);
@@ -117,7 +120,7 @@ export function receiptEntries(
     envelope_id: line.envelopeId,
     amount_cents: amounts[index] ?? 0,
     is_fee: false,
-    description: "",
+    description: line.description ?? "",
     usd_value_cents: currency === "VES" ? (usdLines[index] ?? 0) : null,
   }));
   const feeCents = values.hasFee ? parseAmountInput(values.fee.amount) : null;
@@ -130,6 +133,9 @@ export function receiptEntries(
       description: values.fee.description.trim() || FEE_DESCRIPTION,
       usd_value_cents: null,
     });
+  }
+  for (const fee of values.keptFees ?? []) {
+    entries.push({ ...keptFeeEntry(fee, values.accountId), usd_value_cents: null });
   }
   return entries;
 }
@@ -177,7 +183,7 @@ export function receiveFormValues(operation: {
   }[];
 }): ReceiveFormValues {
   const lines = operation.entries.filter((entry) => !entry.isFee);
-  const fee = operation.entries.find((entry) => entry.isFee);
+  const [fee, ...kept] = operation.entries.filter((entry) => entry.isFee);
   const usdOf = (entry: (typeof lines)[number]) => entry.usdValueCents ?? entry.amountCents;
   return {
     accountId: lines[0]?.accountId ?? "",
@@ -188,7 +194,9 @@ export function receiveFormValues(operation: {
     lines: lines.map((entry) => ({
       envelopeId: entry.envelopeId,
       usd: amountInputText(usdOf(entry)),
+      description: entry.description,
     })),
+    keptFees: kept.map(keptFee),
     hasFee: fee !== undefined,
     fee: {
       envelopeId: fee?.envelopeId ?? "",

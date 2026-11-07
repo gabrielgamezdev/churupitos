@@ -133,3 +133,47 @@ describe("corregir un cobro guardado", () => {
     ).toEqual(saved.entries.map((e) => [e.envelopeId, e.amountCents, e.usdValueCents]));
   });
 });
+
+describe("corregir un cobro sin perder nada (M13)", () => {
+  it("conserva el concepto de cada línea y todas las comisiones", () => {
+    const line = (
+      envelopeId: string,
+      amountCents: number,
+      usdValueCents: number,
+      description: string,
+    ) => ({
+      accountId: "bank",
+      envelopeId,
+      amountCents,
+      isFee: false,
+      description,
+      usdValueCents,
+    });
+    const fee = (amountCents: number, description: string) => ({
+      accountId: "bank",
+      envelopeId: "food",
+      amountCents,
+      isFee: true,
+      description,
+      usdValueCents: null,
+    });
+    const values = receiveFormValues({
+      day: "2026-10-15",
+      description: "Bono",
+      entries: [
+        line("savings", 2400000, 6000, "$60 de Ahorro"),
+        line("food", 1600000, 4000, "$40 de Comida"),
+        fee(-100, "Una"),
+        fee(-200, "Otra"),
+      ],
+    });
+    expect(
+      receiptEntries(values, "VES")?.map((e) => [e.envelope_id, e.amount_cents, e.description]),
+    ).toEqual([
+      ["savings", 2400000, "$60 de Ahorro"],
+      ["food", 1600000, "$40 de Comida"],
+      ["food", -100, "Una"],
+      ["food", -200, "Otra"],
+    ]);
+  });
+});

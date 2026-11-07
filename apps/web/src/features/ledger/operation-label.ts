@@ -21,9 +21,15 @@ const REASON_LABELS: Record<string, string> = {
 
 // Qué es la operación, con las palabras del Excel: «Gasto», «Cobro», «Ajuste · intereses».
 export function operationLabel(
-  operation: Pick<OperationDetail, "kind" | "adjustmentReason" | "incomeId">,
+  operation: Pick<OperationDetail, "kind" | "adjustmentReason" | "incomeId"> & {
+    entries?: { isFee: boolean }[];
+  },
 ) {
   if (operation.incomeId) return "Cobro";
+  // Una comisión suelta (R16): un gasto que solo tiene comisiones.
+  if (operation.kind === "expense" && operation.entries?.length) {
+    if (operation.entries.every((entry) => entry.isFee)) return "Comisión";
+  }
   const label = KIND_LABELS[operation.kind] ?? operation.kind;
   const reason = operation.adjustmentReason && REASON_LABELS[operation.adjustmentReason];
   return reason ? `${label} · ${reason}` : label;

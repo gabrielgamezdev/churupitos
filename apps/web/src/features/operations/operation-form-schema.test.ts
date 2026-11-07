@@ -143,7 +143,7 @@ describe("corregir una operación guardada", () => {
   };
 
   it("vuelve a enseñarla como se tecleó, sin signos", () => {
-    expect(operationFormValues(saved)).toEqual({
+    expect(operationFormValues(saved)).toMatchObject({
       kind: "expense",
       accountId: "Banco A",
       day: "2026-10-18",
@@ -162,6 +162,68 @@ describe("corregir una operación guardada", () => {
     const entries = draftEntries(formDraft(operationFormValues(saved)));
     expect(entries.map((entry) => [entry.envelope_id, entry.amount_cents, entry.is_fee])).toEqual(
       saved.entries.map((entry) => [entry.envelopeId, entry.amountCents, entry.isFee]),
+    );
+  });
+});
+
+describe("corregir sin perder nada (M13)", () => {
+  const entry = (envelopeId: string, amountCents: number, isFee = false, description = "") => ({
+    accountId: "Banco A",
+    envelopeId,
+    amountCents,
+    isFee,
+    description,
+  });
+  const asEntries = (entries: ReturnType<typeof entry>[]) =>
+    entries.map((e) => ({
+      account_id: e.accountId,
+      envelope_id: e.envelopeId,
+      amount_cents: e.amountCents,
+      is_fee: e.isFee,
+      description: e.description,
+    }));
+  const roundTrip = (kind: string, entries: ReturnType<typeof entry>[]) =>
+    draftEntries(
+      formDraft(operationFormValues({ kind, day: "2026-10-18", description: "X", entries })),
+    );
+
+  it("una comisión suelta sigue siéndolo", () => {
+    const entries = [entry("Comida", -100, true, "Mantenimiento")];
+    expect(roundTrip("expense", entries)).toEqual(asEntries(entries));
+    expect(
+      operationFormValues({ kind: "expense", day: "2026-10-18", description: "X", entries }),
+    ).toMatchObject({ isFee: true, total: "1,00", hasFee: false });
+  });
+
+  it("varias comisiones se conservan todas, en su orden", () => {
+    const entries = [
+      entry("Comida", -5000),
+      entry("Comida", -100, true, "Primera"),
+      entry("Ahorro", -200, true, "Segunda"),
+      entry("Ahorro", -300, true, "Tercera"),
+    ];
+    expect(roundTrip("expense", entries)).toEqual(asEntries(entries));
+  });
+
+  it("un ingreso con varias comisiones, también", () => {
+    const entries = [
+      entry("Comida", 5000),
+      entry("Comida", -100, true, "Una"),
+      entry("Comida", -200, true, "Otra"),
+    ];
+    expect(roundTrip("income", entries)).toEqual(asEntries(entries));
+  });
+
+  it("el concepto de cada línea se conserva", () => {
+    const entries = [entry("Comida", -5000, false, "Pan"), entry("Ahorro", -2000, false, "Leche")];
+    expect(roundTrip("expense", entries)).toEqual(asEntries(entries));
+  });
+
+  it("marcar un gasto como comisión marca sus asientos; un ingreso nunca lo es", () => {
+    const values = { ...filled, isFee: true };
+    expect(draftEntries(formDraft(values)).every((e) => e.is_fee)).toBe(true);
+    expect(draftEntries(formDraft({ ...values, kind: "income" })).some((e) => e.is_fee)).toBe(
+      false,
     );
   });
 });

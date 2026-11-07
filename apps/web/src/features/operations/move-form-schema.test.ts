@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import type { Currency } from "@/lib/money";
 
+import { moveEntries } from "./move-draft";
+
 import {
   defaultMoveDescription,
   emptyMoveForm,
@@ -144,5 +146,41 @@ describe("el formulario de Mover", () => {
         ],
       }),
     ).toBeNull();
+  });
+});
+
+describe("corregir un movimiento sin perder nada (M13)", () => {
+  const currencies: Record<string, Currency> = { "Banco A": "VES", "Banco B": "VES" };
+  const entry = (
+    accountId: string,
+    envelopeId: string,
+    amountCents: number,
+    isFee = false,
+    description = "",
+  ) => ({ accountId, envelopeId, amountCents, isFee, description });
+
+  it("conserva el concepto de cada lado y todas las comisiones, cada una en su cuenta", () => {
+    const entries = [
+      entry("Banco A", "Ahorro", -5000, false, "Sale"),
+      entry("Banco B", "Ahorro", 5000, false, "Llega"),
+      entry("Banco A", "Ahorro", -100, true, "Una"),
+      entry("Banco B", "Comida", -200, true, "En la de destino"),
+      entry("Banco A", "Comida", -300, true, "Otra"),
+    ];
+    const values = moveFormValues({ day: "2026-10-18", description: "X", entries });
+    const draft = moveDraft(values!, (account) => currencies[account]);
+    const saved = moveEntries(draft!).map((e) => [
+      e.account_id,
+      e.envelope_id,
+      e.amount_cents,
+      e.is_fee,
+      e.description,
+    ]);
+    expect(saved).toHaveLength(entries.length);
+    expect(saved).toEqual(
+      expect.arrayContaining(
+        entries.map((e) => [e.accountId, e.envelopeId, e.amountCents, e.isFee, e.description]),
+      ),
+    );
   });
 });

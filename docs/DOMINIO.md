@@ -56,7 +56,9 @@ reparto, las dos patas de una compra de USDT).
 cada uno, como la hoja del Excel. El restante **se calcula al leer** (`R2`, `R14`).
 
 **Comisión.** Un asiento propio dentro de la operación que la genera, marcado como
-comisión, en el sobre que se elija. Por ahora se registran a mano (`R16`).
+comisión, en el sobre que se elija. Una comisión que no acompaña a nada, como el
+mantenimiento de una cuenta, es un gasto cuyos asientos son todos de comisión. Por ahora
+se registran a mano (`R16`).
 
 **Ingreso esperado.** Lo que se espera cobrar en el mes de una fuente (Quincena, Bono,
 Tarjeta de alimentación…), en dólares, con su estado ✅ cobrado / ⏳ pendiente. Una

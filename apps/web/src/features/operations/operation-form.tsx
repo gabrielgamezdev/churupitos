@@ -33,6 +33,7 @@ import { writeErrorMessage } from "@/lib/write-error";
 import { conceptSuggestions, type ConceptSuggestion } from "./concept-suggestions";
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
+import { KeptFeesNote } from "./kept-fees-note";
 import { usableAccounts, usableEnvelopes } from "./usable";
 import { EnvelopePicker } from "./envelope-picker";
 import { EnvelopeSelect } from "./envelope-select";
@@ -210,9 +211,11 @@ export function OperationForm({
       showToast({
         message: previous
           ? "Corrección guardada"
-          : submitted.kind === "expense"
-            ? "Gasto guardado"
-            : "Ingreso guardado",
+          : submitted.kind === "income"
+            ? "Ingreso guardado"
+            : submitted.isFee
+              ? "Comisión guardada"
+              : "Gasto guardado",
         detail,
         action: { label: "Deshacer", run: undoSavedOperation(operationId, previous) },
       });
@@ -232,6 +235,13 @@ export function OperationForm({
     setValue("hasFee", true);
   };
 
+  // Una comisión suelta (M13): sin concepto escrito, se llama así.
+  const markFee = () => {
+    if (!getValues("description").trim()) setValue("description", FEE_DESCRIPTION);
+    setValue("isFee", true);
+  };
+  const standaloneFee = values.kind === "expense" && values.isFee === true;
+
   const lineError = errors.lines?.[0];
   const split = lines.fields.length > 1;
   const total = parseAmountInput(values.total) ?? 0;
@@ -247,9 +257,11 @@ export function OperationForm({
   };
   const saveLabel = previous
     ? "Guardar corrección"
-    : values.kind === "expense"
-      ? "Guardar gasto"
-      : "Guardar ingreso";
+    : values.kind === "income"
+      ? "Guardar ingreso"
+      : standaloneFee
+        ? "Guardar comisión"
+        : "Guardar gasto";
   return (
     <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-5">
       <Segmented
@@ -454,7 +466,14 @@ export function OperationForm({
         error={errors.day?.message}
       />
 
-      {values.hasFee ? (
+      {standaloneFee ? (
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-surface-raised p-4">
+          <span className="text-body">Este gasto es una comisión</span>
+          <Button type="button" variant="ghost" onClick={() => setValue("isFee", false)}>
+            Quitar
+          </Button>
+        </div>
+      ) : values.hasFee ? (
         <fieldset className="flex flex-col gap-4 rounded-lg bg-surface-raised p-4">
           <legend className="sr-only">Comisión</legend>
           <div className="flex items-center justify-between gap-3">
@@ -499,10 +518,18 @@ export function OperationForm({
           </Field>
         </fieldset>
       ) : (
-        <Button type="button" variant="link" className="self-start px-0" onClick={toggleFee}>
-          Agregar comisión
-        </Button>
+        <div className="flex flex-wrap gap-x-6">
+          <Button type="button" variant="link" className="px-0" onClick={toggleFee}>
+            Agregar comisión
+          </Button>
+          {values.kind === "expense" && (
+            <Button type="button" variant="link" className="px-0" onClick={markFee}>
+              Es una comisión
+            </Button>
+          )}
+        </div>
       )}
+      <KeptFeesNote count={values.keptFees?.length ?? 0} />
 
       {/* Pegado abajo mientras se baja por el formulario, y encima del teclado cuando
           está abierto (`interactive-widget` en index.html): siempre se alcanza. */}

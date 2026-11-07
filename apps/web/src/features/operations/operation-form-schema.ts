@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 
-import type { OperationDraft, OperationKind } from "./operation-draft";
+import type { KeptFee, OperationDraft, OperationKind } from "./operation-draft";
 
 // El formulario de Registrar. Los montos son texto, como se teclean; pasan a céntimos
 // al leerlos. Solo comprueba que haya algo que mandar: las reglas las impone la base.
@@ -20,10 +20,20 @@ export const operationFormSchema = z
     description: z.string(),
     total: amount("Escribe un monto mayor que cero."),
     lines: z
-      .array(z.object({ envelopeId: z.string().min(1, "Elige el sobre."), amount: z.string() }))
+      .array(
+        z.object({
+          envelopeId: z.string().min(1, "Elige el sobre."),
+          amount: z.string(),
+          // El concepto propio de la línea, si lo trae: no se ve, pero se conserva.
+          description: z.string().optional(),
+        }),
+      )
       .min(1),
+    // El gasto entero es una comisión (M13).
+    isFee: z.boolean().optional(),
     hasFee: z.boolean(),
     fee: z.object({ envelopeId: z.string(), amount: z.string(), description: z.string() }),
+    keptFees: z.custom<KeptFee[]>().optional(),
   })
   .superRefine((values, context) => {
     if (values.lines.length > 1) {
@@ -98,7 +108,7 @@ export function formDraft(values: OperationFormValues): OperationDraft {
   const lines = values.lines.flatMap((line) => {
     const cents = parseAmountInput(single ? values.total : line.amount);
     return line.envelopeId && cents !== null
-      ? [{ envelopeId: line.envelopeId, amountCents: cents }]
+      ? [{ envelopeId: line.envelopeId, amountCents: cents, description: line.description }]
       : [];
   });
   const feeCents = values.hasFee ? parseAmountInput(values.fee.amount) : null;
@@ -106,6 +116,8 @@ export function formDraft(values: OperationFormValues): OperationDraft {
     kind: values.kind,
     accountId: values.accountId,
     lines,
+    isFee: values.isFee,
+    keptFees: values.keptFees,
     fee:
       feeCents !== null && values.fee.envelopeId
         ? {
@@ -114,6 +126,21 @@ export function formDraft(values: OperationFormValues): OperationDraft {
             description: values.fee.description.trim() || FEE_DESCRIPTION,
           }
         : null,
+  };
+}
+
+// Una comisión guardada que el formulario no enseña, para conservarla (M13).
+export function keptFee(entry: {
+  accountId: string;
+  envelopeId: string;
+  amountCents: number;
+  description: string;
+}): KeptFee {
+  return {
+    accountId: entry.accountId,
+    envelopeId: entry.envelopeId,
+    amountCents: Math.abs(entry.amountCents),
+    description: entry.description,
   };
 }
 
@@ -131,8 +158,12 @@ export function operationFormValues(operation: {
     description: string;
   }[];
 }): OperationFormValues {
-  const lines = operation.entries.filter((entry) => !entry.isFee);
-  const fee = operation.entries.find((entry) => entry.isFee);
+  const fees = operation.entries.filter((entry) => entry.isFee);
+  const others = operation.entries.filter((entry) => !entry.isFee);
+  // Sin líneas, es una comisión suelta: sus asientos son las líneas del gasto.
+  const isFee = others.length === 0;
+  const lines = isFee ? fees : others;
+  const [fee, ...kept] = isFee ? [] : fees;
   return {
     kind: operation.kind === "income" ? "income" : "expense",
     accountId: operation.entries[0]?.accountId ?? "",
@@ -142,7 +173,10 @@ export function operationFormValues(operation: {
     lines: lines.map((entry) => ({
       envelopeId: entry.envelopeId,
       amount: amountInputText(entry.amountCents),
+      description: entry.description,
     })),
+    isFee,
+    keptFees: kept.map(keptFee),
     hasFee: fee !== undefined,
     fee: {
       envelopeId: fee?.envelopeId ?? "",

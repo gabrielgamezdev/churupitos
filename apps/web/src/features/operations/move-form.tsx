@@ -27,6 +27,7 @@ import { writeErrorMessage } from "@/lib/write-error";
 
 import { DayField } from "./day-field";
 import { budgetOrder, envelopeOrder } from "./envelope-order";
+import { KeptFeesNote } from "./kept-fees-note";
 import { usableAccounts, usableEnvelopes } from "./usable";
 import { EnvelopePicker } from "./envelope-picker";
 import { EnvelopeSelect } from "./envelope-select";
@@ -444,6 +445,7 @@ export function MoveForm({
           Agregar comisión
         </Button>
       )}
+      <KeptFeesNote count={values.kept?.fees.length ?? 0} />
 
       {/* Pegado abajo, y encima del teclado cuando está abierto, como en Registrar. */}
       <div className="sticky bottom-0 -mx-4 mt-auto flex flex-col gap-2 border-t border-hairline bg-surface px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]">

@@ -3,8 +3,8 @@ import { z } from "zod";
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import type { Currency } from "@/lib/money";
 
-import { moveKind, type MoveDraft, type MoveKind } from "./move-draft";
-import { FEE_DESCRIPTION } from "./operation-form-schema";
+import { moveKind, type MoveDraft, type MoveKept, type MoveKind } from "./move-draft";
+import { FEE_DESCRIPTION, keptFee } from "./operation-form-schema";
 
 const amount = (message: string) =>
   z.string().refine((value) => parseAmountInput(value) !== null, message);
@@ -28,6 +28,7 @@ export function moveFormSchema(currencyOf: CurrencyOf) {
       description: z.string(),
       hasFee: z.boolean(),
       fee: z.object({ envelopeId: z.string(), amount: z.string(), description: z.string() }),
+      kept: z.custom<MoveKept>().optional(),
     })
     .superRefine((values, context) => {
       if (
@@ -100,6 +101,7 @@ export function moveDraft(values: MoveFormValues, currencyOf: CurrencyOf): MoveD
     to: { accountId: values.toAccount, envelopeId: values.toEnvelope, currency: toCurrency },
     amountCents,
     arrivedCents,
+    kept: values.kept,
     fee:
       feeCents === null
         ? null
@@ -153,7 +155,10 @@ export function moveFormValues(operation: {
   if (out.length !== 1 || into.length !== 1) return null;
   const [from] = out as [(typeof out)[number]];
   const [to] = into as [(typeof into)[number]];
-  const fee = operation.entries.find((entry) => entry.isFee);
+  // La que se ve es una de la cuenta de origen, que es de donde el formulario la saca; las
+  // demás se conservan donde estén.
+  const fees = operation.entries.filter((entry) => entry.isFee);
+  const fee = fees.find((entry) => entry.accountId === from.accountId);
   return {
     fromAccount: from.accountId,
     fromEnvelope: from.envelopeId,
@@ -169,6 +174,11 @@ export function moveFormValues(operation: {
       envelopeId: fee?.envelopeId ?? "",
       amount: fee ? amountInputText(fee.amountCents) : "",
       description: fee?.description || FEE_DESCRIPTION,
+    },
+    kept: {
+      fromDescription: from.description,
+      toDescription: to.description,
+      fees: fees.filter((entry) => entry !== fee).map(keptFee),
     },
   };
 }

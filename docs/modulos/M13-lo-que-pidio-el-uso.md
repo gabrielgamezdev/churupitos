@@ -25,7 +25,7 @@
 1. **Lo que falta, en el plan:** un sobre a medias dice debajo de su barra «Le llegaron
    $100 · Faltan $50».
 2. **«Es una comisión», en un gasto de Registrar:** marca el gasto entero como comisión,
-   con su etiqueta en los libros. Sin reparto entre sobres ni otra comisión al lado.
+   con su etiqueta en los libros y sin otra comisión al lado.
 3. **Corregir lo lleva todo:** una comisión suelta, varias comisiones y el concepto de cada
    línea. Se corrige lo que se ve, y lo demás se conserva tal cual. Con eso, las 4 de
    noviembre se pueden marcar como comisión.
@@ -56,8 +56,8 @@ Ninguna nueva: cambian Presupuesto, Registrar, Corregir y Deudas.
 
 1. [x] **Plan aprobado** por el autor (2026-11-07).
 2. [x] **Lo que falta, en el plan** (2026-11-07).
-3. [ ] **Comisiones sueltas y Corregir completo:** «Es una comisión», varias comisiones y
-   el concepto de cada línea.
+3. [x] **Comisiones sueltas y Corregir completo** (2026-11-07): «Es una comisión», varias
+   comisiones y el concepto de cada línea. Sin migración: la base ya las aceptaba.
 4. [ ] **Pagar en la base:** el enlace y la función, con sus pruebas (`R17`).
 5. [ ] **Pagar en la app:** «Pagar», lo que se pagó y a qué tasa, y deshacer.
 6. [ ] **En los teléfonos.**

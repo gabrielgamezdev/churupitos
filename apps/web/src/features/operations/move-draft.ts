@@ -1,6 +1,6 @@
 import type { Currency } from "@/lib/money";
 
-import type { EntryInput } from "./operation-draft";
+import { keptFeeEntry, type EntryInput, type KeptFee } from "./operation-draft";
 
 // Lo que se mueve sin gastarse (M8). Los importes van sin signo: lo que sale sale de
 // `from` y lo que llega entra en `to`.
@@ -16,7 +16,11 @@ export type MoveDraft = {
   arrivedCents: number;
   // La comisión (R16): sale de la cuenta de origen.
   fee: { envelopeId: string; amountCents: number; description: string } | null;
+  // Al corregir, lo que el formulario no enseña y se conserva tal cual (M13).
+  kept?: MoveKept;
 };
+
+export type MoveKept = { fromDescription: string; toDescription: string; fees: KeptFee[] };
 
 // El tipo, de las dos cuentas: la misma es entre sobres; otra de la misma moneda, un
 // traspaso; otra moneda, un cambio. Así no hay que saber cómo se llama cada cosa.
@@ -34,14 +38,14 @@ export function moveEntries(draft: MoveDraft): EntryInput[] {
       envelope_id: draft.from.envelopeId,
       amount_cents: -draft.amountCents,
       is_fee: false,
-      description: "",
+      description: draft.kept?.fromDescription ?? "",
     },
     {
       account_id: draft.to.accountId,
       envelope_id: draft.to.envelopeId,
       amount_cents: kind === "exchange" ? draft.arrivedCents : draft.amountCents,
       is_fee: false,
-      description: "",
+      description: draft.kept?.toDescription ?? "",
     },
   ];
   if (draft.fee) {
@@ -53,5 +57,6 @@ export function moveEntries(draft: MoveDraft): EntryInput[] {
       description: draft.fee.description,
     });
   }
+  for (const fee of draft.kept?.fees ?? []) entries.push(keptFeeEntry(fee));
   return entries;
 }

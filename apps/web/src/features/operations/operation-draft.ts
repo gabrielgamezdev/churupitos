@@ -3,13 +3,25 @@
 
 export type OperationKind = "expense" | "income";
 
+// Una comisión que el formulario no enseña: lo importado trae movimientos con varias, y
+// corregirlos las conserva tal cual (M13).
+export type KeptFee = {
+  accountId: string;
+  envelopeId: string;
+  amountCents: number;
+  description: string;
+};
+
 export type OperationDraft = {
   kind: OperationKind;
   accountId: string;
-  // Cada sobre con su parte, sin signo.
-  lines: { envelopeId: string; amountCents: number }[];
+  // Cada sobre con su parte, sin signo, y el concepto propio de la línea, si lo trae.
+  lines: { envelopeId: string; amountCents: number; description?: string }[];
+  // El gasto entero es una comisión (R16, M13): sin un gasto al lado, como las del banco.
+  isFee?: boolean;
   // La comisión (R16), si la hubo: siempre sale, también en un ingreso.
   fee: { envelopeId: string; amountCents: number; description: string } | null;
+  keptFees?: KeptFee[];
 };
 
 // Un asiento como lo recibe `save_operation`.
@@ -21,14 +33,26 @@ export type EntryInput = {
   description: string;
 };
 
+// Una comisión conservada, como asiento: en su cuenta, o en la del movimiento si solo
+// puede tener una.
+export function keptFeeEntry(fee: KeptFee, accountId = fee.accountId): EntryInput {
+  return {
+    account_id: accountId,
+    envelope_id: fee.envelopeId,
+    amount_cents: -fee.amountCents,
+    is_fee: true,
+    description: fee.description,
+  };
+}
+
 export function draftEntries(draft: OperationDraft): EntryInput[] {
   const sign = draft.kind === "expense" ? -1 : 1;
   const entries = draft.lines.map((line) => ({
     account_id: draft.accountId,
     envelope_id: line.envelopeId,
     amount_cents: sign * line.amountCents,
-    is_fee: false,
-    description: "",
+    is_fee: draft.kind === "expense" && draft.isFee === true,
+    description: line.description ?? "",
   }));
   if (draft.fee) {
     entries.push({
@@ -39,6 +63,7 @@ export function draftEntries(draft: OperationDraft): EntryInput[] {
       description: draft.fee.description,
     });
   }
+  for (const fee of draft.keptFees ?? []) entries.push(keptFeeEntry(fee, draft.accountId));
   return entries;
 }
 
