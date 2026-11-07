@@ -10,7 +10,7 @@ import { operationQuery, type OperationDetail } from "@/features/ledger/queries"
 import { budgetLinesQuery, expectedIncomeQuery, type BudgetLine } from "@/features/budget/queries";
 import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
 import { useMonthLocks } from "@/features/months/queries";
-import { isAppKind, isMoveKind } from "@/features/operations/app-kinds";
+import { fitsCorrectionForm, isAppKind, isMoveKind } from "@/features/operations/app-kinds";
 import { MoveForm } from "@/features/operations/move-form";
 import { moveFormValues } from "@/features/operations/move-form-schema";
 import { OperationForm } from "@/features/operations/operation-form";
@@ -64,6 +64,17 @@ function EditOperationPage() {
       <Screen>
         <ScreenHeader {...HEADER} />
         <ClosedMonthNotice month={monthOf(day)} purpose="para corregirlo" />
+      </Screen>
+    );
+  }
+  if (!fitsCorrectionForm(operation.data.entries)) {
+    return (
+      <Screen>
+        <ScreenHeader {...HEADER} />
+        <EmptyState className="rounded-lg bg-surface-raised">
+          Este movimiento tiene varias comisiones, o solo comisiones: todavía no se corrige aquí. Se
+          puede borrar y registrar de nuevo.
+        </EmptyState>
       </Screen>
     );
   }
@@ -219,7 +230,8 @@ function EditForm({ operationId, operation }: { operationId: string; operation: 
         // Un movimiento de varias partes: la app solo registra los de una salida y una
         // entrada.
         <EmptyState className="rounded-lg bg-surface-raised">
-          Este movimiento tiene varias partes: se corrige en el Excel.
+          Este movimiento tiene varias partes: todavía no se corrige aquí. Se puede borrar y
+          registrar de nuevo.
         </EmptyState>
       )}
     </Screen>
