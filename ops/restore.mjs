@@ -66,9 +66,10 @@ const ORDER = [
   "envelopes",
   "expected_incomes",
   "budget_lines",
-  "debts",
   "operations",
   "entries",
+  // Después de los movimientos: una deuda pagada apunta a su gasto.
+  "debts",
   "backup_log",
   "month_openings",
   "cutover",

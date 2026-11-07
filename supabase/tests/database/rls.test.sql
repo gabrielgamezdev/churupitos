@@ -80,7 +80,7 @@ select results_eq(
     order by 1
   $$,
   $$ values ('close_month'), ('delete_account'), ('delete_debt'), ('delete_envelope'),
-            ('delete_month'), ('delete_operation'), ('is_household_member'), ('open_month'),
+            ('delete_month'), ('delete_operation'), ('is_household_member'), ('open_month'), ('pay_debt'),
             ('restore_debt'), ('restore_operation'), ('save_account'), ('save_debts'),
             ('save_envelope'), ('save_month'), ('save_operation'), ('save_receipt'),
             ('set_debt_paid') $$,

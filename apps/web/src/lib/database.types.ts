@@ -178,6 +178,7 @@ export type Database = {
           id: string;
           is_paid: boolean | null;
           paid_on: string | null;
+          paid_operation_id: string | null;
           position: number;
         };
         ComputedFields: never;
@@ -192,6 +193,7 @@ export type Database = {
           id?: string;
           is_paid?: never;
           paid_on?: string | null;
+          paid_operation_id?: string | null;
           position?: number;
         };
         Update: {
@@ -205,6 +207,7 @@ export type Database = {
           id?: string;
           is_paid?: never;
           paid_on?: string | null;
+          paid_operation_id?: string | null;
           position?: number;
         };
         Relationships: [
@@ -214,6 +217,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "household_members";
             referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "debts_paid_operation_id_fkey";
+            columns: ["paid_operation_id"];
+            isOneToOne: false;
+            referencedRelation: "expected_income_summary";
+            referencedColumns: ["operation_id"];
+          },
+          {
+            foreignKeyName: "debts_paid_operation_id_fkey";
+            columns: ["paid_operation_id"];
+            isOneToOne: false;
+            referencedRelation: "operations";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -595,6 +612,15 @@ export type Database = {
           },
         ];
       };
+      debt_payments: {
+        Row: {
+          currency: string | null;
+          debt_id: string | null;
+          paid_cents: number | null;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
       debt_totals: {
         Row: {
           currency: string | null;
@@ -785,6 +811,16 @@ export type Database = {
       is_household_member: { Args: Record<PropertyKey, never>; Returns: boolean };
       month_is_closed: { Args: { target_day: string }; Returns: boolean };
       open_month: { Args: { target_month: string }; Returns: string };
+      pay_debt: {
+        Args: {
+          op_date: string;
+          op_description: string;
+          op_entries: Json;
+          op_id: string;
+          target_debt: string;
+        };
+        Returns: string;
+      };
       reset_imported_data: { Args: { include_app_data?: boolean }; Returns: undefined };
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };
       restore_operation: { Args: { snapshot: Json }; Returns: undefined };

@@ -58,7 +58,8 @@ Ninguna nueva: cambian Presupuesto, Registrar, Corregir y Deudas.
 2. [x] **Lo que falta, en el plan** (2026-11-07).
 3. [x] **Comisiones sueltas y Corregir completo** (2026-11-07): «Es una comisión», varias
    comisiones y el concepto de cada línea. Sin migración: la base ya las aceptaba.
-4. [ ] **Pagar en la base:** el enlace y la función, con sus pruebas (`R17`).
+4. [x] **Pagar en la base** (2026-11-07, también en la nube): el enlace y la función, con sus
+   pruebas (`R17`).
 5. [ ] **Pagar en la app:** «Pagar», lo que se pagó y a qué tasa, y deshacer.
 6. [ ] **En los teléfonos.**
 

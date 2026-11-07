@@ -154,7 +154,10 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
 - **R17 — Las deudas son una lista aparte del libro.** Pagar una cuota es un gasto;
   la cuota pagada guarda el día en que se pagó, deja de estar pendiente y no suma en lo
   que se debe. Las pagadas en el mes en curso se siguen viendo, marcadas ✅, como en el
-  Excel desde octubre de 2026. Marcarla pagada no registra el gasto: es aparte.
+  Excel desde octubre de 2026. Se paga en un solo paso: el gasto y la deuda pagada a la
+  vez, enlazados, y la deuda conserva su monto, aunque se pague en otra moneda. El gasto
+  manda: corregir su fecha cambia el día del pago, y borrarlo la devuelve a pendiente.
+  También se puede marcar pagada sin gasto: lo pagado por otro medio o perdonado.
 - **R18 — Los ✅/⏳ se calculan.** Un ingreso esperado está cobrado cuando tiene su
   cobro. El plan de un sobre está entregado cuando lo que recibió del reparto del
   mes, en dólares, cubre lo planeado.
