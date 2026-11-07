@@ -116,8 +116,10 @@ describe("la copia de la base (ADR 0009)", () => {
     expect(backupDue("2026-11-01T12:00:00Z", "2026-12-01", true)).toEqual({ daysAgo: 30 });
   });
 
-  it("el día de la copia es el de Caracas", () => {
-    // Las 2 de la madrugada en UTC son todavía el 1 de noviembre en Caracas.
-    expect(backupDue("2026-11-02T02:00:00Z", "2026-12-01", true)).toEqual({ daysAgo: 30 });
+  it("el día de la copia es el del teléfono, no el de UTC", () => {
+    // Las 10 de la noche del 1 de noviembre: en Caracas, en UTC ya es día 2. Se escribe en
+    // hora local para que valga igual en la CI, que corre en UTC.
+    const lateAtNight = new Date(2026, 10, 1, 22, 0).toISOString();
+    expect(backupDue(lateAtNight, "2026-12-01", true)).toEqual({ daysAgo: 30 });
   });
 });

@@ -40,6 +40,13 @@ En JavaScript, `texto.replace(a, b)` interpreta los `$` de `b`: `$$` se vuelve `
 dejó de ser SQL válido. **Para reemplazar texto literal, `texto.split(a).join(b)` o
 `replace(a, () => b)`.**
 
+### Una prueba con fechas pasa en la PC y falla en la CI
+La PC está en Caracas y la CI en UTC, y `today()` da el día del dispositivo. Una prueba con
+un instante escrito en UTC (`"2026-11-02T02:00:00Z"`) cae en días distintos en cada una.
+En las pruebas, **el instante se escribe en hora local**: `new Date(2026, 10, 1, 22, 0)`. Para
+comprobarlo en la PC: `TZ=UTC npx vitest run`. El check en verde en local no dice que la CI
+esté en verde: después de un push se mira.
+
 ### Una prueba de la base que no quita la marca del corte no corre en la nube
 Desde el corte la nube lleva su marca (M12): vaciar la base se niega y los meses pasados
 están cerrados (`R21`). Una prueba que empieza vaciándola, o que escribe en un mes

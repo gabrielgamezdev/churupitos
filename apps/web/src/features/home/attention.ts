@@ -1,7 +1,7 @@
 import type { OverdrawnCell } from "@/features/accounts/queries";
 import { daysBetween } from "@/features/debts/debt-view";
 import type { ExpectedIncome } from "@/features/budget/queries";
-import { addMonths, monthOf, today as caracasDay } from "@/lib/months";
+import { addMonths, monthOf, today as dayOf } from "@/lib/months";
 import type { Debt } from "@/features/debts/queries";
 
 // Cuántos días antes de vencer una cuota sale en Inicio.
@@ -68,6 +68,6 @@ export const BACKUP_EVERY_DAYS = 30;
 export function backupDue(lastTakenAt: string | null, today: string, afterCutover: boolean) {
   if (!afterCutover) return null;
   if (lastTakenAt === null) return { daysAgo: null };
-  const daysAgo = daysBetween(caracasDay(new Date(lastTakenAt)), today);
+  const daysAgo = daysBetween(dayOf(new Date(lastTakenAt)), today);
   return daysAgo >= BACKUP_EVERY_DAYS ? { daysAgo } : null;
 }
