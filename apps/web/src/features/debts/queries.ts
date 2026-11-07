@@ -9,6 +9,9 @@ import { supabase } from "@/lib/supabase";
 
 export type DebtDirection = "payable" | "receivable";
 
+// Lo que se pagó con un gasto (M13): sale de él, en la moneda de su cuenta.
+export type DebtPayment = { operationId: string; currency: Currency; cents: number };
+
 export type Debt = {
   id: string;
   // `payable`: lo que deben. `receivable`: lo que les deben.
@@ -19,9 +22,8 @@ export type Debt = {
   dueOn: string | null;
   // El día en que se pagó (✅): se ve ese mes, pero ya no se debe (D9). `null`, pendiente.
   paidOn: string | null;
-  // Lo que se pagó, si se pagó con un gasto (M13): sale de él, en la moneda de su cuenta.
-  // Pagada sin gasto, `null`.
-  payment: { currency: Currency; cents: number } | null;
+  // Pagada sin gasto, o pendiente, `null`.
+  payment: DebtPayment | null;
   position: number;
 };
 
@@ -32,7 +34,9 @@ export const debtsQuery = queryOptions({
     const [debts, payments] = await Promise.all([
       supabase
         .from("debts")
-        .select("id, direction, description, amount_cents, currency, due_on, paid_on, position")
+        .select(
+          "id, direction, description, amount_cents, currency, due_on, paid_on, paid_operation_id, position",
+        )
         .order("due_on", { nullsFirst: false })
         .order("position"),
       supabase.from("debt_payments").select("debt_id, currency, paid_cents"),
@@ -50,12 +54,14 @@ export const debtsQuery = queryOptions({
         currency: row.currency as Currency,
         dueOn: row.due_on,
         paidOn: row.paid_on,
-        payment: payment
-          ? {
-              currency: required(payment.currency, "currency") as Currency,
-              cents: required(payment.paid_cents, "paid_cents"),
-            }
-          : null,
+        payment:
+          payment && row.paid_operation_id
+            ? {
+                operationId: row.paid_operation_id,
+                currency: required(payment.currency, "currency") as Currency,
+                cents: required(payment.paid_cents, "paid_cents"),
+              }
+            : null,
         position: row.position,
       };
     });

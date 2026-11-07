@@ -37,7 +37,8 @@
    como en un cobro (`R8`).
 6. **«Marcar pagada» sigue,** para lo pagado por otro medio, por otra persona o perdonado.
 7. **El gasto manda:** borrarlo devuelve la deuda a pendiente, y corregir su fecha cambia
-   el día en que se pagó.
+   el día en que se pagó. Desde la deuda, «Deshacer el pago» borra el gasto y «Corregir el
+   pago» lo abre.
 8. **En la base:** el enlace de la deuda con su gasto y una función que guarda los dos a la
    vez. Cambia `R17`: pagar una cuota puede registrar el gasto en el mismo paso.
 

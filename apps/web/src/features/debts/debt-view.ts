@@ -1,7 +1,7 @@
 import { formatMoney, formatRate, type Currency } from "@/lib/money";
 import { monthLabel, monthOf } from "@/lib/months";
 
-import type { Debt, DebtDirection } from "./queries";
+import type { Debt, DebtDirection, DebtPayment } from "./queries";
 
 export type DebtGroup = {
   // El mes de vencimiento, o `null` para las que no tienen fecha.
@@ -65,7 +65,11 @@ export function dueLabel(dueOn: string, today: string): { text: string; overdue:
 
 // Lo que se pagó, cuando no es lo que dice la deuda: «Bs 200,00 · tasa 4,00», con la
 // tasa que sale de los dos montos, sin guardarla (R8). Sin gasto, o por lo mismo, nada.
-export function paymentLabel(debt: Pick<Debt, "amountCents" | "currency" | "payment">) {
+export function paymentLabel(
+  debt: Pick<Debt, "amountCents" | "currency"> & {
+    payment: Pick<DebtPayment, "currency" | "cents"> | null;
+  },
+) {
   const { payment } = debt;
   if (!payment) return null;
   const paid = formatMoney(payment.cents, payment.currency);
