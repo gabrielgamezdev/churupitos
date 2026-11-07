@@ -21,7 +21,8 @@ import {
   type EnvelopeUsage,
 } from "@/features/envelopes/queries";
 import { amountInputText, parseAmountInput } from "@/lib/amount-input";
-import { CURRENCY_NAMES, formatMoney, type Currency } from "@/lib/money";
+import type { Debt } from "@/features/debts/queries";
+import { CURRENCY_NAMES, formatMoney, formatRate, type Currency } from "@/lib/money";
 import { addDays, monthOf, today } from "@/lib/months";
 import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
 import { useMonthLocks } from "@/features/months/queries";
@@ -80,6 +81,8 @@ interface OperationFormProps {
   rememberFor?: string;
   // Al registrar, pasar a Mover con lo ya escrito.
   onMove?: (carry: Carry) => void;
+  // La deuda que paga este gasto (M13): se enseña arriba y queda pagada al guardar.
+  debt?: Debt;
   onSaved: () => void;
 }
 
@@ -93,6 +96,7 @@ export function OperationForm({
   onlyCurrency,
   rememberFor,
   onMove,
+  debt,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -131,6 +135,13 @@ export function OperationForm({
   const lines = useFieldArray({ control, name: "lines" });
   const values = useWatch({ control }) as OperationFormValues;
   const account = accounts.data?.find((row) => row.accountId === values.accountId);
+  // Pagando en la moneda de la deuda, el monto es el suyo; en otra, lo dice quien paga.
+  const accountCurrency = account?.currency;
+  useEffect(() => {
+    if (debt && accountCurrency === debt.currency && !getValues("total")) {
+      setValue("total", amountInputText(debt.amountCents));
+    }
+  }, [accountCurrency, debt, getValues, setValue]);
   const cells = useQuery({
     ...accountCellsQuery(values.accountId),
     enabled: values.accountId !== "",
@@ -195,6 +206,7 @@ export function OperationForm({
         day: submitted.day,
         description: submitted.description.trim(),
         entries,
+        debtId: debt?.id,
       });
       if (rememberFor) rememberAccount(rememberFor, submitted.accountId);
       // Cómo quedó, con los saldos de antes de guardar: los de después aún no llegaron.
@@ -209,13 +221,15 @@ export function OperationForm({
             )
           : undefined;
       showToast({
-        message: previous
-          ? "Corrección guardada"
-          : submitted.kind === "income"
-            ? "Ingreso guardado"
-            : submitted.isFee
-              ? "Comisión guardada"
-              : "Gasto guardado",
+        message: debt
+          ? "Deuda pagada"
+          : previous
+            ? "Corrección guardada"
+            : submitted.kind === "income"
+              ? "Ingreso guardado"
+              : submitted.isFee
+                ? "Comisión guardada"
+                : "Gasto guardado",
         detail,
         action: { label: "Deshacer", run: undoSavedOperation(operationId, previous) },
       });
@@ -255,32 +269,56 @@ export function OperationForm({
       shouldValidate: Boolean(errors.lines),
     });
   };
-  const saveLabel = previous
-    ? "Guardar corrección"
-    : values.kind === "income"
-      ? "Guardar ingreso"
-      : standaloneFee
-        ? "Guardar comisión"
-        : "Guardar gasto";
+  // La tasa a la que se pagó, si es en otra moneda: sale de los dos montos (R8).
+  const debtRate =
+    debt && account && total > 0 && account.currency !== debt.currency
+      ? account.currency === "VES"
+        ? formatRate(total, debt.amountCents)
+        : formatRate(debt.amountCents, total)
+      : null;
+  const saveLabel = debt
+    ? "Pagar deuda"
+    : previous
+      ? "Guardar corrección"
+      : values.kind === "income"
+        ? "Guardar ingreso"
+        : standaloneFee
+          ? "Guardar comisión"
+          : "Guardar gasto";
   return (
     <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-5">
-      <Segmented
-        label="Tipo"
-        options={onMove ? [...KINDS, MOVE] : KINDS}
-        value={values.kind}
-        onChange={(kind) =>
-          kind === "move"
-            ? onMove?.({
-                amount: getValues("total"),
-                accountId: getValues("accountId"),
-                day: getValues("day"),
-                description: getValues("description"),
-              })
-            : setValue("kind", kind)
-        }
-      />
+      {debt ? (
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-surface-raised p-4">
+          <span className="min-w-0 text-body">{debt.description}</span>
+          <Money
+            cents={debt.amountCents}
+            currency={debt.currency}
+            className="shrink-0 text-amount"
+          />
+        </div>
+      ) : (
+        <Segmented
+          label="Tipo"
+          options={onMove ? [...KINDS, MOVE] : KINDS}
+          value={values.kind}
+          onChange={(kind) =>
+            kind === "move"
+              ? onMove?.({
+                  amount: getValues("total"),
+                  accountId: getValues("accountId"),
+                  day: getValues("day"),
+                  description: getValues("description"),
+                })
+              : setValue("kind", kind)
+          }
+        />
+      )}
 
-      <Field label="Monto" htmlFor="amount" error={errors.total?.message}>
+      <Field
+        label={debt ? "Lo que se pagó" : "Monto"}
+        htmlFor="amount"
+        error={errors.total?.message}
+      >
         <AmountInput
           id="amount"
           size="hero"
@@ -291,6 +329,9 @@ export function OperationForm({
           {...register("total")}
         />
       </Field>
+      {debtRate && (
+        <p className="-mt-3 text-caption text-ink-muted">Tasa: Bs {debtRate} por dólar</p>
+      )}
 
       <Field label="Cuenta" htmlFor="account" error={errors.accountId?.message}>
         <NativeSelect
@@ -522,7 +563,7 @@ export function OperationForm({
           <Button type="button" variant="link" className="px-0" onClick={toggleFee}>
             Agregar comisión
           </Button>
-          {values.kind === "expense" && (
+          {values.kind === "expense" && !debt && (
             <Button type="button" variant="link" className="px-0" onClick={markFee}>
               Es una comisión
             </Button>

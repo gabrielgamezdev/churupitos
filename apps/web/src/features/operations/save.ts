@@ -14,10 +14,23 @@ export type SaveOperationArgs = {
   day: string;
   description: string;
   entries: EntryInput[];
+  // Si este gasto paga una deuda: la deja pagada en el mismo paso (M13, R17).
+  debtId?: string;
 };
 
 // Guarda una operación con la función de la base (ADR 0008), que la comprueba entera.
-async function saveOperation({ id, kind, day, description, entries }: SaveOperationArgs) {
+async function saveOperation({ id, kind, day, description, entries, debtId }: SaveOperationArgs) {
+  if (debtId) {
+    const { error } = await supabase.rpc("pay_debt", {
+      target_debt: debtId,
+      op_id: id,
+      op_date: day,
+      op_description: description,
+      op_entries: entries,
+    });
+    if (error) throw error;
+    return;
+  }
   const { error } = await supabase.rpc("save_operation", {
     op_id: id,
     op_kind: kind,

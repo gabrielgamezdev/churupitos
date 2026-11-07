@@ -286,6 +286,7 @@ const sampleDebt = (
   currency: "USD",
   dueOn,
   paidOn: null,
+  payment: null,
   position: 0,
   ...extra,
 });

@@ -9,7 +9,7 @@ import type { Currency } from "@/lib/money";
 import { dayMonthLabel } from "@/lib/months";
 import { cn } from "@/lib/utils";
 
-import { dueLabel, type DebtGroup } from "./debt-view";
+import { dueLabel, paymentLabel, type DebtGroup } from "./debt-view";
 import type { Debt, DebtDirection, DebtTotal } from "./queries";
 
 const CURRENCIES: Currency[] = ["VES", "USD"];
@@ -28,11 +28,13 @@ interface DebtRowProps {
 export function DebtRow({ debt, today, actions }: DebtRowProps) {
   const paid = debt.paidOn !== null;
   const due = debt.dueOn && !paid ? dueLabel(debt.dueOn, today) : null;
+  const paidWith = paymentLabel(debt);
   const content = (
     <>
       <span className="flex min-w-0 flex-col gap-0.5">
         <span className="text-body">{debt.description}</span>
         {paid && <StatusBadge done>Pagada</StatusBadge>}
+        {paidWith && <span className="text-caption text-ink-muted">{paidWith}</span>}
         {debt.dueOn && (
           <span className={cn("text-caption", due?.overdue ? "text-danger" : "text-ink-muted")}>
             {dayMonthLabel(debt.dueOn)}

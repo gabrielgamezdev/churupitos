@@ -1,4 +1,4 @@
-import type { Currency } from "@/lib/money";
+import { formatMoney, formatRate, type Currency } from "@/lib/money";
 import { monthLabel, monthOf } from "@/lib/months";
 
 import type { Debt, DebtDirection } from "./queries";
@@ -61,4 +61,20 @@ export function dueLabel(dueOn: string, today: string): { text: string; overdue:
   if (days > 1) return { text: `en ${days} días`, overdue: false };
   if (days === -1) return { text: "venció ayer", overdue: true };
   return { text: `venció hace ${-days} días`, overdue: true };
+}
+
+// Lo que se pagó, cuando no es lo que dice la deuda: «Bs 200,00 · tasa 4,00», con la
+// tasa que sale de los dos montos, sin guardarla (R8). Sin gasto, o por lo mismo, nada.
+export function paymentLabel(debt: Pick<Debt, "amountCents" | "currency" | "payment">) {
+  const { payment } = debt;
+  if (!payment) return null;
+  const paid = formatMoney(payment.cents, payment.currency);
+  if (payment.currency === debt.currency) {
+    return payment.cents === debt.amountCents ? null : paid;
+  }
+  const rate =
+    payment.currency === "VES"
+      ? formatRate(payment.cents, debt.amountCents)
+      : formatRate(debt.amountCents, payment.cents);
+  return `${paid} · tasa ${rate}`;
 }

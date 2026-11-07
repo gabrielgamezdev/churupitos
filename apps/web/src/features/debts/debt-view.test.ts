@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { daysBetween, dueLabel, summarizeDebts } from "./debt-view";
+import { daysBetween, dueLabel, paymentLabel, summarizeDebts } from "./debt-view";
 import type { Debt } from "./queries";
 
 let position = 0;
@@ -17,6 +17,7 @@ const debt = (
   currency: "USD",
   dueOn,
   paidOn: null,
+  payment: null,
   position: ++position,
   ...extra,
 });
@@ -82,5 +83,34 @@ describe("cuándo vence una cuota", () => {
     expect(dueLabel("2026-11-15", today)).toEqual({ text: "en 26 días", overdue: false });
     expect(dueLabel("2026-10-19", today)).toEqual({ text: "venció ayer", overdue: true });
     expect(dueLabel("2026-10-18", today)).toEqual({ text: "venció hace 2 días", overdue: true });
+  });
+});
+
+describe("lo que se pagó de una deuda (M13)", () => {
+  const usd = { amountCents: 5000, currency: "USD" as const };
+
+  it("en otra moneda dice cuánto y a qué tasa, que sale de los dos montos", () => {
+    expect(paymentLabel({ ...usd, payment: { currency: "VES", cents: 20000 } })).toBe(
+      "Bs 200,00 · tasa 4,00",
+    );
+  });
+
+  it("una deuda en bolívares pagada en dólares también", () => {
+    expect(
+      paymentLabel({
+        amountCents: 20000,
+        currency: "VES",
+        payment: { currency: "USD", cents: 5000 },
+      }),
+    ).toBe("$ 50,00 · tasa 4,00");
+  });
+
+  it("por lo mismo, o sin gasto, no hay nada que decir", () => {
+    expect(paymentLabel({ ...usd, payment: { currency: "USD", cents: 5000 } })).toBeNull();
+    expect(paymentLabel({ ...usd, payment: null })).toBeNull();
+  });
+
+  it("en la misma moneda pero por otro monto, dice cuánto", () => {
+    expect(paymentLabel({ ...usd, payment: { currency: "USD", cents: 4500 } })).toBe("$ 45,00");
   });
 });

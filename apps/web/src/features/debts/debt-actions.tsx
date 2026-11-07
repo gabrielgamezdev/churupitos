@@ -9,15 +9,15 @@ import { writeErrorMessage } from "@/lib/write-error";
 import type { Debt } from "./queries";
 import { undoDebtPaid, undoDeletedDebt, useDeleteDebt, useSetDebtPaid } from "./write";
 
-// Lo que se hace con una deuda desde su fila: marcarla pagada (o desmarcarla), corregirla
-// y borrarla, que no pregunta: el aviso de abajo lo deshace (M7). Pagar es un gasto aparte
-// (R17): una pagada ofrece registrarlo, con el monto y el concepto ya escritos. Sin red,
-// todo se apaga.
+// Lo que se hace con una deuda desde su fila: pagarla, que registra el gasto en el mismo
+// paso (M13, R17); marcarla pagada sin gasto, si se pagó por otro medio; corregirla y
+// borrarla, que no pregunta: el aviso de abajo lo deshace (M7). Sin red, todo se apaga.
 export function DebtActions({ debt }: { debt: Debt }) {
   const online = useOnline();
   const setPaid = useSetDebtPaid();
   const remove = useDeleteDebt();
   const paid = debt.paidOn !== null;
+  const payable = debt.direction === "payable";
   const error = setPaid.error ?? remove.error;
 
   const deleteIt = () =>
@@ -42,30 +42,47 @@ export function DebtActions({ debt }: { debt: Debt }) {
           {remove.error ? "No se borró." : "No se guardó."} {writeErrorMessage(error)}
         </p>
       )}
-      <Button
-        variant={paid ? "outline" : "default"}
-        disabled={!online || setPaid.isPending}
-        onClick={() =>
-          setPaid.mutate(
-            { id: debt.id, paid: !paid },
-            {
-              onSuccess: () =>
-                showToast({
-                  message: paid ? "Vuelve a estar pendiente" : "Marcada como pagada",
-                  detail: debt.description,
-                  action: { label: "Deshacer", run: undoDebtPaid(debt) },
-                }),
-            },
-          )
-        }
-      >
-        {paid ? "No está pagada" : "Marcar pagada"}
-      </Button>
-      {paid && (
+      {payable && !paid && (
+        <Link
+          to="/operations/pay/$debtId"
+          params={{ debtId: debt.id }}
+          disabled={!online}
+          className={cn(buttonVariants(), !online && "opacity-50")}
+        >
+          Pagar
+        </Link>
+      )}
+      {debt.payment ? (
+        // El gasto manda: desmarcarla lo dejaría hecho.
+        <p className="text-caption text-ink-muted">
+          Se pagó con un gasto: al borrarlo, vuelve a estar pendiente.
+        </p>
+      ) : (
+        <Button
+          variant={paid || payable ? "outline" : "default"}
+          disabled={!online || setPaid.isPending}
+          onClick={() =>
+            setPaid.mutate(
+              { id: debt.id, paid: !paid },
+              {
+                onSuccess: () =>
+                  showToast({
+                    message: paid ? "Vuelve a estar pendiente" : "Marcada como pagada",
+                    detail: debt.description,
+                    action: { label: "Deshacer", run: undoDebtPaid(debt) },
+                  }),
+              },
+            )
+          }
+        >
+          {paid ? "No está pagada" : "Marcar pagada"}
+        </Button>
+      )}
+      {paid && !payable && (
         <Link
           to="/operations/new"
           search={{
-            kind: debt.direction === "payable" ? "expense" : "income",
+            kind: "income",
             amount: debt.amountCents,
             description: debt.description,
             currency: debt.currency,
@@ -73,7 +90,7 @@ export function DebtActions({ debt }: { debt: Debt }) {
           disabled={!online}
           className={cn(buttonVariants({ variant: "outline" }), !online && "opacity-50")}
         >
-          {debt.direction === "payable" ? "Registrar el pago" : "Registrar el cobro"}
+          Registrar el cobro
         </Link>
       )}
       <div className="grid grid-cols-2 gap-2">

@@ -27,6 +27,7 @@ import { Route as AuthenticatedSettingsCatalogRouteImport } from './routes/_auth
 import { Route as AuthenticatedBudgetMonthPlanRouteImport } from './routes/_authenticated/budget.$month.plan'
 import { Route as AuthenticatedDebtsDebtIdEditRouteImport } from './routes/_authenticated/debts.$debtId.edit'
 import { Route as AuthenticatedOperationsOperationIdEditRouteImport } from './routes/_authenticated/operations.$operationId.edit'
+import { Route as AuthenticatedOperationsPayDebtIdRouteImport } from './routes/_authenticated/operations.pay.$debtId'
 import { Route as AuthenticatedOperationsReceiveIncomeIdRouteImport } from './routes/_authenticated/operations.receive.$incomeId'
 import { Route as AuthenticatedSettingsAccountsAccountIdRouteImport } from './routes/_authenticated/settings.accounts.$accountId'
 import { Route as AuthenticatedSettingsAccountsNewRouteImport } from './routes/_authenticated/settings.accounts.new'
@@ -133,6 +134,12 @@ const AuthenticatedOperationsOperationIdEditRoute =
     path: '/operations/$operationId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOperationsPayDebtIdRoute =
+  AuthenticatedOperationsPayDebtIdRouteImport.update({
+    id: '/operations/pay/$debtId',
+    path: '/operations/pay/$debtId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOperationsReceiveIncomeIdRoute =
   AuthenticatedOperationsReceiveIncomeIdRouteImport.update({
     id: '/operations/receive/$incomeId',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/operations/pay/$debtId': typeof AuthenticatedOperationsPayDebtIdRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
   '/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
   '/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
   '/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/operations/pay/$debtId': typeof AuthenticatedOperationsPayDebtIdRoute
   '/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
   '/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
   '/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
@@ -232,6 +241,7 @@ export interface FileRoutesById {
   '/_authenticated/budget/$month/plan': typeof AuthenticatedBudgetMonthPlanRoute
   '/_authenticated/debts/$debtId/edit': typeof AuthenticatedDebtsDebtIdEditRoute
   '/_authenticated/operations/$operationId/edit': typeof AuthenticatedOperationsOperationIdEditRoute
+  '/_authenticated/operations/pay/$debtId': typeof AuthenticatedOperationsPayDebtIdRoute
   '/_authenticated/operations/receive/$incomeId': typeof AuthenticatedOperationsReceiveIncomeIdRoute
   '/_authenticated/settings/accounts/$accountId': typeof AuthenticatedSettingsAccountsAccountIdRoute
   '/_authenticated/settings/accounts/new': typeof AuthenticatedSettingsAccountsNewRoute
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
+    | '/operations/pay/$debtId'
     | '/operations/receive/$incomeId'
     | '/settings/accounts/$accountId'
     | '/settings/accounts/new'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/budget/$month/plan'
     | '/debts/$debtId/edit'
     | '/operations/$operationId/edit'
+    | '/operations/pay/$debtId'
     | '/operations/receive/$incomeId'
     | '/settings/accounts/$accountId'
     | '/settings/accounts/new'
@@ -307,6 +319,7 @@ export interface FileRouteTypes {
     | '/_authenticated/budget/$month/plan'
     | '/_authenticated/debts/$debtId/edit'
     | '/_authenticated/operations/$operationId/edit'
+    | '/_authenticated/operations/pay/$debtId'
     | '/_authenticated/operations/receive/$incomeId'
     | '/_authenticated/settings/accounts/$accountId'
     | '/_authenticated/settings/accounts/new'
@@ -447,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOperationsOperationIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/operations/pay/$debtId': {
+      id: '/_authenticated/operations/pay/$debtId'
+      path: '/operations/pay/$debtId'
+      fullPath: '/operations/pay/$debtId'
+      preLoaderRoute: typeof AuthenticatedOperationsPayDebtIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/operations/receive/$incomeId': {
       id: '/_authenticated/operations/receive/$incomeId'
       path: '/operations/receive/$incomeId'
@@ -502,6 +522,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedBudgetMonthPlanRoute: typeof AuthenticatedBudgetMonthPlanRoute
   AuthenticatedDebtsDebtIdEditRoute: typeof AuthenticatedDebtsDebtIdEditRoute
   AuthenticatedOperationsOperationIdEditRoute: typeof AuthenticatedOperationsOperationIdEditRoute
+  AuthenticatedOperationsPayDebtIdRoute: typeof AuthenticatedOperationsPayDebtIdRoute
   AuthenticatedOperationsReceiveIncomeIdRoute: typeof AuthenticatedOperationsReceiveIncomeIdRoute
   AuthenticatedSettingsAccountsAccountIdRoute: typeof AuthenticatedSettingsAccountsAccountIdRoute
   AuthenticatedSettingsAccountsNewRoute: typeof AuthenticatedSettingsAccountsNewRoute
@@ -527,6 +548,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDebtsDebtIdEditRoute: AuthenticatedDebtsDebtIdEditRoute,
   AuthenticatedOperationsOperationIdEditRoute:
     AuthenticatedOperationsOperationIdEditRoute,
+  AuthenticatedOperationsPayDebtIdRoute: AuthenticatedOperationsPayDebtIdRoute,
   AuthenticatedOperationsReceiveIncomeIdRoute:
     AuthenticatedOperationsReceiveIncomeIdRoute,
   AuthenticatedSettingsAccountsAccountIdRoute:

@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: M13 · Lo que pidió el uso (en curso)
+## Ahora: M13 · Lo que pidió el uso, en los teléfonos
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -9,8 +9,9 @@ libros quedan en `privado/excels/` como histórico. Lo registrado en la app hast
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
 M13 sale de usar la app en noviembre: ver lo que le falta a cada sobre, registrar una
-comisión suelta y pagar una deuda en un solo paso. El plan, aprobado, está en
-`docs/modulos/M13-lo-que-pidio-el-uso.md`. Después, M14.
+comisión suelta y pagar una deuda en un solo paso. Está construido y en la nube; falta
+usarlo en los teléfonos, su paso 6. Su plan: `docs/modulos/M13-lo-que-pidio-el-uso.md`.
+Después, M14.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base

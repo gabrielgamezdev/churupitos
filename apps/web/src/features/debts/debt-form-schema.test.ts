@@ -89,6 +89,7 @@ describe("el formulario de una deuda", () => {
         currency: "VES",
         dueOn: null,
         paidOn: null,
+        payment: null,
         position: 1,
       }),
     ).toMatchObject({ description: "Tarjeta", amount: "30,05", currency: "VES", dueOn: "" });

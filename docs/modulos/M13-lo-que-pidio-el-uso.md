@@ -60,7 +60,7 @@ Ninguna nueva: cambian Presupuesto, Registrar, Corregir y Deudas.
    comisiones y el concepto de cada línea. Sin migración: la base ya las aceptaba.
 4. [x] **Pagar en la base** (2026-11-07, también en la nube): el enlace y la función, con sus
    pruebas (`R17`).
-5. [ ] **Pagar en la app:** «Pagar», lo que se pagó y a qué tasa, y deshacer.
+5. [x] **Pagar en la app** (2026-11-07): «Pagar», lo que se pagó y a qué tasa, y deshacer.
 6. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

@@ -14,6 +14,7 @@ const debt = (id: string, dueOn: string | null, extra: Partial<Debt> = {}): Debt
   currency: "USD",
   dueOn,
   paidOn: null,
+  payment: null,
   position: 1,
   ...extra,
 });
