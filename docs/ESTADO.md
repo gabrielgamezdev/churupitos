@@ -1,12 +1,16 @@
 # Estado
 
-## Ahora: la app en uso, sin módulo en curso
+## Ahora: M13 · Lo que pidió el uso (en curso)
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
 saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubila: los
 libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
+
+M13 sale de usar la app en noviembre: ver lo que le falta a cada sobre, registrar una
+comisión suelta y pagar una deuda en un solo paso. El plan, aprobado, está en
+`docs/modulos/M13-lo-que-pidio-el-uso.md`. Después, M14.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base
@@ -51,6 +55,8 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M11 | Sobres y cuentas | Crear; borrar lo que no tiene nada; archivar lo que tiene historia y está en cero | Ídem |
 | — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | Hecho el 2026-11-01 |
 | M12 | Después del corte | La recarga fijada, corregir lo importado, meses cerrados y copias de la base | Corrigen un mes cerrado abriéndolo, y hay una copia que se restauró |
+| M13 | Lo que pidió el uso | Lo que le falta a cada sobre, comisiones sueltas y pagar una deuda en un paso | Lo usan a diario |
+| M14 | Registrar desde una captura | Rellenar monto, fecha y cuenta leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 
