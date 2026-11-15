@@ -125,7 +125,14 @@ try {
     for (const table of restored) {
       const rows = read(table);
       if (rows === null) continue;
-      const columns = await columnsOf(table);
+      // Solo las columnas que trae la copia: una añadida después de hacerla toma su valor
+      // por defecto, en vez de un null que su restricción rechaza.
+      const parsed = JSON.parse(rows);
+      if (parsed.length === 0) continue;
+      const inBackup = new Set(parsed.flatMap((row) => Object.keys(row)));
+      const columns = (await columnsOf(table)).filter((column) =>
+        inBackup.has(column.slice(1, -1)),
+      );
       const values = ARCHIVABLE.has(table)
         ? columns.map((column) => (column === '"archived_at"' ? "null" : column))
         : columns;

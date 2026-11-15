@@ -147,6 +147,13 @@ corre los mismos archivos con la conexión del importador. Allí aparece además
 función de Supabase (`rls_auto_enable`, la del RLS automático) que las pruebas
 tienen en cuenta.
 
+### Una copia de antes de una columna nueva no se restauraba
+La restauración llenaba todas las columnas que la tabla tiene hoy desde el JSON de la
+copia, y una añadida después de hacerla salía `null`, no con su valor por defecto: una
+`not null` la rechazaba entera (pasó con `accounts.capture_hints`, M15). **La
+restauración solo llena las columnas que trae la copia.** Al añadir una columna `not
+null`, darle un valor por defecto, y restaurar una copia de antes en local para verlo.
+
 ### «Success. No rows returned» tras un `insert` no significa cero filas
 El editor SQL del panel de Supabase lo dice siempre que la sentencia no devuelve
 una tabla, haya insertado algo o no. **Para saber qué pasó, un `select` después** (o
