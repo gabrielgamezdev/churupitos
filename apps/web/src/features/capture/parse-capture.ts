@@ -73,11 +73,21 @@ function accountOf(lines: string[], accounts: CaptureAccount[]): string | null {
 // --- El monto ------------------------------------------------------------------------
 
 // Con coma decimal y puntos de miles, como en los bancos de aquí, o con punto decimal y
-// comas de miles, como en las apps en dólares. Siempre con dos decimales: así no se
-// confunde con un teléfono, una cédula o una referencia.
+// comas de miles, como en las apps en dólares. Con dos decimales, para no confundirlo con
+// un teléfono, una cédula o una referencia; con más, solo si lo sigue un dólar cripto
+// (USDT, USDC), que enseña hasta ocho: se toman los dos primeros, como al registrarlo a
+// mano.
 const AMOUNT_FORMATS = [
   { pattern: /(?<!\d|\d[.,])(\d{1,3}(?:\.\d{3})+|\d+),(\d{2})(?!\d|[.,]\d)/g, thousands: /\./g },
   { pattern: /(?<!\d|\d[.,])(\d{1,3}(?:,\d{3})+|\d+)\.(\d{2})(?!\d|[.,]\d)/g, thousands: /,/g },
+  {
+    pattern: /(?<!\d|\d[.,])(\d{1,3}(?:\.\d{3})+|\d+),(\d{3,8})(?=\s*usd[tc]\b)/gi,
+    thousands: /\./g,
+  },
+  {
+    pattern: /(?<!\d|\d[.,])(\d{1,3}(?:,\d{3})+|\d+)\.(\d{3,8})(?=\s*usd[tc]\b)/gi,
+    thousands: /,/g,
+  },
 ];
 const AMOUNT_LABEL = /\b(monto|importe|total)\b/;
 const CURRENCY_MARK = /\b(bs|ves|usd|usdt)\b|\$/;
@@ -87,7 +97,9 @@ const NOT_THE_AMOUNT = /\b(saldo|disponible|comision|tasa)\b/;
 function amountsIn(line: string): number[] {
   return AMOUNT_FORMATS.flatMap(({ pattern, thousands }) =>
     [...line.matchAll(pattern)].map(
-      (match) => Number((match[1] ?? "").replace(thousands, "")) * 100 + Number(match[2] ?? ""),
+      (match) =>
+        Number((match[1] ?? "").replace(thousands, "")) * 100 +
+        Number((match[2] ?? "").slice(0, 2)),
     ),
   ).filter((cents) => Number.isSafeInteger(cents) && cents > 0);
 }
@@ -115,12 +127,25 @@ function amountOf(lines: string[]): number | null {
 // --- La fecha ------------------------------------------------------------------------
 
 const MONTHS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-// En cada forma, qué grupo es el año, cuál el mes y cuál el día.
-const DATE_FORMATS = [
+// En cada forma, qué grupo es el año, cuál el mes y cuál el día; y la hora, si es UTC.
+const DATE_FORMATS: {
+  pattern: RegExp;
+  year: number;
+  month: number;
+  day: number;
+  utcHour?: number;
+}[] = [
   // 06/11/2026, 6-11-26 o 06.11.2026: primero el día, como aquí.
   { pattern: /(?<!\d)(\d{1,2})[/.-](\d{1,2})[/.-](\d{4}|\d{2})(?!\d)/g, year: 3, month: 2, day: 1 },
-  // 2026-11-06, como en las apps en dólares.
-  { pattern: /(?<!\d)(\d{4})-(\d{1,2})-(\d{1,2})(?!\d)/g, year: 1, month: 2, day: 3 },
+  // 2026-11-06, como en las apps en dólares, que a veces dan la hora en UTC.
+  {
+    pattern:
+      /(?<!\d)(\d{4})-(\d{1,2})-(\d{1,2})(?!\d)(?:[ t]+(\d{1,2}):\d{2}(?::\d{2})?\s*\(?\s*(utc))?/g,
+    year: 1,
+    month: 2,
+    day: 3,
+    utcHour: 4,
+  },
   // 6 nov 2026, 6 de noviembre de 2026 o 6 nov., 2026.
   {
     pattern: new RegExp(
@@ -133,7 +158,13 @@ const DATE_FORMATS = [
   },
 ];
 
-function validDay(yearText: string, monthText: string, dayText: string, today: string) {
+function validDay(
+  yearText: string,
+  monthText: string,
+  dayText: string,
+  today: string,
+  dayBefore: boolean,
+) {
   let month = /^\d+$/.test(monthText) ? Number(monthText) : MONTHS.indexOf(monthText) + 1;
   let day = Number(dayText);
   // 11/25/2026 solo puede ser mes y día: una app que escribe la fecha a la inglesa.
@@ -141,17 +172,29 @@ function validDay(yearText: string, monthText: string, dayText: string, today: s
   const year = yearText.length === 2 ? 2000 + Number(yearText) : Number(yearText);
   const date = new Date(Date.UTC(year, month - 1, day));
   if (date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day || year < 2000) return null;
+  if (dayBefore) date.setUTCDate(date.getUTCDate() - 1);
   const iso = date.toISOString().slice(0, 10);
   // Un día que aún no llegó es una lectura mala: una captura es de algo ya pagado.
   return iso > today ? null : iso;
 }
 
+// Venezuela va 4 horas por detrás de UTC, todo el año: antes de las 4:00 en UTC, aquí aún
+// era el día anterior.
+const UTC_OFFSET_HOURS = 4;
+
 function datesIn(line: string, today: string): string[] {
   const folded = fold(line);
-  return DATE_FORMATS.flatMap(({ pattern, year, month, day }) =>
-    [...folded.matchAll(pattern)].map((match) =>
-      validDay(match[year] ?? "", match[month] ?? "", match[day] ?? "", today),
-    ),
+  return DATE_FORMATS.flatMap((format) =>
+    [...folded.matchAll(format.pattern)].map((match) => {
+      const utcHour = format.utcHour === undefined ? undefined : match[format.utcHour];
+      return validDay(
+        match[format.year] ?? "",
+        match[format.month] ?? "",
+        match[format.day] ?? "",
+        today,
+        utcHour !== undefined && Number(utcHour) < UTC_OFFSET_HOURS,
+      );
+    }),
   ).filter((day): day is string => day !== null);
 }
 

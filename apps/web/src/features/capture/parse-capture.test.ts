@@ -118,6 +118,14 @@ describe("el monto", () => {
     expect(read(["Saldo disponible: Bs. 900,00"]).amountCents).toBeNull();
   });
 
+  it("un dólar cripto con hasta ocho decimales: se toman los dos primeros", () => {
+    expect(read(["Pago exitoso", "40.12345678 USDT"]).amountCents).toBe(4012);
+    expect(read(["Pagado con 9.999 USDC"]).amountCents).toBe(999);
+    expect(read(["40,12345678 usdt"]).amountCents).toBe(4012);
+    // Sin la moneda, tres decimales o más no son un monto.
+    expect(read(["40.12345678"]).amountCents).toBeNull();
+  });
+
   it("con el punto pegado a «Bs.»", () => {
     expect(read(["Monto Bs.10,00"]).amountCents).toBe(1000);
   });
@@ -130,6 +138,12 @@ describe("la fecha", () => {
     expect(read(["2026-11-06 21:40:33"]).day).toBe("2026-11-06");
     expect(read(["6 nov 2026"]).day).toBe("2026-11-06");
     expect(read(["6 de noviembre de 2026, 9:40 p. m."]).day).toBe("2026-11-06");
+  });
+
+  it("en UTC, antes de las 4:00 aquí aún era el día anterior", () => {
+    expect(read(["Pagaste 10.00 USDT el 2026-11-14 21:25:15(UTC)"]).day).toBe("2026-11-14");
+    expect(read(["Pagaste 10.00 USDT el 2026-11-14 01:25:15(UTC)"]).day).toBe("2026-11-13");
+    expect(read(["2026-11-14 01:25:15"]).day).toBe("2026-11-14");
   });
 
   it("primero el día, salvo que el mes no pueda ser mes", () => {
