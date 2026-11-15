@@ -111,6 +111,7 @@ function NewOperationPage() {
           rememberFor={session.user.id}
           // Pagar una deuda es un gasto o un cobro, nunca un movimiento.
           onMove={currency ? undefined : toMove}
+          readsCaptures
           onSaved={close}
         />
       ) : (

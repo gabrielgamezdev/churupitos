@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
+import { CaptureReader } from "@/features/capture/capture-reader";
+import type { CaptureFields } from "@/features/capture/parse-capture";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import {
   conceptUsageQuery,
@@ -83,6 +85,8 @@ interface OperationFormProps {
   onMove?: (carry: Carry) => void;
   // La deuda que paga este gasto (M13): se enseña arriba y queda pagada al guardar.
   debt?: Debt;
+  // Al registrar, «Leer una captura» (M15): rellena lo que dice la captura del pago.
+  readsCaptures?: boolean;
   onSaved: () => void;
 }
 
@@ -97,6 +101,7 @@ export function OperationForm({
   rememberFor,
   onMove,
   debt,
+  readsCaptures = false,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -239,6 +244,15 @@ export function OperationForm({
     }
   });
 
+  // Lo que se leyó de la captura pisa lo escrito; lo que no se encontró, queda (M15).
+  const fillFromCapture = ({ amountCents, day, description }: CaptureFields) => {
+    if (amountCents !== null) {
+      setValue("total", amountInputText(amountCents), { shouldValidate: Boolean(errors.total) });
+    }
+    if (day !== null) setValue("day", day, { shouldValidate: Boolean(errors.day) });
+    if (description !== null) setValue("description", description);
+  };
+
   const toggleFee = () => {
     if (getValues("hasFee")) {
       setValue("hasFee", false);
@@ -313,6 +327,7 @@ export function OperationForm({
           }
         />
       )}
+      {readsCaptures && <CaptureReader onRead={fillFromCapture} />}
 
       <Field
         label={debt ? "Lo que se pagó" : "Monto"}

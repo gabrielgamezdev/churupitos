@@ -9,3 +9,5 @@ interface ImportMeta {
 
 // La pone vite.config.ts al construir: el commit publicado, o «local».
 declare const __APP_VERSION__: string;
+// También: la carpeta del lector de capturas, con su versión en la ruta (M15).
+declare const __OCR_PATH__: string;

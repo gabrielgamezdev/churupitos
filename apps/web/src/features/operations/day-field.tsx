@@ -26,12 +26,15 @@ interface DayFieldProps {
 // calendario del teléfono. Los días se cuentan sin zona horaria (R13).
 export function DayField({ value, today, onChange, dateInput, error }: DayFieldProps) {
   const yesterday = addDays(today, -1);
-  const [other, setOther] = useState(value !== today && value !== yesterday);
+  // «Otro día» sale del día que hay, aunque lo ponga otro (una captura, M15), o de
+  // haberlo elegido: con hoy en el calendario, sigue abierto.
+  const [otherChosen, setOtherChosen] = useState(false);
+  const other = otherChosen || (value !== today && value !== yesterday);
   const dateRef = useRef<HTMLInputElement | null>(null);
   const choice: DayChoice = other ? "other" : value === yesterday ? "yesterday" : "today";
 
   const choose = (next: DayChoice) => {
-    setOther(next === "other");
+    setOtherChosen(next === "other");
     if (next === "today") onChange(today);
     else if (next === "yesterday") onChange(yesterday);
     // El calendario se abre solo; si el navegador no deja, queda el campo para tocarlo.

@@ -21,14 +21,14 @@
 
 ## Decisiones (2026-11-15)
 
-1. **«Leer captura» en Registrar:** abre la galería del teléfono; la app lee la imagen y
+1. **«Leer una captura» en Registrar:** abre la galería del teléfono; la app lee la imagen y
    rellena el monto, la fecha, la cuenta y el concepto. El sobre lo elige la persona, y
    nunca se guarda solo.
 2. **Se lee en el teléfono, sin servicios:** la captura no sale de él, por privacidad y
    por la regla 7 (ADR 0010). Tampoco se guarda: solo existe mientras se registra.
 3. **El lector se baja la primera vez que se usa** (unos 5 MB), no al instalar la app ni
    con cada versión nueva, y queda guardado en el teléfono.
-4. **Lo que no se encuentra no se inventa:** se dice («No encontré la fecha») y el campo
+4. **Lo que no se encuentra no se inventa:** se dice («No se encontró la fecha») y el campo
    queda como estaba. La captura se ve en pequeño arriba, para comparar.
 5. **La cuenta, por lo que dice su captura:** cada cuenta guarda en la base lo que la
    delata (sus últimos dígitos o una palabra), y gana la primera que aparezca. Si no se
@@ -54,8 +54,9 @@ Ninguna nueva: cambian Registrar y la ficha de cada cuenta en Ajustes.
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-11-15).
-2. [ ] **El lector en Registrar:** el monto, la fecha y el concepto, medido en los dos
-   teléfonos.
+2. [x] **El lector en Registrar** (2026-11-15): el monto, la fecha y el concepto. Con las
+   capturas de la prueba, en Chrome, acertó el monto y la fecha de todas, en menos de un
+   segundo cada una; falta medirlo en los dos teléfonos.
 3. [ ] **La cuenta de cada captura.**
 4. [ ] **Compartir → Churupitos.**
 5. [ ] **En los teléfonos.**
