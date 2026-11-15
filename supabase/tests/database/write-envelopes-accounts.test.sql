@@ -8,7 +8,7 @@ create extension if not exists pgtap with schema extensions;
 -- (M12): se quita dentro de la prueba, y el rollback del final la devuelve.
 delete from public.cutover;
 
-select plan(32);
+select plan(37);
 
 -- La base local puede tener una carga real y, en la nube, lo registrado de verdad en la
 -- app: se vacía todo, y el rollback del final lo deja como estaba.
@@ -239,9 +239,39 @@ select throws_ok(
   'R20: una cuenta con historia no se borra'
 );
 
+-- M15: lo que delata a la cuenta en una captura, limpio y en el orden en que se escribió.
 select lives_ok(
-  $$ select public.save_account('00000000-0000-4000-a000-0000000000d1', 'Banco C', 'USD', true) $$,
+  $$ select public.save_account('00000000-0000-4000-a000-0000000000d1', 'Banco C', 'USD', false,
+       array[' 1234 ', '', 'Banco C', 'banco c', null, 'Billetera']) $$,
+  'una cuenta guarda lo que la delata en una captura'
+);
+
+select results_eq(
+  $$ select capture_hints from public.accounts where id = '00000000-0000-4000-a000-0000000000d1' $$,
+  $$ values (array['1234', 'Banco C', 'Billetera']) $$,
+  'sin espacios de más, sin vacías y sin repetidas'
+);
+
+select lives_ok(
+  $$ select public.save_account('00000000-0000-4000-a000-0000000000d1', 'Banco C', 'USD', false) $$,
+  'guardar sin ellas, como la versión de la app que no las conoce'
+);
+
+select results_eq(
+  $$ select capture_hints from public.accounts where id = '00000000-0000-4000-a000-0000000000d1' $$,
+  $$ values (array['1234', 'Banco C', 'Billetera']) $$,
+  'las deja como estaban'
+);
+
+select lives_ok(
+  $$ select public.save_account('00000000-0000-4000-a000-0000000000d1', 'Banco C', 'USD', true, '{}') $$,
   'una cuenta sin nada se archiva'
+);
+
+select results_eq(
+  $$ select capture_hints from public.accounts where id = '00000000-0000-4000-a000-0000000000d1' $$,
+  $$ values ('{}'::text[]) $$,
+  'y vaciarlas las quita todas'
 );
 
 select lives_ok(
