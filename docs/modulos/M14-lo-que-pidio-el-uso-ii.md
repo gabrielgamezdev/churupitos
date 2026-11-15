@@ -63,8 +63,9 @@ Ninguna nueva: cambian Mover, el plan (Presupuesto y su edición) y Cobrar.
 ## Pasos
 
 1. [x] **Plan aprobado** por el autor (2026-11-15).
-2. [ ] **«Todo» en Mover.**
-3. [ ] **El teclado al volver.**
+2. [x] **«Todo» en Mover** (2026-11-15).
+3. [x] **El teclado al volver** (2026-11-15): sin forma de probarlo fuera de un teléfono;
+   se comprueba en el paso 6.
 4. [ ] **Fuentes y acciones del plan:** el aviso, renombrar, el orden fijo y una sola «pagar
    de inmediato».
 5. [ ] **La parte de cada fuente:** deducirla, enseñarla en el plan y usarla en Cobrar
