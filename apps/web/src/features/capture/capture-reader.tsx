@@ -96,16 +96,20 @@ export function CaptureReader({ accounts, readsShared = false, onRead }: Capture
       };
       const parse = (text: string | null) =>
         text === null ? null : parseCapture(text, today(), latestAccounts.current);
-      // Una foto se lee primero recortando el papel, y una captura, entera. Si falta el
-      // monto o la fecha, se prueba de la otra forma y se queda la que encontró más.
+      // Una foto se lee recortando el papel (entera, si no hay papel que recortar), y una
+      // captura, entera. A una captura sin monto o sin fecha se le prueba el recorte, que
+      // es rápido; una foto no se relee entera: con lo que la rodea tarda mucho en un
+      // teléfono (25 s, con una girada) y no sale nada mejor.
       const photo = await looksLikePhoto(file);
       let fields = parse(await readCaptureText(file, onStage, photo));
       if (current !== attempt.current) return;
-      if (!fields || found(fields) < 2) {
-        const other = parse(await readCaptureText(file, onStage, !photo));
+      if (photo && !fields) fields = parse(await readCaptureText(file, onStage, false));
+      if (!photo && fields && found(fields) < 2) {
+        const other = parse(await readCaptureText(file, onStage, true));
         if (current !== attempt.current) return;
-        if (other && (!fields || found(other) > found(fields))) fields = other;
+        if (other && found(other) > found(fields)) fields = other;
       }
+      if (current !== attempt.current) return;
       if (!fields) throw new Error("No se pudo leer la imagen");
       setState({
         stage: "done",
@@ -137,6 +141,18 @@ export function CaptureReader({ accounts, readsShared = false, onRead }: Capture
   }, [readsShared]);
 
   const pick = () => input.current?.click();
+  // Lo que llegue de esta lectura ya no cuenta, y el lector se suelta.
+  const stop = async () => {
+    attempt.current += 1;
+    setState({ stage: "idle" });
+    const { stopReading } = await import("./read-capture");
+    stopReading();
+  };
+  const stopButton = (
+    <Button type="button" variant="link" className="self-start px-0" onClick={() => void stop()}>
+      Dejar de leer
+    </Button>
+  );
   const fileInput = (
     <input
       ref={input}
@@ -182,9 +198,15 @@ export function CaptureReader({ accounts, readsShared = false, onRead }: Capture
             <>
               <p className="text-body">Preparando el lector…</p>
               <p className="text-caption text-ink-muted">La primera vez se baja: unos 5 MB.</p>
+              {stopButton}
             </>
           )}
-          {state.stage === "reading" && <p className="text-body">Leyendo la captura…</p>}
+          {state.stage === "reading" && (
+            <>
+              <p className="text-body">Leyendo la captura…</p>
+              {stopButton}
+            </>
+          )}
           {state.stage === "done" && (
             <>
               <p className="text-body">Leída en {SECONDS.format(state.seconds)} s</p>

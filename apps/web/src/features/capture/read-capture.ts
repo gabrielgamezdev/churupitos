@@ -48,6 +48,15 @@ function ocrWorker(): Promise<OcrWorker> {
   return worker;
 }
 
+// Dejar de leer: se suelta el lector a mitad, que en una foto puede tardar, y libera el
+// teléfono. La próxima lectura lo arranca otra vez.
+export function stopReading() {
+  clearTimeout(idleTimer);
+  const current = worker;
+  worker = null;
+  void current?.then((w) => w.terminate()).catch(() => undefined);
+}
+
 function releaseLater() {
   clearTimeout(idleTimer);
   idleTimer = setTimeout(() => {

@@ -73,7 +73,9 @@ Ninguna nueva: cambian Registrar y la ficha de cada cuenta en Ajustes.
    Chrome actualiza la app instalada.
 5. [x] **La foto de una factura** (2026-11-15): con la única que hay, sale la fecha, la
    cuenta sin elegir y el total con un céntimo de diferencia, que hay que corregir.
-   Agrandar la foto no la leyó mejor: cada tamaño confundía otra cifra.
+   Agrandar la foto no la leyó mejor: cada tamaño confundía otra cifra. Una foto girada no
+   se lee y tardaba 25 s en un teléfono: ahora una foto no se relee entera, que era lo
+   lento, y mientras lee se puede «Dejar de leer».
 6. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
