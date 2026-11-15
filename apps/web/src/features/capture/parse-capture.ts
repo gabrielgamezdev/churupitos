@@ -1,13 +1,21 @@
-// Lo que se saca del texto de una captura de pago (M15): el monto, la fecha y el concepto.
-// Sin reglas de ningún banco: el repositorio es público, y cada banco cambia su captura
-// cuando quiere. Se buscan las etiquetas que usan todos («Monto», «Fecha», «Concepto») y,
-// si no, la forma de cada dato. Lo que no se encuentra queda en null: no se adivina.
+// Lo que se saca del texto de una captura de pago (M15): el monto, la fecha, el concepto y
+// la cuenta. Sin reglas de ningún banco: el repositorio es público, y cada banco cambia su
+// captura cuando quiere. Se buscan las etiquetas que usan todos («Monto», «Fecha»,
+// «Concepto») y, si no, la forma de cada dato; la cuenta, por lo que cada una guarda en la
+// base. Lo que no se encuentra queda en null: no se adivina.
 
 export interface CaptureFields {
   amountCents: number | null;
   // AAAA-MM-DD.
   day: string | null;
   description: string | null;
+  accountId: string | null;
+}
+
+// Una cuenta y lo que la delata en sus capturas: sus últimos dígitos o una palabra.
+export interface CaptureAccount {
+  accountId: string;
+  hints: string[];
 }
 
 // Sin tildes y en minúsculas: el lector a veces se come una tilde, o la pone de más.
@@ -15,7 +23,11 @@ export function fold(text: string): string {
   return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 }
 
-export function parseCapture(text: string, today: string): CaptureFields {
+export function parseCapture(
+  text: string,
+  today: string,
+  accounts: CaptureAccount[] = [],
+): CaptureFields {
   const lines = text
     .split(/\r?\n/)
     .map((line) => line.replace(/\s+/g, " ").trim())
@@ -24,7 +36,38 @@ export function parseCapture(text: string, today: string): CaptureFields {
     amountCents: amountOf(lines),
     day: dayOf(lines, today),
     description: descriptionOf(lines),
+    accountId: accountOf(lines, accounts),
   };
+}
+
+// --- La cuenta -----------------------------------------------------------------------
+
+// Dónde aparece por primera vez, como palabra o cifra entera: «1234» está en «***1234» o
+// en «Cta. 1234», pero no dentro de «912345».
+function firstAt(text: string, hint: string): number {
+  const folded = fold(hint.trim());
+  if (!folded) return -1;
+  const escaped = folded.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return text.search(new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, "u"));
+}
+
+// La cuenta de origen sale antes que la de destino en las capturas: gana la que aparece
+// primero. Si dos aparecen en el mismo sitio, no se sabe cuál es: ninguna.
+function accountOf(lines: string[], accounts: CaptureAccount[]): string | null {
+  const text = fold(lines.join("\n"));
+  const found = accounts
+    .map(({ accountId, hints }) => ({
+      accountId,
+      at: Math.min(
+        ...hints.map((hint) => firstAt(text, hint)).filter((at) => at >= 0),
+        Number.POSITIVE_INFINITY,
+      ),
+    }))
+    .filter(({ at }) => Number.isFinite(at))
+    .sort((a, b) => a.at - b.at);
+  const [first, second] = found;
+  if (!first || (second && second.at === first.at)) return null;
+  return first.accountId;
 }
 
 // --- El monto ------------------------------------------------------------------------

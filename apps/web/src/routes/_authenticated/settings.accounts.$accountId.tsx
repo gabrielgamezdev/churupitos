@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Screen } from "@/components/screen";
@@ -5,6 +6,7 @@ import { ScreenHeader } from "@/components/screen-header";
 import { EmptyState, MissingData } from "@/components/states";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
+import { captureHintsQuery } from "@/features/capture/queries";
 import { AccountForm } from "@/features/catalog/account-form";
 import { useCloseToCatalog } from "@/features/catalog/use-close";
 
@@ -22,13 +24,14 @@ const HEADER = {
 function EditAccountPage() {
   const { accountId } = Route.useParams();
   const accounts = useAccountBalances();
+  const hints = useQuery(captureHintsQuery);
   const close = useCloseToCatalog();
-  if (!accounts.data) {
+  if (!accounts.data || !hints.data) {
     return (
       <Screen>
         <ScreenHeader {...HEADER} />
         <MissingData
-          queries={[accounts]}
+          queries={[accounts, hints]}
           errorMessage="No se pudo cargar la cuenta."
           skeleton={<Skeleton aria-label="Cargando" className="h-40 w-full" />}
         />
@@ -48,7 +51,12 @@ function EditAccountPage() {
     // Sin el hueco de la barra: abajo va «Guardar», fijo.
     <Screen className="pb-0">
       <ScreenHeader {...HEADER} />
-      <AccountForm key={account.accountId} account={account} onDone={close} />
+      <AccountForm
+        key={account.accountId}
+        account={account}
+        captureHints={hints.data.find((row) => row.accountId === accountId)?.hints ?? []}
+        onDone={close}
+      />
     </Screen>
   );
 }

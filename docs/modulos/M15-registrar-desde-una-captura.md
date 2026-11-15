@@ -57,7 +57,8 @@ Ninguna nueva: cambian Registrar y la ficha de cada cuenta en Ajustes.
 2. [x] **El lector en Registrar** (2026-11-15): el monto, la fecha y el concepto. Con las
    capturas de la prueba, en Chrome, acertó el monto y la fecha de todas, en menos de un
    segundo cada una; falta medirlo en los dos teléfonos.
-3. [ ] **La cuenta de cada captura.**
+3. [x] **La cuenta de cada captura** (2026-11-15): «En sus capturas» en la ficha de cada
+   cuenta, guardado en la base. Con las capturas de la prueba eligió la cuenta de todas.
 4. [ ] **Compartir → Churupitos.**
 5. [ ] **En los teléfonos.**
 

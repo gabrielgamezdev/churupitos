@@ -15,6 +15,7 @@ import { Segmented } from "@/components/ui/segmented";
 import { accountCellsQuery } from "@/features/accounts/queries";
 import { CaptureReader } from "@/features/capture/capture-reader";
 import type { CaptureFields } from "@/features/capture/parse-capture";
+import { captureHintsQuery } from "@/features/capture/queries";
 import { useAccountBalances } from "@/features/balances/use-account-balances";
 import {
   conceptUsageQuery,
@@ -244,10 +245,24 @@ export function OperationForm({
     }
   });
 
-  // Lo que se leyó de la captura pisa lo escrito; lo que no se encontró, queda (M15).
-  const fillFromCapture = ({ amountCents, day, description }: CaptureFields) => {
+  // Las cuentas que se pueden elegir, con lo que delata a cada una en sus capturas (M15).
+  const captureHints = useQuery({ ...captureHintsQuery, enabled: readsCaptures });
+  const choosableIds = new Set(
+    usableAccounts(accounts.data ?? [])
+      .filter((row) => !onlyCurrency || row.currency === onlyCurrency)
+      .map((row) => row.accountId),
+  );
+  const captureAccounts = (captureHints.data ?? []).filter((row) =>
+    choosableIds.has(row.accountId),
+  );
+  // Lo que se leyó de la captura pisa lo escrito; lo que no se encontró, queda: sin cuenta
+  // reconocida, la de siempre.
+  const fillFromCapture = ({ amountCents, day, description, accountId }: CaptureFields) => {
     if (amountCents !== null) {
       setValue("total", amountInputText(amountCents), { shouldValidate: Boolean(errors.total) });
+    }
+    if (accountId !== null) {
+      setValue("accountId", accountId, { shouldValidate: Boolean(errors.accountId) });
     }
     if (day !== null) setValue("day", day, { shouldValidate: Boolean(errors.day) });
     if (description !== null) setValue("description", description);
@@ -327,7 +342,7 @@ export function OperationForm({
           }
         />
       )}
-      {readsCaptures && <CaptureReader onRead={fillFromCapture} />}
+      {readsCaptures && <CaptureReader accounts={captureAccounts} onRead={fillFromCapture} />}
 
       <Field
         label={debt ? "Lo que se pagó" : "Monto"}

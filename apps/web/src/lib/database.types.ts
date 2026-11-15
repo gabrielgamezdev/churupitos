@@ -26,6 +26,7 @@ export type Database = {
       accounts: {
         Row: {
           archived_at: string | null;
+          capture_hints: string[];
           created_at: string;
           created_by: string | null;
           currency: string;
@@ -37,6 +38,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           archived_at?: string | null;
+          capture_hints?: string[];
           created_at?: string;
           created_by?: string | null;
           currency: string;
@@ -47,6 +49,7 @@ export type Database = {
         };
         Update: {
           archived_at?: string | null;
+          capture_hints?: string[];
           created_at?: string;
           created_by?: string | null;
           currency?: string;
@@ -825,7 +828,13 @@ export type Database = {
       restore_debt: { Args: { snapshot: Json }; Returns: undefined };
       restore_operation: { Args: { snapshot: Json }; Returns: undefined };
       save_account: {
-        Args: { is_archived: boolean; new_currency: string; new_name: string; target_id: string };
+        Args: {
+          is_archived: boolean;
+          new_capture_hints?: string[];
+          new_currency: string;
+          new_name: string;
+          target_id: string;
+        };
         Returns: undefined;
       };
       save_debts: { Args: { debt_rows: Json }; Returns: undefined };

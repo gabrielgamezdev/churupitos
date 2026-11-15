@@ -8,7 +8,14 @@ import { supabase } from "@/lib/supabase";
 // 0008), que comprueban que lo archivado esté en cero y lo borrado no tenga nada (R20).
 
 export type EnvelopeArgs = { id: string; name: string; emoji: string | null; archived: boolean };
-export type AccountArgs = { id: string; name: string; currency: Currency; archived: boolean };
+export type AccountArgs = {
+  id: string;
+  name: string;
+  currency: Currency;
+  archived: boolean;
+  // Lo que la delata en la captura de un pago (M15).
+  captureHints: string[];
+};
 
 async function saveEnvelope({ id, name, emoji, archived }: EnvelopeArgs) {
   const { error } = await supabase.rpc("save_envelope", {
@@ -26,12 +33,13 @@ async function deleteEnvelope(id: string) {
   if (error) throw error;
 }
 
-async function saveAccount({ id, name, currency, archived }: AccountArgs) {
+async function saveAccount({ id, name, currency, archived, captureHints }: AccountArgs) {
   const { error } = await supabase.rpc("save_account", {
     target_id: id,
     new_name: name,
     new_currency: currency,
     is_archived: archived,
+    new_capture_hints: captureHints,
   });
   if (error) throw error;
 }

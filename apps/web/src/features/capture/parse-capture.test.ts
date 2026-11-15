@@ -53,15 +53,30 @@ const upperCase = [
 
 describe("leer una captura", () => {
   it("con la etiqueta encima del dato", () => {
-    expect(read(labelAbove)).toEqual({ amountCents: 100000, day: "2026-11-02", description: null });
+    expect(read(labelAbove)).toEqual({
+      amountCents: 100000,
+      day: "2026-11-02",
+      description: null,
+      accountId: null,
+    });
   });
 
   it("con la etiqueta y el dato en la misma línea, y la cifra grande sin etiqueta", () => {
-    expect(read(inline)).toEqual({ amountCents: 400000, day: "2026-11-06", description: null });
+    expect(read(inline)).toEqual({
+      amountCents: 400000,
+      day: "2026-11-06",
+      description: null,
+      accountId: null,
+    });
   });
 
   it("en mayúsculas, con el año en dos cifras y sin concepto", () => {
-    expect(read(upperCase)).toEqual({ amountCents: 150000, day: "2026-11-06", description: null });
+    expect(read(upperCase)).toEqual({
+      amountCents: 150000,
+      day: "2026-11-06",
+      description: null,
+      accountId: null,
+    });
   });
 
   it("lo que no está queda en null", () => {
@@ -69,6 +84,7 @@ describe("leer una captura", () => {
       amountCents: null,
       day: null,
       description: null,
+      accountId: null,
     });
   });
 });
@@ -148,5 +164,39 @@ describe("el concepto", () => {
     expect(read(["Concepto:", "pago móvil"]).description).toBeNull();
     expect(read(["Concepto:", "Fecha:"]).description).toBeNull();
     expect(read(["Concepto: 12345"]).description).toBeNull();
+  });
+});
+
+describe("la cuenta", () => {
+  const accounts = [
+    { accountId: "first", hints: ["1234"] },
+    { accountId: "second", hints: ["5678", "Banco Dos"] },
+    { accountId: "empty", hints: [] },
+  ];
+  const accountOf = (lines: string[], list = accounts) =>
+    parseCapture(lines.join("\n"), TODAY, list).accountId;
+
+  it("la que aparece, por sus últimos dígitos o por una palabra", () => {
+    expect(accountOf(labelAbove)).toBe("first");
+    expect(accountOf(["BANCO DOS", "Pago móvil"])).toBe("second");
+  });
+
+  it("si aparecen dos, la primera: la de origen va antes que la de destino", () => {
+    expect(accountOf(inline)).toBe("first");
+    expect(accountOf(["Origen: 0001****5678", "Destino: 0001****1234"])).toBe("second");
+  });
+
+  it("unos dígitos sueltos dentro de otra cifra no cuentan", () => {
+    expect(accountOf(["Referencia 912345", "Teléfono 0400-5678000"])).toBeNull();
+  });
+
+  it("sin ninguna, o con dos en el mismo sitio, ninguna", () => {
+    expect(accountOf(upperCase)).toBeNull();
+    expect(
+      accountOf(labelAbove, [
+        { accountId: "one", hints: ["1234"] },
+        { accountId: "other", hints: [" 1234 "] },
+      ]),
+    ).toBeNull();
   });
 });

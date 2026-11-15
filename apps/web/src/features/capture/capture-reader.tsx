@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { today } from "@/lib/months";
 
-import { parseCapture, type CaptureFields } from "./parse-capture";
+import { parseCapture, type CaptureAccount, type CaptureFields } from "./parse-capture";
 import type { ReadStage } from "./read-capture";
 
 type State =
@@ -14,6 +14,8 @@ type State =
   | { stage: "failed"; preview: string; file: File; offline: boolean };
 
 interface CaptureReaderProps {
+  // Las cuentas que se pueden elegir, con lo que delata a cada una en sus capturas.
+  accounts: CaptureAccount[];
   // Lo que se encontró; lo que no, en null. Quien rellena decide qué hace con cada cosa.
   onRead: (fields: CaptureFields) => void;
 }
@@ -24,15 +26,19 @@ const joined = (parts: string[], last: string) =>
   parts.length < 2 ? parts.join("") : `${parts.slice(0, -1).join(", ")} ${last} ${parts.at(-1)}`;
 
 // Qué se rellenó y qué no: lo que falta se escribe a mano, y lo leído se revisa.
-function summary({ amountCents, day, description }: CaptureFields): string[] {
+function summary({ amountCents, day, description, accountId }: CaptureFields): string[] {
   const filled = [
     amountCents !== null && "el monto",
+    accountId !== null && "la cuenta",
     day !== null && "la fecha",
     description !== null && "el concepto",
   ].filter((part): part is string => Boolean(part));
-  const missing = [amountCents === null && "el monto", day === null && "la fecha"].filter(
-    (part): part is string => Boolean(part),
-  );
+  // Sin concepto es lo normal: casi todas dicen «pago».
+  const missing = [
+    amountCents === null && "el monto",
+    accountId === null && "la cuenta",
+    day === null && "la fecha",
+  ].filter((part): part is string => Boolean(part));
   return [
     filled.length === 0
       ? "No se encontró nada que rellenar."
@@ -46,7 +52,7 @@ function summary({ amountCents, day, description }: CaptureFields): string[] {
 // «Leer una captura» en Registrar (M15): la captura del pago se lee en el teléfono y
 // rellena lo que dice. Se ve en pequeño mientras se registra, para comparar, y no se
 // guarda en ningún sitio.
-export function CaptureReader({ onRead }: CaptureReaderProps) {
+export function CaptureReader({ accounts, onRead }: CaptureReaderProps) {
   const input = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<State>({ stage: "idle" });
   const [enlarged, setEnlarged] = useState(false);
@@ -74,7 +80,7 @@ export function CaptureReader({ onRead }: CaptureReaderProps) {
         if (current === attempt.current) setState({ stage, preview: image });
       });
       if (current !== attempt.current) return;
-      const fields = parseCapture(text, today());
+      const fields = parseCapture(text, today(), accounts);
       setState({
         stage: "done",
         preview: image,

@@ -29,7 +29,15 @@ import {
 const accountFormSchema = z.object({
   name: z.string().trim().min(1, "Escribe el nombre de la cuenta.").max(40, "Hasta 40 letras."),
   currency: z.enum(["VES", "USD"]),
+  captureHints: z.string().max(200, "Hasta 200 letras."),
 });
+
+// Lo que delata a la cuenta en una captura se escribe en una línea, separado por comas.
+const hintsOf = (text: string) =>
+  text
+    .split(",")
+    .map((hint) => hint.trim())
+    .filter(Boolean);
 
 type AccountFormValues = z.input<typeof accountFormSchema>;
 
@@ -41,16 +49,18 @@ const CURRENCY_OPTIONS: { value: Currency; label: string }[] = [
 interface AccountFormProps {
   // La cuenta como está; sin ella, una nueva.
   account?: AccountBalance;
+  // Lo que la delata en sus capturas, como está guardado (M15).
+  captureHints?: string[];
   onDone: () => void;
 }
 
 // Crear una cuenta o cambiarle el nombre (M11). La moneda se elige al crearla y no cambia:
 // cada movimiento está en la moneda de su cuenta (R3).
-export function AccountForm({ account, onDone }: AccountFormProps) {
+export function AccountForm({ account, captureHints = [], onDone }: AccountFormProps) {
   const online = useOnline();
   const save = useSaveAccount();
   const [id] = useState(() => account?.accountId ?? crypto.randomUUID());
-  const previous = account && argsOf(account);
+  const previous = account && argsOf(account, captureHints);
   const {
     register,
     control,
@@ -59,7 +69,11 @@ export function AccountForm({ account, onDone }: AccountFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues: { name: account?.name ?? "", currency: account?.currency ?? "VES" },
+    defaultValues: {
+      name: account?.name ?? "",
+      currency: account?.currency ?? "VES",
+      captureHints: captureHints.join(", "),
+    },
   });
   const currency = useWatch({ control, name: "currency" });
 
@@ -70,6 +84,7 @@ export function AccountForm({ account, onDone }: AccountFormProps) {
         name: values.name.trim(),
         currency: values.currency,
         archived: account?.archived ?? false,
+        captureHints: hintsOf(values.captureHints),
       });
       showToast({
         message: account ? "Cuenta guardada" : "Cuenta creada",
@@ -106,9 +121,29 @@ export function AccountForm({ account, onDone }: AccountFormProps) {
             onChange={(value) => setValue("currency", value)}
           />
         )}
+        <div className="flex flex-col gap-2">
+          <Field
+            label="En sus capturas"
+            htmlFor="capture-hints"
+            error={errors.captureHints?.message}
+          >
+            <Input
+              id="capture-hints"
+              autoComplete="off"
+              aria-describedby="capture-hints-help"
+              aria-invalid={errors.captureHints ? true : undefined}
+              {...register("captureHints")}
+            />
+          </Field>
+          <p id="capture-hints-help" className="text-caption text-ink-muted">
+            Lo que trae la captura de un pago desde esta cuenta y no la de otras: sus últimos
+            dígitos o una palabra. Varias, separadas por comas. Así «Leer una captura» la elige
+            sola.
+          </p>
+        </div>
       </form>
 
-      {account && <AccountRetire account={account} onDone={onDone} />}
+      {account && <AccountRetire account={account} captureHints={captureHints} onDone={onDone} />}
 
       {/* Pegado abajo, como en los demás formularios. */}
       <div className="sticky bottom-0 -mx-4 mt-auto flex flex-col gap-2 border-t border-hairline bg-surface px-4 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)_+_0.75rem)]">
@@ -130,15 +165,24 @@ export function AccountForm({ account, onDone }: AccountFormProps) {
   );
 }
 
-const argsOf = (account: AccountBalance): AccountArgs => ({
+const argsOf = (account: AccountBalance, captureHints: string[]): AccountArgs => ({
   id: account.accountId,
   name: account.name,
   currency: account.currency,
   archived: account.archived,
+  captureHints,
 });
 
 // Archivar, reactivar o borrar la cuenta como está guardada.
-function AccountRetire({ account, onDone }: { account: AccountBalance; onDone: () => void }) {
+function AccountRetire({
+  account,
+  captureHints,
+  onDone,
+}: {
+  account: AccountBalance;
+  captureHints: string[];
+  onDone: () => void;
+}) {
   const hasEntries = useQuery(accountHasEntriesQuery(account.accountId));
   const cells = useQuery(accountCellsQuery(account.accountId));
   const envelopes = useQuery(envelopesQuery);
@@ -146,7 +190,7 @@ function AccountRetire({ account, onDone }: { account: AccountBalance; onDone: (
   const remove = useDeleteAccount();
   if (hasEntries.data === undefined || !cells.data || !envelopes.data) return null;
 
-  const current = argsOf(account);
+  const current = argsOf(account, captureHints);
   const envelopeName = (id: string) =>
     envelopes.data.find((envelope) => envelope.id === id)?.name ?? "otro sobre";
   // En cero en cada celda, no solo en el total (R20).
