@@ -146,6 +146,30 @@ export function fundingNames(note: string, names: string[]): string[] {
   return names.filter((name) => name.trim() && folded.includes(foldText(name.trim())));
 }
 
+// Los trozos de una fuente, como se escribe en el Excel: «💰 Bono, Quincena y T. Int».
+const fundingParts = (note: string) =>
+  note
+    .split(/\s*,\s*|\s+\+\s+|\s+y\s+/)
+    .map((part) => part.trim())
+    .filter((part) => /[\p{L}\p{N}]/u.test(part));
+
+// Lo que la fuente dice y no es ningún ingreso del mes (M14): una abreviatura del Excel o el
+// nombre viejo de un ingreso. Cobrar no lo ve, así que se avisa.
+export function unknownFunding(note: string, names: string[]): string[] {
+  if (names.length === 0) return [];
+  return fundingParts(note).filter((part) => fundingNames(part, names).length === 0);
+}
+
+// Un ingreso que cambia de nombre (M14): el nuevo sustituye al viejo en la fuente, y lo demás
+// se queda tal cual, su emoji y los otros ingresos.
+export function renameFunding(note: string, from: string, to: string): string {
+  const [before, after] = [from.trim(), to.trim()];
+  if (!before || !after || foldText(before) === foldText(after)) return note;
+  const range = findFolded(note, before);
+  if (!range) return note;
+  return note.slice(0, range[0]) + after + note.slice(range[1]);
+}
+
 // Tocar un ingreso en la fuente: si estaba, sale; si no, entra al final, con su emoji
 // (`label`), como se escribe en el Excel. El resto del texto se respeta: hay fuentes con
 // abreviaturas que no son el nombre de ningún ingreso, y se perderían.
@@ -157,11 +181,7 @@ export function toggleFunding(note: string, name: string, label = name): string 
   }
   // Fuera el nombre, y con él lo que quede suelto: su emoji, un separador de más.
   const rest = note.slice(0, range[0]) + note.slice(range[1]);
-  return rest
-    .split(/\s*,\s*|\s+\+\s+|\s+y\s+/)
-    .map((part) => part.trim())
-    .filter((part) => /[\p{L}\p{N}]/u.test(part))
-    .join(", ");
+  return fundingParts(rest).join(", ");
 }
 
 // Dónde está `name` dentro de `note`, sin mayúsculas ni tildes: el trozo del texto tal cual
@@ -183,6 +203,16 @@ function findFolded(note: string, name: string): [number, number] | null {
   const at = folded.indexOf(target);
   if (at === -1) return null;
   return [origin[at]!, origin[at + target.length]!];
+}
+
+// Las acciones para elegir con un toque (M14): en el orden en que estaban al abrir el plan, y
+// las que se escriban después, al final. Si se reordenaran al elegir una, saltarían bajo el
+// dedo.
+export function actionChoices(
+  opening: string[],
+  lines: Pick<PlanFormValues["lines"][number], "actionNote">[],
+) {
+  return [...opening, ...usedActions(lines).filter((action) => !opening.includes(action))];
 }
 
 // Las acciones ya escritas en el plan, de la más usada a la menos: se eligen con un toque.

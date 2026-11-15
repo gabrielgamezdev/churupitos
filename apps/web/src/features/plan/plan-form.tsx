@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, TriangleAlert, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { AmountInput } from "@/components/amount-field";
@@ -21,11 +21,14 @@ import { cn } from "@/lib/utils";
 import { writeErrorMessage } from "@/lib/write-error";
 
 import {
+  actionChoices,
   fundingNames,
   monthRows,
   planFormSchema,
   planTotals,
+  renameFunding,
   toggleFunding,
+  unknownFunding,
   usedActions,
   type PlanFormValues,
 } from "./plan-form-schema";
@@ -52,6 +55,7 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
     register,
     control,
     handleSubmit,
+    getValues,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<PlanFormValues>({
@@ -76,7 +80,22 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
     const emoji = values.incomes.find((income) => income.name.trim() === name)?.emoji;
     return emoji ? `${emoji} ${name}` : name;
   };
-  const actions = usedActions(values.lines);
+  const [openingActions] = useState(() => usedActions(initial.lines));
+  const actions = actionChoices(openingActions, values.lines);
+  // El nombre de cada ingreso al empezar a cambiarlo: al soltarlo, si cambió, el nuevo pasa a
+  // las fuentes que lo nombraban (M14). Así renombrar no deja ninguna atrás.
+  const nameAtFocus = useRef(new Map<string, string>());
+  const renameInFunding = (index: number) => {
+    const id = getValues(`incomes.${index}.id`);
+    const before = nameAtFocus.current.get(id);
+    nameAtFocus.current.delete(id);
+    if (before === undefined) return;
+    const after = getValues(`incomes.${index}.name`);
+    getValues("lines").forEach((line, lineIndex) => {
+      const renamed = renameFunding(line.fundingNote, before, after);
+      if (renamed !== line.fundingNote) setValue(`lines.${lineIndex}.fundingNote`, renamed);
+    });
+  };
   const { expectedUsdCents, plannedUsdCents, pendingUsdCents } = planTotals(values);
 
   const toggleOpen = (envelopeId: string) =>
@@ -119,7 +138,16 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
   });
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-1 flex-col gap-6">
+    <form
+      onSubmit={(event) => {
+        // Guardar con «Enter» desde el nombre de un ingreso no lo suelta: se suelta antes, para
+        // que su nombre nuevo llegue a las fuentes.
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        void submit(event);
+      }}
+      noValidate
+      className="flex flex-1 flex-col gap-6"
+    >
       <section aria-labelledby="plan-incomes-title" className="flex flex-col gap-3">
         <h2 id="plan-incomes-title" className="text-heading">
           Ingresos esperados
@@ -127,6 +155,7 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
         {incomes.fields.map((field, index) => {
           const error = errors.incomes?.[index];
           const income = values.incomes[index];
+          const nameField = register(`incomes.${index}.name`);
           return (
             <div key={field.key} className="flex flex-col gap-2 rounded-lg bg-surface-raised p-3">
               <div className="flex items-center gap-2">
@@ -137,7 +166,17 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
                   placeholder="De dónde viene"
                   className="min-w-0 flex-1"
                   aria-invalid={error?.name ? true : undefined}
-                  {...register(`incomes.${index}.name`)}
+                  onFocus={() =>
+                    nameAtFocus.current.set(
+                      getValues(`incomes.${index}.id`),
+                      getValues(`incomes.${index}.name`),
+                    )
+                  }
+                  {...nameField}
+                  onBlur={(event) => {
+                    void nameField.onBlur(event);
+                    renameInFunding(index);
+                  }}
                 />
                 {income?.received ? (
                   // Ya tiene su cobro: se cambia, pero no se quita (R19).
@@ -198,6 +237,7 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
             const expanded = open.has(envelopeId);
             const notes = [line?.fundingNote.trim(), line?.actionNote.trim()].filter(Boolean);
             const chosen = fundingNames(line?.fundingNote ?? "", names);
+            const unknown = unknownFunding(line?.fundingNote ?? "", names);
             return (
               <li key={field.key} className="flex flex-col gap-2 px-4 py-3">
                 <div className="flex items-center gap-3">
@@ -245,6 +285,17 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
                     className={cn("size-4 shrink-0 transition-transform", expanded && "rotate-180")}
                   />
                 </button>
+                {unknown.length > 0 && (
+                  // Plegado o no, se ve: Cobrar no reparte con lo que no es un ingreso.
+                  <p className="flex items-start gap-1.5 text-caption text-overdrawn">
+                    <TriangleAlert aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+                    <span>
+                      {unknown.map((part) => `«${part}»`).join(" y ")}{" "}
+                      {unknown.length === 1 ? "no es ningún ingreso" : "no son ingresos"} de{" "}
+                      {monthName(month)}
+                    </span>
+                  </p>
+                )}
                 {expanded && (
                   <div id={`line-${index}-notes`} className="flex flex-col gap-4 pb-1">
                     <fieldset className="flex flex-col gap-2">

@@ -3,14 +3,17 @@ import { describe, expect, it } from "vitest";
 import type { BudgetLine, ExpectedIncome } from "@/features/budget/queries";
 
 import {
+  actionChoices,
   fundingNames,
   monthRows,
   planFormSchema,
   planFromMonth,
   planFromPrevious,
-  plannedCents,
   planTotals,
+  plannedCents,
+  renameFunding,
   toggleFunding,
+  unknownFunding,
   usedActions,
 } from "./plan-form-schema";
 
@@ -148,11 +151,37 @@ describe("la fuente de fondos con los ingresos del mes", () => {
     expect(toggleFunding("Quincena, Bono", "bono")).toBe("Quincena");
   });
 
+  it("avisa de lo que no es ningún ingreso del mes: una abreviatura, un nombre viejo (M14)", () => {
+    expect(unknownFunding("🥪 T. Alim, 💰 Bono", names)).toEqual(["🥪 T. Alim"]);
+    expect(unknownFunding("💰 Bono y Quincena", names)).toEqual([]);
+    expect(unknownFunding("", names)).toEqual([]);
+    // Sin ingresos todavía, no hay con qué comparar.
+    expect(unknownFunding("Bono", [])).toEqual([]);
+  });
+
+  it("renombrar un ingreso lo cambia en la fuente, con lo demás tal cual (M14)", () => {
+    expect(renameFunding("💰 Bono, 🪙 20% deuda", "20% Deuda", "20% Ahorro")).toBe(
+      "💰 Bono, 🪙 20% Ahorro",
+    );
+    expect(renameFunding("💵 Quincena", "Bono", "Bono anual")).toBe("💵 Quincena");
+    // Un nombre a medio escribir, vacío, no borra nada.
+    expect(renameFunding("💰 Bono", "Bono", " ")).toBe("💰 Bono");
+  });
+
   it("al quitar uno, respeta lo demás: abreviaturas, emojis y otros separadores", () => {
     expect(toggleFunding("T. Int, 💰 Bono", "Bono")).toBe("T. Int");
     expect(toggleFunding("💰 Bono y Quincena", "Bono")).toBe("Quincena");
     expect(toggleFunding("Quincena + Pensión", "pension")).toBe("Quincena");
   });
+});
+
+it("las acciones no saltan: las de al abrir, en su orden, y las nuevas al final (M14)", () => {
+  expect(
+    actionChoices(
+      ["Cambiar", "Mantener"],
+      [{ actionNote: "Mantener" }, { actionNote: "Mantener" }, { actionNote: "Pagar" }],
+    ),
+  ).toEqual(["Cambiar", "Mantener", "Pagar"]);
 });
 
 it("las acciones ya usadas, de la más usada a la menos", () => {

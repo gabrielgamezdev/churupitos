@@ -66,8 +66,8 @@ Ninguna nueva: cambian Mover, el plan (Presupuesto y su edición) y Cobrar.
 2. [x] **«Todo» en Mover** (2026-11-15).
 3. [x] **El teclado al volver** (2026-11-15): sin forma de probarlo fuera de un teléfono;
    se comprueba en el paso 6.
-4. [ ] **Fuentes y acciones del plan:** el aviso, renombrar, el orden fijo y una sola «pagar
-   de inmediato».
+4. [x] **Fuentes y acciones del plan** (2026-11-15): el aviso, renombrar, el orden fijo y una
+   sola «pagar de inmediato», ya cambiada en la nube.
 5. [ ] **La parte de cada fuente:** deducirla, enseñarla en el plan y usarla en Cobrar
    (`R22`).
 6. [ ] **En los teléfonos.**
