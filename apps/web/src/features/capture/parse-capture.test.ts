@@ -58,6 +58,7 @@ describe("leer una captura", () => {
       day: "2026-11-02",
       description: null,
       accountId: null,
+      receipt: false,
     });
   });
 
@@ -67,6 +68,7 @@ describe("leer una captura", () => {
       day: "2026-11-06",
       description: null,
       accountId: null,
+      receipt: false,
     });
   });
 
@@ -76,6 +78,7 @@ describe("leer una captura", () => {
       day: "2026-11-06",
       description: null,
       accountId: null,
+      receipt: false,
     });
   });
 
@@ -85,6 +88,7 @@ describe("leer una captura", () => {
       day: null,
       description: null,
       accountId: null,
+      receipt: false,
     });
   });
 });
@@ -212,5 +216,46 @@ describe("la cuenta", () => {
         { accountId: "other", hints: [" 1234 "] },
       ]),
     ).toBeNull();
+  });
+});
+
+describe("la foto de una factura", () => {
+  // Como se lee una foto: con ruido alrededor, una cifra mal leída (la base, que es igual
+  // al subtotal) y sin la etiqueta del total.
+  const receipt = [
+    "SENIAT",
+    "COMERCIO DE EJEMPLO, C.A.",
+    "Transaccion: 10000",
+    "FACTURA",
+    "FECHA: 13-11-2026 HORA: 14:48",
+    "Plato del dia (G) Bs 1.200,00", // barrido:permitido
+    "Bebida (G) Bs 300,00",
+    "PuBrTL Bs 1.500,00", // barrido:permitido
+    "BI G16,00% Bs 7.500,00 IVA G16,00% Bs 240,00", // barrido:permitido
+    "Efectivo Bs 2.000,00", // barrido:permitido
+    "Cambio Bs 260,00",
+    "e Ds 1.740,00 L A", // barrido:permitido
+  ];
+
+  it("el monto es el total, el último; el concepto, «Factura»; y sin cuenta", () => {
+    expect(
+      parseCapture(receipt.join("\n"), TODAY, [{ accountId: "first", hints: ["Ejemplo"] }]),
+    ).toEqual({
+      amountCents: 174000,
+      day: "2026-11-13",
+      description: "Factura",
+      accountId: null,
+      receipt: true,
+    });
+  });
+
+  it("si se lee «Total», el suyo, aunque haya cifras después", () => {
+    expect(
+      read(["FACTURA", "TOTAL Bs 1.740,00", "Ref. de la caja 10,00"]).amountCents, // barrido:permitido
+    ).toBe(174000);
+  });
+
+  it("una captura de un pago no es una factura", () => {
+    expect(read(labelAbove).receipt).toBe(false);
   });
 });

@@ -13,8 +13,8 @@ app, las fuentes y las acciones del plan, y cuánto pone cada fuente en un sobre
 dos. Está construido y en la nube; falta usarlo en los teléfonos, su paso 6. Su plan:
 `docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
 
-Mientras tanto, M15: leer la captura del pago en el propio teléfono y rellenar Registrar.
-Su plan: `docs/modulos/M15-registrar-desde-una-captura.md`.
+Mientras tanto, M15: leer la captura del pago, o la foto de una factura, en el propio
+teléfono y rellenar Registrar. Su plan: `docs/modulos/M15-registrar-desde-una-captura.md`.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base
@@ -62,7 +62,7 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M12 | Después del corte | La recarga fijada, corregir lo importado, meses cerrados y copias de la base | Corrigen un mes cerrado abriéndolo, y hay una copia que se restauró |
 | M13 | Lo que pidió el uso | Lo que le falta a cada sobre, comisiones sueltas y pagar una deuda en un paso | Lo usan a diario |
 | M14 | Lo que pidió el uso, II | «Todo» en Mover, el teclado al volver, las fuentes y las acciones del plan, y la parte de cada fuente | Lo usan a diario |
-| M15 | Registrar desde una captura | Rellenar monto, fecha, cuenta y concepto leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
+| M15 | Registrar desde una captura | Rellenar monto, fecha, cuenta y concepto leyendo una captura o la foto de una factura en el propio teléfono | Ídem, si en los teléfonos va rápido |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 

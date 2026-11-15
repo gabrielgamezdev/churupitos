@@ -3,6 +3,9 @@
 // captura cuando quiere. Se buscan las etiquetas que usan todos («Monto», «Fecha»,
 // «Concepto») y, si no, la forma de cada dato; la cuenta, por lo que cada una guarda en la
 // base. Lo que no se encuentra queda en null: no se adivina.
+//
+// Una factura en papel (la foto de una) es otra cosa: su monto es el total, que va al
+// final; su concepto, «Factura», que se cambia a mano; y no dice con qué se pagó.
 
 export interface CaptureFields {
   amountCents: number | null;
@@ -10,7 +13,13 @@ export interface CaptureFields {
   day: string | null;
   description: string | null;
   accountId: string | null;
+  // Es una factura: la cuenta no se elige sola.
+  receipt: boolean;
 }
+
+export const RECEIPT_DESCRIPTION = "Factura";
+// Lo que dice una factura y no una captura de un pago.
+const RECEIPT_MARK = /\b(factura|seniat|iva|subtotal|subttl)\b/;
 
 // Una cuenta y lo que la delata en sus capturas: sus últimos dígitos o una palabra.
 export interface CaptureAccount {
@@ -32,11 +41,13 @@ export function parseCapture(
     .split(/\r?\n/)
     .map((line) => line.replace(/\s+/g, " ").trim())
     .filter(Boolean);
+  const receipt = RECEIPT_MARK.test(fold(text));
   return {
-    amountCents: amountOf(lines),
+    amountCents: amountOf(lines, receipt),
     day: dayOf(lines, today),
-    description: descriptionOf(lines),
-    accountId: accountOf(lines, accounts),
+    description: receipt ? RECEIPT_DESCRIPTION : descriptionOf(lines),
+    accountId: receipt ? null : accountOf(lines, accounts),
+    receipt,
   };
 }
 
@@ -91,8 +102,10 @@ const AMOUNT_FORMATS = [
 ];
 const AMOUNT_LABEL = /\b(monto|importe|total)\b/;
 const CURRENCY_MARK = /\b(bs|ves|usd|usdt)\b|\$/;
-// Lo que también es una cifra con decimales pero no es lo que se pagó.
+// Lo que también es una cifra con decimales pero no es lo que se pagó. En una factura,
+// además, lo que se entregó en efectivo y el vuelto, que pueden pasar del total.
 const NOT_THE_AMOUNT = /\b(saldo|disponible|comision|tasa)\b/;
+const NOT_THE_RECEIPT_TOTAL = /\b(efectivo|cambio|vuelto)\b/;
 
 function amountsIn(line: string): number[] {
   return AMOUNT_FORMATS.flatMap(({ pattern, thousands }) =>
@@ -106,20 +119,28 @@ function amountsIn(line: string): number[] {
 
 // La etiqueta va en la misma línea («Monto: Bs 10,00») o en la de encima, sola
 // («Monto:» y debajo la cifra). De varias cifras gana la de etiqueta más clara y, a
-// igualdad, la primera: la cifra grande de una captura va arriba.
-function amountOf(lines: string[]): number | null {
+// igualdad, la primera: la cifra grande de una captura va arriba. En una factura, la que
+// lleva «Total» o, si no se leyó (en una foto pasa a menudo), la última: el total cierra
+// la factura. La mayor no sirve: una cifra de arriba mal leída puede pasarla.
+function amountOf(lines: string[], receipt: boolean): number | null {
   let best: { cents: number; rank: number } | null = null;
   for (const [index, line] of lines.entries()) {
-    const [cents] = amountsIn(line);
-    if (cents === undefined) continue;
+    const amounts = amountsIn(line);
+    if (amounts.length === 0) continue;
     const own = fold(line);
     // La de encima solo cuenta si es una etiqueta sola, sin cifra propia.
     const previous = lines[index - 1] ?? "";
     const above = amountsIn(previous).length === 0 ? fold(previous) : "";
     if (NOT_THE_AMOUNT.test(own) || NOT_THE_AMOUNT.test(above)) continue;
+    if (receipt) {
+      if (NOT_THE_RECEIPT_TOTAL.test(own) || NOT_THE_RECEIPT_TOTAL.test(above)) continue;
+      const rank = /\btotal\b/.test(own) || /\btotal\b/.test(above) ? 1 : 0;
+      if (!best || rank >= best.rank) best = { cents: amounts.at(-1) ?? 0, rank };
+      continue;
+    }
     const rank =
       AMOUNT_LABEL.test(own) || AMOUNT_LABEL.test(above) ? 2 : CURRENCY_MARK.test(own) ? 1 : 0;
-    if (!best || rank > best.rank) best = { cents, rank };
+    if (!best || rank > best.rank) best = { cents: amounts[0] ?? 0, rank };
   }
   return best?.cents ?? null;
 }

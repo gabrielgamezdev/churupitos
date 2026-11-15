@@ -28,8 +28,9 @@ const SECONDS = new Intl.NumberFormat("es", { minimumFractionDigits: 1, maximumF
 const joined = (parts: string[], last: string) =>
   parts.length < 2 ? parts.join("") : `${parts.slice(0, -1).join(", ")} ${last} ${parts.at(-1)}`;
 
-// Qué se rellenó y qué no: lo que falta se escribe a mano, y lo leído se revisa.
-function summary({ amountCents, day, description, accountId }: CaptureFields): string[] {
+// Qué se rellenó y qué no: lo que falta se escribe a mano, y lo leído se revisa. Sin
+// fecha, queda la de hoy. Una factura no dice con qué se pagó: se pide la cuenta.
+function summary({ amountCents, day, description, accountId, receipt }: CaptureFields): string[] {
   const filled = [
     amountCents !== null && "el monto",
     accountId !== null && "la cuenta",
@@ -39,8 +40,7 @@ function summary({ amountCents, day, description, accountId }: CaptureFields): s
   // Sin concepto es lo normal: casi todas dicen «pago».
   const missing = [
     amountCents === null && "el monto",
-    accountId === null && "la cuenta",
-    day === null && "la fecha",
+    accountId === null && !receipt && "la cuenta",
   ].filter((part): part is string => Boolean(part));
   return [
     filled.length === 0
@@ -49,8 +49,14 @@ function summary({ amountCents, day, description, accountId }: CaptureFields): s
     ...(filled.length > 0 && missing.length > 0
       ? [`No se encontró ${joined(missing, "ni")}.`]
       : []),
+    ...(day === null ? ["No trae fecha: queda la de hoy."] : []),
+    ...(receipt ? ["Es una factura: elige la cuenta con la que se pagó."] : []),
   ];
 }
+
+// Cuánto se encontró: entre dos lecturas de la misma imagen, la que más.
+const found = ({ amountCents, day }: CaptureFields) =>
+  Number(amountCents !== null) + Number(day !== null);
 
 // «Leer una captura» en Registrar (M15): la captura del pago se lee en el teléfono y
 // rellena lo que dice. Se ve en pequeño mientras se registra, para comparar, y no se
@@ -84,12 +90,23 @@ export function CaptureReader({ accounts, readsShared = false, onRead }: Capture
     setEnlarged(false);
     setState({ stage: "preparing", preview: image });
     try {
-      const { readCaptureText } = await import("./read-capture");
-      const text = await readCaptureText(file, (stage) => {
+      const { looksLikePhoto, readCaptureText } = await import("./read-capture");
+      const onStage = (stage: ReadStage) => {
         if (current === attempt.current) setState({ stage, preview: image });
-      });
+      };
+      const parse = (text: string | null) =>
+        text === null ? null : parseCapture(text, today(), latestAccounts.current);
+      // Una foto se lee primero recortando el papel, y una captura, entera. Si falta el
+      // monto o la fecha, se prueba de la otra forma y se queda la que encontró más.
+      const photo = await looksLikePhoto(file);
+      let fields = parse(await readCaptureText(file, onStage, photo));
       if (current !== attempt.current) return;
-      const fields = parseCapture(text, today(), latestAccounts.current);
+      if (!fields || found(fields) < 2) {
+        const other = parse(await readCaptureText(file, onStage, !photo));
+        if (current !== attempt.current) return;
+        if (other && (!fields || found(other) > found(fields))) fields = other;
+      }
+      if (!fields) throw new Error("No se pudo leer la imagen");
       setState({
         stage: "done",
         preview: image,

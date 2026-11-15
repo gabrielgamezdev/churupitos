@@ -259,15 +259,22 @@ export function OperationForm({
     choosableIds.has(row.accountId),
   );
   // Lo que se leyó de la captura pisa lo escrito; lo que no se encontró, queda: sin cuenta
-  // reconocida, la de siempre.
-  const fillFromCapture = ({ amountCents, day, description, accountId }: CaptureFields) => {
+  // reconocida, la de siempre. Sin fecha, la de hoy. Una factura no dice con qué se pagó:
+  // sin cuenta, que la elija quien registra.
+  const fillFromCapture = ({
+    amountCents,
+    day,
+    description,
+    accountId,
+    receipt,
+  }: CaptureFields) => {
     if (amountCents !== null) {
       setValue("total", amountInputText(amountCents), { shouldValidate: Boolean(errors.total) });
     }
-    if (accountId !== null) {
-      setValue("accountId", accountId, { shouldValidate: Boolean(errors.accountId) });
+    if (accountId !== null || receipt) {
+      setValue("accountId", accountId ?? "", { shouldValidate: Boolean(errors.accountId) });
     }
-    if (day !== null) setValue("day", day, { shouldValidate: Boolean(errors.day) });
+    setValue("day", day ?? today(), { shouldValidate: Boolean(errors.day) });
     if (description !== null) setValue("description", description);
   };
 
