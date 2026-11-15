@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: M14 · Lo que pidió el uso, II, en los teléfonos
+## Ahora: M15 · Registrar desde una captura, y M14 en los teléfonos
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -10,8 +10,11 @@ ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
 M14 sale otra vez del uso: «Todo» en Mover, el teclado que se abre solo al volver a la
 app, las fuentes y las acciones del plan, y cuánto pone cada fuente en un sobre que tiene
-dos. Va antes de la captura, que pasó a ser M15 (2026-11-15). Está construido y en la nube;
-falta usarlo en los teléfonos, su paso 6. Su plan: `docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
+dos. Está construido y en la nube; falta usarlo en los teléfonos, su paso 6. Su plan:
+`docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
+
+Mientras tanto, M15: leer la captura del pago en el propio teléfono y rellenar Registrar.
+Su plan: `docs/modulos/M15-registrar-desde-una-captura.md`.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base
@@ -59,7 +62,7 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | M12 | Después del corte | La recarga fijada, corregir lo importado, meses cerrados y copias de la base | Corrigen un mes cerrado abriéndolo, y hay una copia que se restauró |
 | M13 | Lo que pidió el uso | Lo que le falta a cada sobre, comisiones sueltas y pagar una deuda en un paso | Lo usan a diario |
 | M14 | Lo que pidió el uso, II | «Todo» en Mover, el teclado al volver, las fuentes y las acciones del plan, y la parte de cada fuente | Lo usan a diario |
-| M15 | Registrar desde una captura | Rellenar monto, fecha y cuenta leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
+| M15 | Registrar desde una captura | Rellenar monto, fecha, cuenta y concepto leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 
@@ -107,11 +110,8 @@ pierden:
 - **Cuotas de montos distintos** (2026-10-21). Hoy cada cuota es una deuda aparte, así
   que una se corrige sola después de agregarlas; faltaría poder cambiar el monto de cada
   una en la lista, antes de guardar. Junto con «3 de 6» (fuera de M7).
-- **Rellenar Registrar desde una captura** (2026-10-21, del autor): sacar la fecha, el
-  monto y la cuenta, sin guardar solo. Probado el 2026-11-07 con Tesseract.js en Chrome, en
-  el propio dispositivo y sin servicios de pago (regla 7): acertó en las 5 capturas, de 4
-  bancos, pasándolas antes a grises. Falta medirlo en un teléfono y probar fotos de
-  facturas. El concepto de las capturas no sirve: casi siempre dice «pago».
+- **Proponer la comisión del 0,3 %** (2026-11-15): 23 de las 31 comisiones de la primera
+  quincena de noviembre fueron justo el 0,3 % del gasto. Registrar podría proponerla.
 - **Vibración al guardar**, con un interruptor en Ajustes (fuera de M7).
 - **La parte de cada fuente, a mano** (2026-11-15, del autor): escribir en el plan cuánto
   pone cada ingreso en un sobre con varias fuentes, guardarlo y copiarlo a los meses
