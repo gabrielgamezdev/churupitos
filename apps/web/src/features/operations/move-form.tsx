@@ -16,7 +16,7 @@ import {
   envelopeUsageQuery,
   type EnvelopeUsage,
 } from "@/features/envelopes/queries";
-import { parseAmountInput } from "@/lib/amount-input";
+import { amountInputText, parseAmountInput } from "@/lib/amount-input";
 import { CURRENCY_NAMES, formatMoney, formatRate, type Currency } from "@/lib/money";
 import { addDays, monthOf, today } from "@/lib/months";
 import { ClosedMonthNotice } from "@/features/months/closed-month-notice";
@@ -149,6 +149,12 @@ export function MoveForm({
   const cellMap = (cells: { envelopeId: string; balanceCents: number }[] | undefined) =>
     new Map(cells?.map((cell) => [cell.envelopeId, cell.balanceCents]));
   const envelopeById = new Map(envelopes.data?.map((envelope) => [envelope.id, envelope]));
+  // Todo lo que tiene el sobre de origen en esa cuenta (M14): mover lo que sobró sin escribir
+  // la cifra. Al corregir no se ofrece: su saldo ya descuenta lo que este movimiento sacó.
+  const fromBalance = values.fromEnvelope
+    ? cellMap(fromCells.data).get(values.fromEnvelope)
+    : undefined;
+  const everything = !previous && fromBalance !== undefined && fromBalance > 0 ? fromBalance : null;
 
   // Cuánto se usa cada sobre, fijado al abrir: que no salten mientras se elige.
   const [since] = useState(() => addDays(today(), -USAGE_DAYS));
@@ -293,6 +299,20 @@ export function MoveForm({
           {...register("amount")}
         />
       </Field>
+      {everything !== null && fromAccount && (
+        <Button
+          type="button"
+          variant="link"
+          className="-mt-3 self-start px-0"
+          onClick={() =>
+            setValue("amount", amountInputText(everything), {
+              shouldValidate: Boolean(errors.amount),
+            })
+          }
+        >
+          Todo: {formatMoney(everything, fromAccount.currency)}
+        </Button>
+      )}
 
       <fieldset className="flex flex-col gap-3">
         <legend className="pb-2 text-heading">Sale de</legend>
