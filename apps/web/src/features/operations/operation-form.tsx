@@ -88,6 +88,8 @@ interface OperationFormProps {
   debt?: Debt;
   // Al registrar, «Leer una captura» (M15): rellena lo que dice la captura del pago.
   readsCaptures?: boolean;
+  // Llegó una con Compartir → Churupitos: se lee al abrir.
+  readsSharedCapture?: boolean;
   onSaved: () => void;
 }
 
@@ -103,6 +105,7 @@ export function OperationForm({
   onMove,
   debt,
   readsCaptures = false,
+  readsSharedCapture = false,
   onSaved,
 }: OperationFormProps) {
   const online = useOnline();
@@ -342,7 +345,13 @@ export function OperationForm({
           }
         />
       )}
-      {readsCaptures && <CaptureReader accounts={captureAccounts} onRead={fillFromCapture} />}
+      {readsCaptures && (
+        <CaptureReader
+          accounts={captureAccounts}
+          readsShared={readsSharedCapture}
+          onRead={fillFromCapture}
+        />
+      )}
 
       <Field
         label={debt ? "Lo que se pagó" : "Monto"}
@@ -354,8 +363,9 @@ export function OperationForm({
           size="hero"
           currency={account?.currency}
           invalid={Boolean(errors.total)}
-          // Al registrar, lo primero es la cifra: el teclado ya abierto.
-          autoFocus={!previous && !initial.total}
+          // Al registrar, lo primero es la cifra: el teclado ya abierto. Salvo si llega una
+          // captura compartida, que la trae.
+          autoFocus={!previous && !initial.total && !readsSharedCapture}
           {...register("total")}
         />
       </Field>

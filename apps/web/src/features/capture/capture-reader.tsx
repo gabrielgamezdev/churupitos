@@ -1,11 +1,12 @@
 import { ScanText } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { today } from "@/lib/months";
 
 import { parseCapture, type CaptureAccount, type CaptureFields } from "./parse-capture";
 import type { ReadStage } from "./read-capture";
+import { takeSharedCapture } from "./shared-capture";
 
 type State =
   | { stage: "idle" }
@@ -16,6 +17,8 @@ type State =
 interface CaptureReaderProps {
   // Las cuentas que se pueden elegir, con lo que delata a cada una en sus capturas.
   accounts: CaptureAccount[];
+  // Llegó una con Compartir → Churupitos: se lee sola al abrir.
+  readsShared?: boolean;
   // Lo que se encontró; lo que no, en null. Quien rellena decide qué hace con cada cosa.
   onRead: (fields: CaptureFields) => void;
 }
@@ -52,12 +55,18 @@ function summary({ amountCents, day, description, accountId }: CaptureFields): s
 // «Leer una captura» en Registrar (M15): la captura del pago se lee en el teléfono y
 // rellena lo que dice. Se ve en pequeño mientras se registra, para comparar, y no se
 // guarda en ningún sitio.
-export function CaptureReader({ accounts, onRead }: CaptureReaderProps) {
+export function CaptureReader({ accounts, readsShared = false, onRead }: CaptureReaderProps) {
   const input = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<State>({ stage: "idle" });
   const [enlarged, setEnlarged] = useState(false);
   // Si se elige otra captura mientras se lee una, la que cuenta es la última.
   const attempt = useRef(0);
+  // Las cuentas pueden llegar mientras se lee: se usan las de ese momento, no las de
+  // cuando se eligió la captura.
+  const latestAccounts = useRef(accounts);
+  useEffect(() => {
+    latestAccounts.current = accounts;
+  }, [accounts]);
 
   const preview = state.stage === "idle" ? null : state.preview;
   // La miniatura apunta a la imagen en memoria: se suelta al cambiarla o al salir.
@@ -80,7 +89,7 @@ export function CaptureReader({ accounts, onRead }: CaptureReaderProps) {
         if (current === attempt.current) setState({ stage, preview: image });
       });
       if (current !== attempt.current) return;
-      const fields = parseCapture(text, today(), accounts);
+      const fields = parseCapture(text, today(), latestAccounts.current);
       setState({
         stage: "done",
         preview: image,
@@ -94,6 +103,21 @@ export function CaptureReader({ accounts, onRead }: CaptureReaderProps) {
       }
     }
   };
+
+  // La compartida se saca de la caché del service worker y se lee en cuanto está.
+  const readShared = useEffectEvent((file: File) => void read(file));
+  useEffect(() => {
+    if (!readsShared) return;
+    let active = true;
+    takeSharedCapture()
+      .then((file) => {
+        if (active && file) readShared(file);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [readsShared]);
 
   const pick = () => input.current?.click();
   const fileInput = (

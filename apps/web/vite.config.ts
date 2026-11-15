@@ -92,12 +92,22 @@ export default defineConfig({
         // la barra del sistema la pone el theme-color de index.html.
         theme_color: "#f6f8f6",
         background_color: "#f6f8f6",
+        // Compartir → Churupitos (M15): una imagen compartida desde el banco, WhatsApp o
+        // la galería llega aquí y la recibe el service worker (public/share-target.js).
+        share_target: {
+          action: "/share-capture",
+          method: "POST",
+          enctype: "multipart/form-data",
+          params: { files: [{ name: "capture", accept: ["image/*"] }] },
+        },
       },
       workbox: {
         // Solo el «cascarón» de la app. Los datos van a Supabase y nunca se
         // cachean aquí: la caché de datos es la de TanStack Query (M2).
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
-        globIgnores: ["ocr/**"],
+        globIgnores: ["ocr/**", "share-target.js"],
+        // Va antes que las rutas de Workbox: recibe la captura compartida.
+        importScripts: ["share-target.js"],
         navigateFallback: "index.html",
         runtimeCaching: [
           {

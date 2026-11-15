@@ -61,7 +61,10 @@ Ninguna nueva: cambian Registrar y la ficha de cada cuenta en Ajustes.
    cuenta, guardado en la base. Con las 13 capturas que mandó el autor, de cinco cuentas
    (una en USDT, de la que se toman dos decimales), acierta el monto, la fecha y la cuenta
    de todas.
-4. [ ] **Compartir → Churupitos.**
+4. [x] **Compartir → Churupitos** (2026-11-15): el manifiesto la declara y la recibe el
+   service worker, que abre Registrar con la captura ya leída. Probado en Chrome con un
+   envío como el de Android; en los teléfonos, la lista de Compartir la incluye cuando
+   Chrome actualiza la app instalada.
 5. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

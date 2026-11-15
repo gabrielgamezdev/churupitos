@@ -23,6 +23,8 @@ type NewOperationSearch = {
   // Abrir directo en Mover, con el sobre de destino: «Cubrir» un descubierto (M8).
   mode?: "move";
   toEnvelope?: string;
+  // Llega una captura con Compartir → Churupitos (M15): se lee al abrir.
+  shared?: true;
 };
 
 export const Route = createFileRoute("/_authenticated/operations/new")({
@@ -39,6 +41,8 @@ export const Route = createFileRoute("/_authenticated/operations/new")({
     currency: search.currency === "VES" || search.currency === "USD" ? search.currency : undefined,
     mode: search.mode === "move" ? "move" : undefined,
     toEnvelope: typeof search.toEnvelope === "string" ? search.toEnvelope : undefined,
+    shared:
+      search.shared === 1 || search.shared === "1" || search.shared === true ? true : undefined,
   }),
   component: NewOperationPage,
 });
@@ -46,7 +50,7 @@ export const Route = createFileRoute("/_authenticated/operations/new")({
 // Registrar: al guardar vuelve a la pantalla desde la que se abrió, que ya enseña el
 // movimiento nuevo.
 function NewOperationPage() {
-  const { account, envelope, kind, amount, description, currency, mode, toEnvelope } =
+  const { account, envelope, kind, amount, description, currency, mode, toEnvelope, shared } =
     Route.useSearch();
   const { session } = Route.useRouteContext();
   const router = useRouter();
@@ -112,6 +116,7 @@ function NewOperationPage() {
           // Pagar una deuda es un gasto o un cobro, nunca un movimiento.
           onMove={currency ? undefined : toMove}
           readsCaptures
+          readsSharedCapture={shared}
           onSaved={close}
         />
       ) : (
