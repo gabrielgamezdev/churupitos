@@ -14,7 +14,7 @@ import {
 } from "@/features/budget/queries";
 import { envelopesQuery, type Envelope } from "@/features/envelopes/queries";
 import { budgetOrder } from "@/features/operations/envelope-order";
-import { proposeAllocation } from "@/features/receipts/allocation";
+import { fundingShares, proposeAllocation, sharesOf } from "@/features/receipts/allocation";
 import { ReceiveForm, type IncomeToReceive } from "@/features/receipts/receive-form";
 import { emptyReceiveForm } from "@/features/receipts/receive-form-schema";
 import { today } from "@/lib/months";
@@ -73,6 +73,7 @@ function ReceivePage() {
       otherIncomeNames={incomes.data
         .filter((other) => other.id !== income.data.id)
         .map((other) => other.name)}
+      shares={sharesOf(fundingShares(incomes.data, plan.data), income.data.id)}
       envelopes={envelopes.data}
     />
   );
@@ -82,11 +83,14 @@ function NewReceipt({
   income,
   plan,
   otherIncomeNames,
+  shares,
   envelopes,
 }: {
   income: IncomeToReceive;
   plan: BudgetLine[];
   otherIncomeNames: string[];
+  // Lo que pone este ingreso en cada sobre, si el plan lo deja deducir (R22).
+  shares: ReadonlyMap<string, number> | undefined;
   envelopes: Envelope[];
 }) {
   const { session } = Route.useRouteContext();
@@ -107,6 +111,7 @@ function NewReceipt({
         plan,
         budgetOrder(envelopes).map((envelope) => envelope.id),
         otherIncomeNames,
+        shares,
       ),
     }),
   );

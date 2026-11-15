@@ -68,8 +68,9 @@ Ninguna nueva: cambian Mover, el plan (Presupuesto y su edición) y Cobrar.
    se comprueba en el paso 6.
 4. [x] **Fuentes y acciones del plan** (2026-11-15): el aviso, renombrar, el orden fijo y una
    sola «pagar de inmediato», ya cambiada en la nube.
-5. [ ] **La parte de cada fuente:** deducirla, enseñarla en el plan y usarla en Cobrar
-   (`R22`).
+5. [x] **La parte de cada fuente** (2026-11-15): deducirla, enseñarla en el plan y en su
+   editor, y usarla en Cobrar (`R22`). Con la copia de la nube, cobrar el Bono propone lo
+   que se corrigió a mano.
 6. [ ] **En los teléfonos.**
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.

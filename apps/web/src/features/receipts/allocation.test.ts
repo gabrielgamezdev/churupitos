@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { allocationInBs, proposeAllocation } from "./allocation";
+import { allocationInBs, fundingShares, proposeAllocation, sharesOf } from "./allocation";
 
 const line = (envelopeId: string, planned: number, allocated: number, fundingNote: string) => ({
   envelopeId,
@@ -62,6 +62,81 @@ describe("el reparto que se propone al cobrar", () => {
 
   it("si ninguna fuente lo nombra, nada que proponer", () => {
     expect(proposeAllocation("Extra", 1000, [line("a", 1000, 0, "Bono")], ["a"])).toEqual([]);
+  });
+});
+
+describe("cuánto pone cada fuente, deducido del plan (R22)", () => {
+  const incomes = [
+    { id: "bonus", name: "Bono", expectedUsdCents: 81500 },
+    { id: "card", name: "Tarjeta", expectedUsdCents: 7000 },
+    { id: "last", name: "Último", expectedUsdCents: 6500 },
+  ];
+  const plan = [
+    { envelopeId: "outings", plannedUsdCents: 68000, fundingNote: "💰 Bono" },
+    { envelopeId: "food", plannedUsdCents: 12000, fundingNote: "🥪 Tarjeta, 💰 Bono" },
+    { envelopeId: "person", plannedUsdCents: 15000, fundingNote: "💰 Bono, 💵 Último" },
+  ];
+
+  it("lo que una fuente solo puede poner en un sobre va ahí, y la otra pone lo que falta", () => {
+    expect(fundingShares(incomes, plan)).toEqual(
+      expect.arrayContaining([
+        { incomeId: "bonus", envelopeId: "outings", usdCents: 68000 },
+        { incomeId: "card", envelopeId: "food", usdCents: 7000 },
+        { incomeId: "bonus", envelopeId: "food", usdCents: 5000 },
+        { incomeId: "last", envelopeId: "person", usdCents: 6500 },
+        { incomeId: "bonus", envelopeId: "person", usdCents: 8500 },
+      ]),
+    );
+  });
+
+  it("si el plan no suma lo esperado de cada ingreso, no se deduce", () => {
+    const short = incomes.map((income) =>
+      income.id === "bonus" ? { ...income, expectedUsdCents: 90000 } : income,
+    );
+    expect(fundingShares(short, plan)).toBeNull();
+  });
+
+  it("si dos ingresos llenan los mismos dos sobres, no hay forma de saberlo", () => {
+    expect(
+      fundingShares(
+        [
+          { id: "a", name: "Bono", expectedUsdCents: 10000 },
+          { id: "b", name: "Quincena", expectedUsdCents: 10000 },
+        ],
+        [
+          { envelopeId: "x", plannedUsdCents: 10000, fundingNote: "Bono, Quincena" },
+          { envelopeId: "y", plannedUsdCents: 10000, fundingNote: "Quincena, Bono" },
+        ],
+      ),
+    ).toBeNull();
+  });
+
+  it("al cobrar, cada sobre recibe su parte, y no la de la otra fuente", () => {
+    const lines = plan.map((l) => ({ ...l, allocatedUsdCents: 0 }));
+    const order = ["outings", "food", "person"];
+    const shares = sharesOf(fundingShares(incomes, plan), "bonus");
+    expect(proposeAllocation("Bono", 81500, lines, order, ["Tarjeta", "Último"], shares)).toEqual([
+      { envelopeId: "outings", usdCents: 68000 },
+      { envelopeId: "food", usdCents: 5000 },
+      { envelopeId: "person", usdCents: 8500 },
+    ]);
+    // Sin ella, el sobre compartido que va antes se lleva su plan entero.
+    expect(proposeAllocation("Bono", 81500, lines, order, ["Tarjeta", "Último"])).toEqual([
+      { envelopeId: "outings", usdCents: 68000 },
+      { envelopeId: "food", usdCents: 12000 },
+      { envelopeId: "person", usdCents: 1500 },
+    ]);
+  });
+
+  it("su parte, sin pasar de lo que le falta al sobre", () => {
+    const lines = plan.map((l) => ({
+      ...l,
+      allocatedUsdCents: l.envelopeId === "food" ? 10000 : 0,
+    }));
+    const shares = sharesOf(fundingShares(incomes, plan), "bonus");
+    expect(
+      proposeAllocation("Bono", 81500, lines, ["outings", "food", "person"], [], shares),
+    ).toContainEqual({ envelopeId: "food", usdCents: 2000 });
   });
 });
 

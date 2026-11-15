@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { Fragment } from "react";
 
 import { EnvelopeChip } from "@/components/envelope-chip";
 import { ListRow } from "@/components/list";
@@ -16,8 +17,13 @@ import type { PlanRow as PlanRowData } from "./budget-view";
 // Excel: lo planeado en dólares, lo que le llegó en bolívares (R10) y ✅/⏳ (R18);
 // debajo, la fuente de fondos y la acción tal cual se escribieron, una barra de cuánto
 // le llegó de lo planeado (M7) y, a medias, lo que le llegó y lo que le falta (M13). Lleva
-// a la pantalla del sobre, donde está su restante.
-export function PlanRow({ line, envelope }: PlanRowData) {
+// a la pantalla del sobre, donde está su restante. Con dos fuentes o más, cuánto pone cada
+// una (R22), o que no se puede saber.
+export function PlanRow({
+  line,
+  envelope,
+  sources,
+}: PlanRowData & { sources?: { name: string; usdCents: number }[] | "unknown" }) {
   const notes = [line.fundingNote, line.actionNote]
     .map((note) => note.trim())
     .filter((note) => note && note !== "-")
@@ -36,6 +42,25 @@ export function PlanRow({ line, envelope }: PlanRowData) {
               className={cn("text-body", !envelope.isThirdParty && "text-ink")}
             />
             {notes && <span className="text-caption text-ink-muted">{notes}</span>}
+            {sources === "unknown" ? (
+              <span className="text-caption text-ink-muted">
+                No se puede deducir cuánto pone cada fuente
+              </span>
+            ) : (
+              sources && (
+                <span className="text-caption text-ink-muted">
+                  {sources.map((source, index) => (
+                    // Cada fuente con su monto, sin partirse; se salta de línea entre ellas.
+                    <Fragment key={index}>
+                      {index > 0 && " · "}
+                      <span className="whitespace-nowrap">
+                        {source.name} {formatMoney(source.usdCents, "USD")}
+                      </span>
+                    </Fragment>
+                  ))}
+                </span>
+              )
+            )}
           </span>
           <span className="flex shrink-0 items-center gap-1">
             <span className="flex flex-col items-end gap-0.5">

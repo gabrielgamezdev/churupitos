@@ -18,6 +18,7 @@ import { incomeTotals, summarizePlan } from "@/features/budget/budget-view";
 import { IncomeRow, IncomeRowSkeleton } from "@/features/budget/income-row";
 import { budgetMonth, budgetMonthRange } from "@/features/budget/months";
 import { PlanRow, PlanRowSkeleton } from "@/features/budget/plan-row";
+import { fundingIncomes, fundingShares } from "@/features/receipts/allocation";
 import {
   budgetChecksQuery,
   budgetLinesQuery,
@@ -127,7 +128,7 @@ function BudgetPage() {
               accountById={accountById}
               envelopeById={envelopeById}
             />
-            <PlanSection month={month} lines={lines} envelopes={envelopes} />
+            <PlanSection month={month} lines={lines} incomes={incomes} envelopes={envelopes} />
             <section aria-labelledby="checks-title" className="flex flex-col gap-3">
               <h2 id="checks-title" className="text-heading">
                 El cuadre
@@ -246,13 +247,25 @@ function IncomesSection({
 interface PlanSectionProps {
   month: string;
   lines: UseQueryResult<BudgetLine[]>;
+  incomes: UseQueryResult<ExpectedIncome[]>;
   envelopes: UseQueryResult<Envelope[]>;
 }
 
 // «Distribución de los ingresos» del Excel: sus totales y cada sobre con lo planeado y
 // lo que le llegó. Los de $0, plegados al final.
-function PlanSection({ month, lines, envelopes }: PlanSectionProps) {
+function PlanSection({ month, lines, incomes, envelopes }: PlanSectionProps) {
   const plan = lines.data && envelopes.data ? summarizePlan(lines.data, envelopes.data) : undefined;
+  const shares = incomes.data && lines.data ? fundingShares(incomes.data, lines.data) : null;
+  // Solo en los sobres con dos fuentes o más: en los demás, es todo lo planeado.
+  const sourcesOf = (line: BudgetLine) => {
+    if (!incomes.data || fundingIncomes(line.fundingNote, incomes.data).length < 2)
+      return undefined;
+    if (!shares) return "unknown" as const;
+    const nameOf = new Map(incomes.data.map((income) => [income.id, income.name]));
+    return shares
+      .filter((share) => share.envelopeId === line.envelopeId)
+      .map((share) => ({ name: nameOf.get(share.incomeId) ?? "", usdCents: share.usdCents }));
+  };
   return (
     <section aria-labelledby="plan-title" className="flex flex-col gap-3">
       <h2 id="plan-title" className="text-heading">
@@ -274,7 +287,7 @@ function PlanSection({ month, lines, envelopes }: PlanSectionProps) {
           ) : (
             <List>
               {plan.planned.map((row) => (
-                <PlanRow key={row.line.id} {...row} />
+                <PlanRow key={row.line.id} {...row} sources={sourcesOf(row.line)} />
               ))}
             </List>
           )}

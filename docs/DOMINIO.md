@@ -176,6 +176,13 @@ operación `envelope_transfer`: `(Banco A, Salidas, −50)` y `(Banco A, Transpo
   deshace un movimiento, no se cobra y no se planea. Para corregir algo a propósito se
   abre hasta el fin de ese día. Antes del corte ningún mes se cierra: la fuente era el
   Excel.
+- **R22 — La parte de cada fuente se deduce del plan, no se guarda.** En un sobre con
+  varias fuentes, cuánto pone cada ingreso sale del plan: un sobre al que solo le falta
+  fijar una fuente se lleva de ella lo que le falta; un ingreso al que solo le falta fijar
+  un sobre le da lo que le queda; y así hasta fijarlas todas. Vale solo si cuadra: cada
+  sobre suma lo planeado y cada ingreso, lo esperado. Si no (dos ingresos llenan los mismos
+  dos sobres, o el plan no suma lo esperado), no hay parte. Al cobrar, cada sobre recibe la
+  suya, sin pasar de lo que le falta; sin parte, lo que le falta (`R9`).
 
 ---
 
@@ -234,5 +241,6 @@ con qué emoji pinta la app cada sobre y cada ingreso vive en `privado/import/ca
 - Seguimiento de préstamos entre sobres (quién le debe a quién, devoluciones): D7.
 - Comisiones automáticas: D4.
 - Cierre de mes con pasos obligatorios: el mes se cierra solo al empezar el siguiente (`R7`).
-- Planificar qué ingreso financia qué sobre antes de cobrarlo: los Bs salen del reparto real (`R10`).
+- Guardar cuánto pone cada ingreso en un sobre: se deduce del plan (`R22`), y los Bs siguen
+  saliendo del reparto real (`R10`).
 - Notas libres o borradores: D11.

@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: M14 · Lo que pidió el uso, II
+## Ahora: M14 · Lo que pidió el uso, II, en los teléfonos
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -10,8 +10,8 @@ ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
 M14 sale otra vez del uso: «Todo» en Mover, el teclado que se abre solo al volver a la
 app, las fuentes y las acciones del plan, y cuánto pone cada fuente en un sobre que tiene
-dos. Va antes de la captura, que pasó a ser M15 (2026-11-15). Su plan, aprobado, está en
-`docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
+dos. Va antes de la captura, que pasó a ser M15 (2026-11-15). Está construido y en la nube;
+falta usarlo en los teléfonos, su paso 6. Su plan: `docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base

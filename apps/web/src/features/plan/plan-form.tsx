@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, TriangleAlert, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
 import { AmountInput } from "@/components/amount-field";
@@ -13,6 +13,8 @@ import { NativeSelect } from "@/components/ui/native-select";
 import type { Envelope } from "@/features/envelopes/queries";
 import { budgetOrder } from "@/features/operations/envelope-order";
 import { usableEnvelopes } from "@/features/operations/usable";
+import { fundingShares } from "@/features/receipts/allocation";
+import { parseAmountInput } from "@/lib/amount-input";
 import { formatMoney } from "@/lib/money";
 import { monthName } from "@/lib/months";
 import { showToast } from "@/lib/toast";
@@ -25,6 +27,7 @@ import {
   fundingNames,
   monthRows,
   planFormSchema,
+  plannedCents,
   planTotals,
   renameFunding,
   toggleFunding,
@@ -97,6 +100,20 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
     });
   };
   const { expectedUsdCents, plannedUsdCents, pendingUsdCents } = planTotals(values);
+  // Cuánto pondría cada fuente con el plan como va (R22): se ve mientras se planea.
+  const shares = fundingShares(
+    values.incomes.map((income) => ({
+      id: income.id,
+      name: income.name,
+      expectedUsdCents: parseAmountInput(income.usd) ?? 0,
+    })),
+    values.lines.map((line) => ({
+      envelopeId: line.envelopeId,
+      plannedUsdCents: plannedCents(line.usd) ?? 0,
+      fundingNote: line.fundingNote,
+    })),
+  );
+  const incomeName = new Map(values.incomes.map((income) => [income.id, income.name.trim()]));
 
   const toggleOpen = (envelopeId: string) =>
     setOpen((current) => {
@@ -238,6 +255,7 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
             const notes = [line?.fundingNote.trim(), line?.actionNote.trim()].filter(Boolean);
             const chosen = fundingNames(line?.fundingNote ?? "", names);
             const unknown = unknownFunding(line?.fundingNote ?? "", names);
+            const lineShares = shares?.filter((share) => share.envelopeId === envelopeId) ?? [];
             return (
               <li key={field.key} className="flex flex-col gap-2 px-4 py-3">
                 <div className="flex items-center gap-3">
@@ -318,6 +336,19 @@ export function PlanForm({ month, initial, previous, envelopes, onSaved }: PlanF
                             </Chip>
                           ))}
                         </div>
+                      )}
+                      {lineShares.length > 1 && (
+                        <p className="text-caption text-ink-muted">
+                          {lineShares.map((share, index) => (
+                            <Fragment key={share.incomeId}>
+                              {index > 0 && " · "}
+                              <span className="whitespace-nowrap">
+                                {incomeName.get(share.incomeId)}{" "}
+                                {formatMoney(share.usdCents, "USD")}
+                              </span>
+                            </Fragment>
+                          ))}
+                        </p>
                       )}
                       <Input
                         aria-label={`Fuente de fondos de ${envelope?.name ?? "el sobre"}`}
