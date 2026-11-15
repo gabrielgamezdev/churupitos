@@ -1,6 +1,6 @@
 # Estado
 
-## Ahora: entre M13 y el siguiente
+## Ahora: M14 · Lo que pidió el uso, II
 
 El **2026-11-01 fue el corte**: octubre se terminó en el Excel, la base se recargó una
 última vez (todo hasta octubre, y el presupuesto y las deudas de noviembre), con los 468
@@ -8,10 +8,10 @@ saldos iguales al Excel, y desde ese día la fuente es la app. El Excel se jubil
 libros quedan en `privado/excels/` como histórico. Lo registrado en la app hasta octubre
 ya estaba en el Excel; su copia está en `privado/respaldos/`.
 
-M13 se cerró el 2026-11-15. El siguiente sale otra vez del uso: «Todo» en Mover, el
-teclado que se vuelve a abrir al volver a la app, las fuentes de fondos que no reconocen
-un ingreso y el reparto de un sobre con dos fuentes. Su plan, y su orden respecto a la
-captura (M14), están por decidir.
+M14 sale otra vez del uso: «Todo» en Mover, el teclado que se abre solo al volver a la
+app, las fuentes y las acciones del plan, y cuánto pone cada fuente en un sobre que tiene
+dos. Va antes de la captura, que pasó a ser M15 (2026-11-15). Su plan, aprobado, está en
+`docs/modulos/M14-lo-que-pidio-el-uso-ii.md`.
 
 Desde el corte, la marca está puesta (la recarga se niega), lo importado se corrige como
 lo demás, los meses se cierran solos el día 5 del siguiente (`R21`) y hay copias de la base
@@ -58,7 +58,8 @@ dispara una sola CI y un solo despliegue. Las migraciones van a la nube a mano
 | — | **Corte** | El primer día de un mes, la app pasa a ser la fuente y el Excel se jubila | Hecho el 2026-11-01 |
 | M12 | Después del corte | La recarga fijada, corregir lo importado, meses cerrados y copias de la base | Corrigen un mes cerrado abriéndolo, y hay una copia que se restauró |
 | M13 | Lo que pidió el uso | Lo que le falta a cada sobre, comisiones sueltas y pagar una deuda en un paso | Lo usan a diario |
-| M14 | Registrar desde una captura | Rellenar monto, fecha y cuenta leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
+| M14 | Lo que pidió el uso, II | «Todo» en Mover, el teclado al volver, las fuentes y las acciones del plan, y la parte de cada fuente | Lo usan a diario |
+| M15 | Registrar desde una captura | Rellenar monto, fecha y cuenta leyendo una captura en el propio teléfono | Ídem, si en los teléfonos va rápido |
 
 ## Decisiones ya tomadas — no volver a preguntarlas
 
@@ -112,3 +113,6 @@ pierden:
   bancos, pasándolas antes a grises. Falta medirlo en un teléfono y probar fotos de
   facturas. El concepto de las capturas no sirve: casi siempre dice «pago».
 - **Vibración al guardar**, con un interruptor en Ajustes (fuera de M7).
+- **La parte de cada fuente, a mano** (2026-11-15, del autor): escribir en el plan cuánto
+  pone cada ingreso en un sobre con varias fuentes, guardarlo y copiarlo a los meses
+  siguientes hasta que se cambie. Por ahora se deduce del plan (M14); esto, si no basta.

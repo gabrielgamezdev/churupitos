@@ -79,4 +79,4 @@ Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 
 - Pagar una deuda a medias, o en varias veces.
 - Cobrar con un ingreso lo que les deben: hoy no hay ninguna pendiente.
-- Rellenar Registrar desde una captura: es M14.
+- Rellenar Registrar desde una captura: es M15 (fue M14 hasta el 2026-11-15).
