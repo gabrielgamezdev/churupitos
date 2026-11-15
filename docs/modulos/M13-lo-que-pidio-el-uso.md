@@ -1,6 +1,10 @@
 # M13 · Lo que pidió el uso
 
-- **Estado:** en curso (desde 2026-11-07). El plan está aprobado.
+- **Estado:** cerrado el 2026-11-15 (empezó el 2026-11-07). Congelado: lo que siga vigente
+  vive en `docs/DOMINIO.md` (`R16`, `R17`), `docs/DESIGN_SYSTEM.md`, el código y las
+  migraciones.
+- **Resultado:** en su primera semana en los teléfonos, 10 de las 11 deudas pagadas se
+  pagaron con «Pagar», se registró una comisión suelta y se corrigieron 19 movimientos.
 - **Objetivo:** tres cosas que salieron de usar la app de verdad en noviembre: ver lo que
   le falta a cada sobre, registrar una comisión suelta y pagar una deuda en un solo paso.
 
@@ -62,7 +66,7 @@ Ninguna nueva: cambian Presupuesto, Registrar, Corregir y Deudas.
 4. [x] **Pagar en la base** (2026-11-07, también en la nube): el enlace y la función, con sus
    pruebas (`R17`).
 5. [x] **Pagar en la app** (2026-11-07): «Pagar», lo que se pagó y a qué tasa, y deshacer.
-6. [ ] **En los teléfonos.**
+6. [x] **En los teléfonos** (2026-11-15).
 
 Cada paso termina con su commit y con un push, para probarlo en el teléfono.
 
