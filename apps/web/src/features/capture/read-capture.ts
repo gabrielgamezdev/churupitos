@@ -11,6 +11,9 @@ export type ReadStage = "preparing" | "reading";
 const IDLE_MS = 2 * 60_000;
 // Una foto grande no se lee mejor que una captura, y tarda mucho más.
 const MAX_WIDTH = 1600;
+// La de la cámara, menos aún: se lee al tamaño al que la deja WhatsApp, que se leyó bien,
+// y no a los 4000 px con los que sale, que en un teléfono tardaban más de 10 s.
+const PHOTO_MAX_SIDE = 1280;
 // Una pantalla de teléfono es alta: de 16:9 hacia arriba. Lo más ancho es una foto.
 const MIN_SCREEN_RATIO = 1.6;
 // El papel: claro y sin color. Las filas en las que lo es al menos esta parte, y las
@@ -69,10 +72,12 @@ function releaseLater() {
 // Una foto (de una factura, por ejemplo) y no una captura de la pantalla.
 export async function looksLikePhoto(image: Blob): Promise<boolean> {
   const bitmap = await createImageBitmap(image);
-  const ratio = bitmap.height / bitmap.width;
+  const photo = isPhoto(bitmap);
   bitmap.close();
-  return ratio < MIN_SCREEN_RATIO;
+  return photo;
 }
+
+const isPhoto = (bitmap: ImageBitmap) => bitmap.height / bitmap.width < MIN_SCREEN_RATIO;
 
 // Con `paper`, solo el papel: en una foto, lo que hay alrededor (las manos, la mesa) mete
 // ruido y el lector se pierde. Si no hay nada que recortar, no lee: daría lo mismo que
@@ -158,7 +163,11 @@ function paperBox(bitmap: ImageBitmap): Box | null {
 // leyeron bien todas las capturas de la prueba; en color, algunas no. Agrandar el papel
 // de una foto no se probó mejor: con la primera, cada tamaño confundía otra cifra.
 async function prepareImage(bitmap: ImageBitmap, box: Box): Promise<Blob> {
-  const scale = Math.min(1, MAX_WIDTH / box.width);
+  const scale = Math.min(
+    1,
+    MAX_WIDTH / box.width,
+    isPhoto(bitmap) ? PHOTO_MAX_SIDE / Math.max(bitmap.width, bitmap.height) : 1,
+  );
   const width = Math.round(box.width * scale);
   const height = Math.round(box.height * scale);
   const canvas = new OffscreenCanvas(width, height);
